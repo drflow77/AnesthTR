@@ -3,900 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trivia Anestesia — HGR 200 Tecámac</title>
+<title>AnesthTR — Evaluaciones de Anestesiología | HGR 200</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0F172A; font-family: 'DM Sans', sans-serif; color: #E2E8F0; min-height: 100vh; }
   
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #0d1117;
-    color: #e6edf3;
-    min-height: 100vh;
+  .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
+  
+  .logo { text-align: center; margin-bottom: 32px; }
+  .logo-icon { font-size: 56px; margin-bottom: 12px; }
+  .logo-title { font-size: 28px; font-weight: 800; color: #F1F5F9; letter-spacing: -0.03em; }
+  .logo-subtitle { font-size: 14px; color: #64748B; margin-top: 4px; }
+  .logo-badge { display: inline-block; background: linear-gradient(135deg, #3B82F6, #8B5CF6); color: #FFF; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-top: 12px; letter-spacing: 0.05em; }
+  
+  .section-label { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; padding-left: 4px; }
+  
+  .card {
+    display: block; text-decoration: none; color: inherit;
+    background: #1E293B; border-radius: 16px; padding: 24px;
+    margin-bottom: 12px; border: 1px solid #334155;
+    transition: all 0.25s ease; position: relative; overflow: hidden;
   }
-
-  header {
-    background: linear-gradient(135deg, #1a2744, #0d2137);
-    padding: 20px;
-    text-align: center;
-    border-bottom: 2px solid #2f81f7;
-  }
-
-  header h1 { font-size: 1.4em; color: #2f81f7; }
-  header p { font-size: 0.85em; color: #8b949e; margin-top: 4px; }
-
-  .score-bar {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 12px;
-    background: #161b22;
-    border-bottom: 1px solid #30363d;
-    flex-wrap: wrap;
-  }
-
-  .score-item {
-    text-align: center;
-    font-size: 0.8em;
-    color: #8b949e;
-  }
-  .score-item span {
-    display: block;
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #e6edf3;
-  }
-  .score-item.correct span { color: #3fb950; }
-  .score-item.wrong span { color: #f85149; }
-  .score-item.streak span { color: #f0883e; }
-
-  .categories {
-    display: flex;
-    gap: 10px;
-    padding: 16px;
-    overflow-x: auto;
-    background: #161b22;
-    border-bottom: 1px solid #30363d;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .cat-btn {
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 1px solid #30363d;
-    background: #21262d;
-    color: #8b949e;
-    cursor: pointer;
-    font-size: 0.85em;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .cat-btn:hover, .cat-btn.active {
-    border-color: #2f81f7;
-    color: #2f81f7;
-    background: #1a2744;
-  }
-  .cat-btn.active { font-weight: bold; }
-
-  .difficulty-filter {
-    display: flex;
-    gap: 8px;
-    padding: 10px 16px;
-    justify-content: center;
-    background: #161b22;
-    border-bottom: 1px solid #30363d;
-  }
-
-  .diff-btn {
-    padding: 5px 14px;
-    border-radius: 12px;
-    border: 1px solid #30363d;
-    background: #21262d;
-    color: #8b949e;
-    cursor: pointer;
-    font-size: 0.8em;
-    transition: all 0.2s;
-  }
-  .diff-btn.active-easy { border-color: #3fb950; color: #3fb950; background: #0d2a12; }
-  .diff-btn.active-medium { border-color: #f0883e; color: #f0883e; background: #2a1500; }
-  .diff-btn.active-hard { border-color: #f85149; color: #f85149; background: #2a0d0d; }
-
-  .main {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 20px 16px;
-  }
-
-  .question-card {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 16px;
-  }
-
-  .question-meta {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 0.75em;
-    color: #8b949e;
-  }
-
-  .diff-badge {
-    padding: 2px 10px;
-    border-radius: 10px;
-    font-weight: bold;
-  }
-  .easy { background: #0d2a12; color: #3fb950; border: 1px solid #3fb950; }
-  .medium { background: #2a1500; color: #f0883e; border: 1px solid #f0883e; }
-  .hard { background: #2a0d0d; color: #f85149; border: 1px solid #f85149; }
-
-  .question-text {
-    font-size: 1.05em;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    color: #e6edf3;
-  }
-
-  .options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .option-btn {
-    padding: 14px 18px;
-    background: #21262d;
-    border: 1px solid #30363d;
-    border-radius: 8px;
-    color: #e6edf3;
-    cursor: pointer;
-    text-align: left;
-    font-size: 0.9em;
-    line-height: 1.4;
-    transition: all 0.2s;
-  }
-  .option-btn:hover:not(:disabled) {
-    border-color: #2f81f7;
-    background: #1a2744;
-  }
-  .option-btn.correct-ans {
-    background: #0d2a12;
-    border-color: #3fb950;
-    color: #3fb950;
-  }
-  .option-btn.wrong-ans {
-    background: #2a0d0d;
-    border-color: #f85149;
-    color: #f85149;
-  }
-  .option-btn:disabled { cursor: default; }
-
-  .explanation {
-    margin-top: 16px;
-    padding: 16px;
-    background: #0d1117;
-    border-left: 3px solid #2f81f7;
-    border-radius: 0 8px 8px 0;
-    font-size: 0.88em;
-    line-height: 1.6;
-    color: #c9d1d9;
-    display: none;
-  }
-  .explanation.show { display: block; }
-  .explanation strong { color: #2f81f7; }
-
-  .result-icon {
-    font-size: 1.5em;
-    margin-right: 8px;
-  }
-
-  .nav-btns {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 8px;
-  }
-
-  .nav-btn {
-    padding: 10px 24px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9em;
-    font-weight: bold;
-    transition: all 0.2s;
-  }
-  .btn-next {
-    background: #2f81f7;
-    color: white;
-  }
-  .btn-next:hover { background: #1f6feb; }
-  .btn-random {
-    background: #21262d;
-    border: 1px solid #30363d;
-    color: #e6edf3;
-  }
-  .btn-random:hover { border-color: #2f81f7; color: #2f81f7; }
-
-  .progress {
-    font-size: 0.8em;
-    color: #8b949e;
-    text-align: center;
-    margin-bottom: 16px;
-  }
-  .progress-bar {
-    height: 4px;
-    background: #21262d;
-    border-radius: 2px;
-    margin-top: 6px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: #2f81f7;
-    transition: width 0.3s;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: #8b949e;
-  }
-  .empty-state .icon { font-size: 3em; margin-bottom: 12px; }
-
-  .finished-card {
-    text-align: center;
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 12px;
-    padding: 40px 24px;
-  }
-  .finished-card h2 { font-size: 1.8em; margin-bottom: 8px; }
-  .final-score { font-size: 3em; font-weight: bold; color: #2f81f7; margin: 16px 0; }
-  .final-msg { color: #8b949e; margin-bottom: 24px; }
-
-  @media (max-width: 480px) {
-    .question-text { font-size: 0.95em; }
-    .option-btn { font-size: 0.85em; padding: 12px 14px; }
-  }
+  .card:hover { border-color: #3B82F6; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59,130,246,0.15); }
+  .card.disabled { opacity: 0.4; pointer-events: none; }
+  
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .card-grade { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 8px; }
+  .card-grade.r1 { background: #3B82F622; color: #60A5FA; border: 1px solid #3B82F644; }
+  .card-grade.r2 { background: #8B5CF622; color: #A78BFA; border: 1px solid #8B5CF644; }
+  .card-grade.r3 { background: #F59E0B22; color: #FCD34D; border: 1px solid #F59E0B44; }
+  .card-grade.general { background: #22C55E22; color: #86EFAC; border: 1px solid #22C55E44; }
+  
+  .card-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
+  .card-status.active { background: #22C55E22; color: #86EFAC; }
+  .card-status.soon { background: #64748B22; color: #94A3B8; }
+  
+  .card-title { font-size: 17px; font-weight: 700; color: #F1F5F9; margin-bottom: 6px; }
+  .card-desc { font-size: 13px; color: #94A3B8; line-height: 1.5; }
+  .card-meta { display: flex; gap: 16px; margin-top: 12px; font-size: 12px; color: #64748B; }
+  .card-meta span { display: flex; align-items: center; gap: 4px; }
+  
+  .card-arrow { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #334155; transition: all 0.25s; }
+  .card:hover .card-arrow { color: #3B82F6; right: 16px; }
+  
+  .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1E293B; }
+  .footer-text { font-size: 12px; color: #475569; line-height: 1.6; }
+  .footer-text a { color: #3B82F6; text-decoration: none; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🏥 Trivia de Anestesia</h1>
-  <p>HGR 200 Tecámac — Dr. David Flores Carrasco</p>
-</header>
-
-<div class="score-bar">
-  <div class="score-item"><span id="total-q">0</span>Respondidas</div>
-  <div class="score-item correct"><span id="correct-q">0</span>Correctas</div>
-  <div class="score-item wrong"><span id="wrong-q">0</span>Incorrectas</div>
-  <div class="score-item streak"><span id="streak-q">0</span>🔥 Racha</div>
-  <div class="score-item"><span id="pct-q">—</span>Precisión</div>
-</div>
-
-<div class="categories">
-  <button class="cat-btn active" onclick="setCategory('all')">📚 Todas</button>
-  <button class="cat-btn" onclick="setCategory('halogenados')">💨 Halogenados</button>
-  <button class="cat-btn" onclick="setCategory('etomidato')">💉 Etomidato</button>
-  <button class="cat-btn" onclick="setCategory('propofol')">🥛 Propofol</button>
-  <button class="cat-btn" onclick="setCategory('benzodiacepinas')">💊 Benzodiacepinas</button>
-</div>
-
-<div class="difficulty-filter">
-  <button class="diff-btn" id="df-all" onclick="setDiff('all')">Todas</button>
-  <button class="diff-btn" id="df-easy" onclick="setDiff('easy')">🟢 Fácil</button>
-  <button class="diff-btn" id="df-medium" onclick="setDiff('medium')">🟡 Intermedio</button>
-  <button class="diff-btn" id="df-hard" onclick="setDiff('hard')">🔴 Ultra Difícil</button>
-</div>
-
-<div class="main">
-  <div class="progress">
-    <span id="progress-text">Pregunta 1 de 40</span>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="container">
+  <div class="logo">
+    <div class="logo-icon">🩺</div>
+    <div class="logo-title">AnesthTR</div>
+    <div class="logo-subtitle">Evaluaciones de Anestesiología · HGR 200 Tecámac</div>
+    <div class="logo-badge">TURNO VESPERTINO</div>
   </div>
-  <div id="game-area"></div>
+
+  <div class="section-label">Trivia general</div>
+
+  <a href="general/" class="card">
+    <div class="card-header">
+      <span class="card-grade general">General</span>
+      <span class="card-status active">● Activo</span>
+    </div>
+    <div class="card-title">Trivia de Anestesiología</div>
+    <div class="card-desc">Preguntas de repaso general para todos los grados. Farmacología, fisiología y conceptos clave.</div>
+    <div class="card-meta">
+      <span>🎯 Trivia interactiva</span>
+      <span>📊 Con puntaje</span>
+    </div>
+    <div class="card-arrow">→</div>
+  </a>
+
+  <div class="section-label" style="margin-top:20px;">Exámenes mensuales por grado</div>
+
+  <a href="R1/" class="card">
+    <div class="card-header">
+      <span class="card-grade r1">R1</span>
+      <span class="card-status active">● Activo</span>
+    </div>
+    <div class="card-title">Examen R1 — Marzo 2026</div>
+    <div class="card-desc">Escalas de vía aérea, Cormack-Lehane, clasificación ASA, Caprini y valoración pre-anestésica.</div>
+    <div class="card-meta">
+      <span>📝 25 preguntas</span>
+      <span>⏱ ~15 min</span>
+      <span>📊 Con calificación</span>
+    </div>
+    <div class="card-arrow">→</div>
+  </a>
+
+  <div class="card disabled">
+    <div class="card-header">
+      <span class="card-grade r2">R2</span>
+      <span class="card-status soon">Próximamente</span>
+    </div>
+    <div class="card-title">Examen R2 — Marzo 2026</div>
+    <div class="card-desc">Temas por definir.</div>
+    <div class="card-meta">
+      <span>📝 25 preguntas</span>
+    </div>
+  </div>
+
+  <div class="card disabled">
+    <div class="card-header">
+      <span class="card-grade r3">R3</span>
+      <span class="card-status soon">Próximamente</span>
+    </div>
+    <div class="card-title">Examen R3 — Marzo 2026</div>
+    <div class="card-desc">Temas por definir.</div>
+    <div class="card-meta">
+      <span>📝 25 preguntas</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">
+      Coordinación de Anestesiología — Turno Vespertino<br>
+      HGR 200 Tecámac · IMSS<br><br>
+      Desarrollado por <a href="https://ropicalc.com" target="_blank">DFC Medical Apps</a>
+    </div>
+  </div>
 </div>
 
-<script>
-const ALL_QUESTIONS = [
-  // ===== HALOGENADOS =====
-  {
-    id:1, cat:"halogenados", diff:"easy",
-    q:"¿Cuál es el CAM del Sevoflurano en adultos?",
-    opts:["1.0%","2.0 - 2.05%","3.5%","0.75%"],
-    ans:1,
-    exp:"El CAM del Sevoflurano en adultos es aproximadamente 2.0%. Disminuye con la edad, opioides y otros adyuvantes."
-  },
-  {
-    id:2, cat:"halogenados", diff:"easy",
-    q:"¿A qué temperatura hierve el Desflurano?",
-    opts:["37°C","56°C","23.5°C","100°C"],
-    ans:2,
-    exp:"Su bajo punto de ebullición (casi temperatura ambiente) hace que el Desflurano requiera un vaporizador especial calentado a presión. No puede usarse en vaporizadores convencionales."
-  },
-  {
-    id:3, cat:"halogenados", diff:"easy",
-    q:"¿Cuál halogenado tiene el coeficiente de partición sangre/gas más bajo entre Sevoflurano y Desflurano?",
-    opts:["Sevoflurano (0.65)","Ambos igual","Desflurano (0.42)","Isoflurano (1.4)"],
-    ans:2,
-    exp:"A menor coeficiente sangre/gas, más rápida la inducción y el despertar. Por eso el Desflurano tiene recuperación más rápida que el Sevoflurano."
-  },
-  {
-    id:4, cat:"halogenados", diff:"easy",
-    q:"El Sevoflurano produce el Compuesto A principalmente cuando...",
-    opts:["Se usa con mascarilla facial","Entra en contacto con cal sodada seca a altos flujos","Se mezcla con óxido nitroso","Se usa en pediatría"],
-    ans:1,
-    exp:"El Compuesto A se forma por degradación del Sevo con absorbentes de CO₂ secos. Es nefrotóxico en animales. Se recomienda flujo fresco >2 L/min con Sevo para minimizar su acumulación."
-  },
-  {
-    id:5, cat:"halogenados", diff:"medium",
-    q:"¿Cuál es el CAM del Desflurano en adultos?",
-    opts:["2.0 - 2.5%","3.5 - 4.0%","6.0 - 6.6%","8.0 - 9.0%"],
-    ans:2,
-    exp:"El CAM del Desflurano es 6.0-6.6%, significativamente mayor que el Sevoflurano. Requiere concentraciones más altas para lograr anestesia quirúrgica."
-  },
-  {
-    id:6, cat:"halogenados", diff:"medium",
-    q:"¿Por qué el Desflurano NO se recomienda para inducción inhalatoria?",
-    opts:["Es demasiado costoso","Produce irritación de vía aérea, laringoespasmo y taquicardia refleja","No tiene efecto hipnótico suficiente","Causa broncodilatación excesiva"],
-    ans:1,
-    exp:"A concentraciones altas es pungente e irritante. Produce tos, laringoespasmo y activación simpática. Se usa principalmente para mantenimiento, no inducción."
-  },
-  {
-    id:7, cat:"halogenados", diff:"medium",
-    q:"¿Qué efecto cardiovascular produce el Desflurano cuando se aumenta rápidamente su concentración?",
-    opts:["Bradicardia e hipotensión","Taquicardia y aumento de TA por activación simpática","Bloqueo AV de primer grado","Vasodilatación periférica sin cambios en FC"],
-    ans:1,
-    exp:"Este efecto se debe a activación simpática refleja. Es importante en pacientes cardíacos. Se recomienda incrementar la concentración gradualmente."
-  },
-  {
-    id:8, cat:"halogenados", diff:"medium",
-    q:"¿Cuál es la ventaja del Sevoflurano para inducción inhalatoria en pediatría?",
-    opts:["Tiene el CAM más bajo de todos los halogenados","No es pungente, tiene olor dulce y no irrita la vía aérea","Es el más económico","No produce depresión cardiovascular"],
-    ans:1,
-    exp:"Es el halogenado de elección para inducción en mascarilla en niños. Puede usarse a 8% para inducción rápida sin causar irritación ni laringoespasmo."
-  },
-  {
-    id:9, cat:"halogenados", diff:"hard",
-    q:"¿Qué es el Compuesto A y cuál es su mecanismo de nefrotoxicidad en animales?",
-    opts:[
-      "Un metabolito del Desflurano que daña el hígado por peroxidación lipídica",
-      "Fluorometil-vinil éter formado por degradación del Sevo con absorbentes; nefrotóxico por biotransformación renal a metabolitos que alquilan proteínas tubulares",
-      "Un producto de la reacción del Sevo con O₂ que produce metahemoglobina",
-      "Un compuesto del Isoflurano que genera fluoruro inorgánico en exceso"
-    ],
-    ans:1,
-    exp:"El Compuesto A (fluorometil-2,2-difluoro-1-(trifluorometil)vinil éter) se forma por degradación del Sevo con absorbentes de CO₂ secos. Su nefrotoxicidad en ratas ocurre por biotransformación renal a metabolitos reactivos que alquilan proteínas tubulares. En humanos no se ha demostrado daño clínico con flujos >1 L/min."
-  },
-  {
-    id:10, cat:"halogenados", diff:"hard",
-    q:"¿Cómo se puede atenuar clínicamente la activación simpática que produce el Desflurano?",
-    opts:[
-      "Administrando atropina IV antes de la inducción",
-      "Usando solo ventilación espontánea",
-      "Con opioides, dexmedetomidina, clonidina o betabloqueadores previos e incremento gradual de concentración",
-      "Aumentando la FiO₂ al 100%"
-    ],
-    ans:2,
-    exp:"La activación simpática del Des se atenúa con: pretreatment con opioides (fentanilo, remifentanilo), dexmedetomidina, clonidina, betabloqueadores o incrementando la concentración <1 CAM/minuto."
-  },
-
-  // ===== ETOMIDATO =====
-  {
-    id:11, cat:"etomidato", diff:"easy",
-    q:"¿Cuál es la dosis de inducción del Etomidato?",
-    opts:["0.05 - 0.1 mg/kg","0.2 - 0.3 mg/kg","0.5 - 1.0 mg/kg","1.5 - 2.5 mg/kg"],
-    ans:1,
-    exp:"Dosis estándar de inducción: 0.2-0.3 mg/kg IV. Tiene gran margen de seguridad cardiovascular."
-  },
-  {
-    id:12, cat:"etomidato", diff:"easy",
-    q:"¿Cuál es la principal ventaja del Etomidato en pacientes hemodinámicamente inestables?",
-    opts:[
-      "Produce broncodilatación potente",
-      "Mínima depresión cardiovascular — mantiene TA y FC estables",
-      "Tiene efecto analgésico importante",
-      "No produce apnea post-inducción"
-    ],
-    ans:1,
-    exp:"Es el inductor de elección en pacientes en choque, cardíacos descompensados o con reserva cardiovascular limitada. No afecta significativamente la presión arterial ni el gasto cardíaco."
-  },
-  {
-    id:13, cat:"etomidato", diff:"easy",
-    q:"¿Qué efecto endocrino produce el Etomidato?",
-    opts:[
-      "Hipoglucemia por estimulación de insulina",
-      "Hipertiroidismo transitorio",
-      "Supresión adrenal — inhibe la 11-β-hidroxilasa bloqueando síntesis de cortisol",
-      "Aumento de hormona de crecimiento"
-    ],
-    ans:2,
-    exp:"Por eso se evita en infusiones prolongadas. Una sola dosis de inducción produce supresión adrenal de 4-8 horas."
-  },
-  {
-    id:14, cat:"etomidato", diff:"easy",
-    q:"¿En qué solvente está preparado el Etomidato comercial y qué problema causa?",
-    opts:[
-      "Agua destilada — no causa problemas",
-      "Propilenglicol — causa dolor a la inyección y tromboflebitis",
-      "Emulsión lipídica — causa hiperlipidemia",
-      "Dimetilsulfóxido — causa sabor metálico"
-    ],
-    ans:1,
-    exp:"La formulación en propilenglicol causa dolor a la inyección y tromboflebitis. La formulación en emulsión lipídica reduce estos efectos adversos pero no está disponible en todos los centros."
-  },
-  {
-    id:15, cat:"etomidato", diff:"medium",
-    q:"¿Por qué el Etomidato puede producir mioclonías y cómo se previenen?",
-    opts:[
-      "Por efecto directo sobre motoneurona alfa; se previene con relajantes musculares",
-      "Por desinhibición de centros subcorticales; se previene con BZD u opioides previos",
-      "Por irritación de la vía aérea; se previene con lidocaína nebulizada",
-      "Por hiperkalemia transitoria; se previene con gluconato de calcio"
-    ],
-    ans:1,
-    exp:"Las mioclonías del Etomidato ocurren por desinhibición de centros subcorticales. Se previenen eficazmente con premedicación de benzodiacepinas o fentanilo previo a la inducción."
-  },
-  {
-    id:16, cat:"etomidato", diff:"medium",
-    q:"¿Cuál es el mecanismo de acción del Etomidato a nivel molecular?",
-    opts:[
-      "Bloquea receptores NMDA como la Ketamina",
-      "Potencia el receptor GABA-A aumentando la frecuencia de apertura del canal de cloro; se une al sitio β2/β3",
-      "Inhibe canales de sodio voltaje-dependientes como los anestésicos locales",
-      "Activa receptores opioides μ en el SNC"
-    ],
-    ans:1,
-    exp:"El Etomidato potencia el receptor GABA-A aumentando la FRECUENCIA de apertura del canal de cloro, hiperpolarizando la membrana neuronal. Se une específicamente al sitio β2/β3 del receptor."
-  },
-  {
-    id:17, cat:"etomidato", diff:"medium",
-    q:"¿Por qué el Etomidato está contraindicado en pacientes con insuficiencia adrenal?",
-    opts:[
-      "Porque acelera el metabolismo de los corticosteroides exógenos",
-      "Porque la supresión adrenal adicional puede precipitar una crisis adrenal aguda potencialmente fatal",
-      "Porque aumenta la presión intracraneana en estos pacientes",
-      "Porque produce hiperkalemia severa en insuficiencia adrenal"
-    ],
-    ans:1,
-    exp:"En pacientes con reserva adrenal limitada (Addison, uso crónico de esteroides, sepsis grave), la inhibición adicional de la 11-β-hidroxilasa puede precipitar una crisis adrenal aguda."
-  },
-  {
-    id:18, cat:"etomidato", diff:"medium",
-    q:"¿Cuál es la vida media de redistribución del Etomidato y qué explica clínicamente?",
-    opts:[
-      "15-20 minutos — explica su duración de acción intermedia",
-      "2-4 minutos — explica su corta duración de acción (efecto clínico 5-10 min)",
-      "45-60 minutos — explica la sedación prolongada",
-      "30 segundos — explica la inducción ultra rápida"
-    ],
-    ans:1,
-    exp:"La vida media de redistribución de 2-4 minutos explica su corta duración. El Etomidato se redistribuye rápidamente del SNC a tejidos periféricos, terminando su efecto clínico en 5-10 min."
-  },
-  {
-    id:19, cat:"etomidato", diff:"hard",
-    q:"Paciente séptico requiere inducción de secuencia rápida. ¿Cuál es la evidencia en contra del Etomidato en este contexto?",
-    opts:[
-      "Produce broncoespasmo severo en pacientes sépticos",
-      "El estudio CORTICUS y meta-análisis muestran que la supresión adrenal por dosis única se asocia a mayor mortalidad y necesidad de vasopresores en sepsis",
-      "Está contraindicado por interacción con antibióticos betalactámicos",
-      "Produce coagulopatía dilucional en pacientes sépticos"
-    ],
-    ans:1,
-    exp:"El debate sobre Etomidato en sepsis es clínicamente relevante. La alternativa actual es Ketamina 1-2 mg/kg, que ofrece estabilidad cardiovascular sin supresión adrenal. Muchos centros han reemplazado Etomidato por Ketamina en ISR para pacientes sépticos."
-  },
-  {
-    id:20, cat:"etomidato", diff:"hard",
-    q:"¿Cuál es la vía metabólica principal del Etomidato y qué polimorfismo genético modifica su efecto clínico?",
-    opts:[
-      "CYP3A4 hepático; polimorfismos del CYP producen acumulación tóxica",
-      "Hidrólisis por esterasas plasmáticas/hepáticas; polimorfismos en NR5A1 modifican la sensibilidad de la 11-β-hidroxilasa explicando variabilidad en supresión adrenal",
-      "Glucuronidación renal; polimorfismos UGT alteran la duración de acción",
-      "Acetilación hepática; acetiladores lentos tienen mayor efecto hipnótico"
-    ],
-    ans:1,
-    exp:"El Etomidato se metaboliza principalmente por esterasas (hidrólisis del enlace éster) a ácido carboxílico inactivo, con mínima participación del CYP. Polimorfismos en NR5A1 explican la variabilidad interindividual en la supresión adrenal."
-  },
-
-  // ===== PROPOFOL =====
-  {
-    id:21, cat:"propofol", diff:"easy",
-    q:"¿Cuál es la dosis de inducción del Propofol en adulto sano?",
-    opts:["0.5 - 1.0 mg/kg","1.5 - 2.5 mg/kg","3.0 - 4.0 mg/kg","5.0 - 6.0 mg/kg"],
-    ans:1,
-    exp:"En ancianos, pacientes ASA III-IV o premedicados con opioides se reduce a 1-1.5 mg/kg para evitar hipotensión severa."
-  },
-  {
-    id:22, cat:"propofol", diff:"easy",
-    q:"¿Por qué el Propofol tiene propiedades antieméticas?",
-    opts:[
-      "Aumenta la motilidad gástrica",
-      "Inhibe la zona gatillo quimiorreceptora y reduce liberación de dopamina",
-      "Bloquea receptores 5-HT3 como el Ondansetrón",
-      "Estimula el nervio vago"
-    ],
-    ans:1,
-    exp:"El Propofol inhibe la zona gatillo quimiorreceptora (área postrema) y reduce la liberación de dopamina. Por eso se asocia a menor incidencia de NVPO comparado con otros agentes anestésicos."
-  },
-  {
-    id:23, cat:"propofol", diff:"easy",
-    q:"¿En qué solvente está formulado el Propofol?",
-    opts:[
-      "Propilenglicol al 40%",
-      "Solución salina hipertónica",
-      "Emulsión lipídica — aceite de soya, glicerol y lecitina de huevo",
-      "Ciclodextrina sulfobutiléter"
-    ],
-    ans:2,
-    exp:"Importante en pacientes con alergia al huevo (aunque la alergia verdadera a lecitina de huevo es rara) y en restricción de lípidos como en pancreatitis o hipertrigliceridemia severa."
-  },
-  {
-    id:24, cat:"propofol", diff:"easy",
-    q:"¿Cómo se reduce el dolor a la inyección del Propofol?",
-    opts:[
-      "Calentando la solución a 40°C",
-      "Inyectando en venas pequeñas del dorso de la mano",
-      "Lidocaína 20-40mg IV previa, inyección en vena grande, o mezcla con lidocaína",
-      "Administrando dexametasona antes"
-    ],
-    ans:2,
-    exp:"El dolor se debe a activación de canales TRPA1 por el solvente lipídico. La lidocaína IV previa (con torniquete 30-60 seg) es la técnica más efectiva. También ayuda la vena antecubital en vez de la dorsal."
-  },
-  {
-    id:25, cat:"propofol", diff:"medium",
-    q:"¿Qué es el Síndrome de Infusión de Propofol (PRIS) y cuáles son sus factores de riesgo?",
-    opts:[
-      "Broncoespasmo severo con infusiones >1 mg/kg/h; riesgo en asmáticos",
-      "Acidosis metabólica, rabdomiólisis, arritmias y falla cardíaca; riesgo con >4 mg/kg/h por >48h, niños graves y TCE con corticosteroides",
-      "Hipertrigliceridemia severa con infusiones prolongadas; riesgo en diabéticos",
-      "Nefrotoxicidad progresiva similar al Compuesto A; riesgo en nefropatía previa"
-    ],
-    ans:1,
-    exp:"El PRIS es raro pero potencialmente fatal. Incluye: acidosis metabólica, rabdomiólisis, insuficiencia renal, bloqueo de rama derecha y falla cardíaca. Factores de riesgo: infusiones >4 mg/kg/h por >48h, niños en estado crítico, TCE con corticosteroides y catecolaminas concomitantes."
-  },
-  {
-    id:26, cat:"propofol", diff:"medium",
-    q:"¿Cuál es el mecanismo anticonvulsivante del Propofol?",
-    opts:[
-      "Solo bloquea canales de calcio tipo L en neuronas corticales",
-      "Potencia GABA-A, inhibe receptores NMDA y canales de sodio; reduce metabolismo cerebral hasta 60%",
-      "Activa receptores de adenosina A1 que inhiben la actividad neuronal",
-      "Bloquea la recaptación de GABA en la hendidura sináptica"
-    ],
-    ans:1,
-    exp:"Por sus múltiples mecanismos es útil en status epilepticus refractario. Además reduce la PIC al disminuir el metabolismo cerebral y la presión de perfusión cerebral."
-  },
-  {
-    id:27, cat:"propofol", diff:"medium",
-    q:"¿Por qué el Propofol NO se recomienda como inductor en pacientes hipovolémicos?",
-    opts:[
-      "Porque aumenta la resistencia vascular pulmonar",
-      "Porque produce vasodilatación sistémica y depresión miocárdica directa que puede precipitar colapso cardiovascular",
-      "Porque inhibe la vasopresina endógena",
-      "Porque aumenta el consumo de oxígeno miocárdico"
-    ],
-    ans:1,
-    exp:"El Propofol reduce las resistencias vasculares sistémicas y tiene depresión miocárdica directa. En hipovolemia esto puede precipitar hipotensión severa o colapso. En estos casos se prefiere Etomidato o Ketamina."
-  },
-  {
-    id:28, cat:"propofol", diff:"medium",
-    q:"En TCI con Propofol, ¿a qué concentración plasmática objetivo se logra anestesia general?",
-    opts:[
-      "0.5 - 1.0 mcg/mL","1.0 - 2.0 mcg/mL","3.0 - 6.0 mcg/mL","8.0 - 10.0 mcg/mL"
-    ],
-    ans:2,
-    exp:"Sedación: 1-2 mcg/mL. Hipnosis/anestesia: 3-6 mcg/mL. Con opioides concomitantes se puede reducir 30-50% la concentración objetivo. Los modelos Marsh y Schnider difieren en el Vd central."
-  },
-  {
-    id:29, cat:"propofol", diff:"hard",
-    q:"¿Cuál es la diferencia clave entre los modelos farmacocinéticos de Marsh y Schnider para TCI de Propofol?",
-    opts:[
-      "Marsh incluye edad y Schnider solo usa el peso corporal total",
-      "Marsh solo usa peso corporal (sobreestima en obesos); Schnider incluye edad, peso, talla y masa magra con Vd central fijo — mejor en ancianos y obesos",
-      "Ambos modelos son idénticos, solo difieren en la nomenclatura",
-      "Schnider fue validado en pediatría y Marsh en adultos"
-    ],
-    ans:1,
-    exp:"MARSH: modelo 3 compartimentos, solo peso corporal, sobreestima Vd en obesos. SCHNIDER: incluye edad, peso, talla y masa magra, Vd central fijo (4.27 L), mejor en ancianos y obesos. En obesos usar peso magro con Marsh o Schnider con masa magra para evitar sobredosis."
-  },
-  {
-    id:30, cat:"propofol", diff:"hard",
-    q:"¿Por qué el BIS puede FALLAR en detectar awareness durante anestesia con Propofol?",
-    opts:[
-      "Porque el BIS solo funciona con halogenados y no fue validado para TIVA",
-      "El BIS mide solo actividad frontal, artefactos musculares lo elevan falsamente, hay variabilidad farmacocinética individual y fue validado principalmente con halogenados",
-      "Porque el Propofol produce artefactos eléctricos que dañan el sensor del BIS",
-      "El BIS no puede detectar concentraciones de Propofol <3 mcg/mL"
-    ],
-    ans:1,
-    exp:"La awareness ocurre cuando Ce <1.5 mcg/mL. El BIS falla porque: (1) mide solo actividad frontal no subcortical, (2) artefactos musculares elevan falsamente el valor, (3) variabilidad farmacocinética individual, (4) validado principalmente con halogenados. La combinación BIS + monitorización autonómica + dosis adecuadas reduce pero no elimina el riesgo."
-  },
-
-  // ===== BENZODIACEPINAS =====
-  {
-    id:31, cat:"benzodiacepinas", diff:"easy",
-    q:"¿Cuál es la dosis de premedicación del Midazolam IV en adulto?",
-    opts:["0.001 - 0.005 mg/kg","0.02 - 0.05 mg/kg (1-2.5 mg)","0.2 - 0.5 mg/kg","1.0 - 2.0 mg/kg"],
-    ans:1,
-    exp:"Para ansiólisis preoperatoria: 0.02-0.05 mg/kg IV (1-2.5 mg en adulto). Para sedación/inducción: 0.1-0.2 mg/kg. Siempre titular lentamente para evitar depresión respiratoria."
-  },
-  {
-    id:32, cat:"benzodiacepinas", diff:"easy",
-    q:"¿Cuál es el antídoto de las benzodiacepinas y su dosis?",
-    opts:[
-      "Naloxona 0.4 mg IV",
-      "Flumazenil 0.2 mg IV cada minuto hasta efecto, máximo 1 mg",
-      "Neostigmina 0.05 mg/kg IV",
-      "Physostigmina 1-2 mg IV"
-    ],
-    ans:1,
-    exp:"El Flumazenil tiene vida media corta (1 hora) — puede requerirse re-dosificación por resedación. No revierte tolerancia crónica ni síndrome de abstinencia."
-  },
-  {
-    id:33, cat:"benzodiacepinas", diff:"easy",
-    q:"¿Por qué el Midazolam produce amnesia anterógrada?",
-    opts:[
-      "Bloquea los receptores NMDA en el hipocampo impidiendo la potenciación a largo plazo",
-      "Bloquea la consolidación de memorias en el hipocampo al potenciar GABA-A — amnesia anterógrada, no retrógrada",
-      "Inhibe la síntesis de acetilcolina en el núcleo basal de Meynert",
-      "Produce vasoconstricción hipocámpica transitoria"
-    ],
-    ans:1,
-    exp:"La amnesia es ANTERÓGRADA — el paciente no recuerda lo que ocurre después de la dosis, pero sí lo que pasó antes. Esto es clínicamente útil en procedimientos ansiógenos."
-  },
-  {
-    id:34, cat:"benzodiacepinas", diff:"easy",
-    q:"¿Cuál benzodiacepina tiene mayor vida media: Diazepam o Midazolam?",
-    opts:[
-      "Midazolam (20-100 horas)",
-      "Son iguales (6-8 horas)",
-      "Diazepam (20-100 horas vs 1.5-2.5 horas del Midazolam)",
-      "Depende del peso del paciente"
-    ],
-    ans:2,
-    exp:"El Diazepam tiene metabolitos activos (desmetildiazepam) con vida media aún mayor. Por eso el Midazolam es preferido en anestesia y procedimientos cortos, ya que permite recuperación más predecible."
-  },
-  {
-    id:35, cat:"benzodiacepinas", diff:"medium",
-    q:"¿Cómo afecta el pH al Midazolam y por qué es relevante clínicamente?",
-    opts:[
-      "A pH ácido es lipofílico y a pH fisiológico es hidrosoluble — por eso es doloroso",
-      "A pH fisiológico (7.4) su anillo imidazólico se cierra haciéndolo lipofílico; a pH ácido en la jeringa (3.5) es hidrosoluble — por eso no precipita al mezclarse con otros fármacos",
-      "El pH no afecta la farmacocinética del Midazolam",
-      "A pH alcalino precipita formando cristales, por eso debe administrarse en solución ácida"
-    ],
-    ans:1,
-    exp:"Esta propiedad única del Midazolam (cambio de solubilidad según pH) explica por qué no precipita en mezclas, a diferencia del Diazepam. Permite mezclarlo con otros agentes en la misma jeringa."
-  },
-  {
-    id:36, cat:"benzodiacepinas", diff:"medium",
-    q:"¿Cuál es el mecanismo molecular de acción de las benzodiacepinas en el receptor GABA-A?",
-    opts:[
-      "Se unen al sitio del GABA y activan directamente el canal de cloro",
-      "Bloquean el canal de cloro impidiendo la entrada de iones",
-      "Se unen al sitio alostérico entre subunidades α y γ; aumentan la FRECUENCIA de apertura del canal de cloro",
-      "Inhiben la recaptación de GABA en la hendidura sináptica"
-    ],
-    ans:2,
-    exp:"A diferencia de los barbitúricos que aumentan la DURACIÓN de apertura, las BZD aumentan la FRECUENCIA. Esto explica su efecto techo: requieren GABA endógeno para actuar y no pueden abrir el canal directamente."
-  },
-  {
-    id:37, cat:"benzodiacepinas", diff:"medium",
-    q:"¿Por qué las benzodiacepinas tienen 'efecto techo' y los barbitúricos NO?",
-    opts:[
-      "Las BZD son metabolizadas más rápido que los barbitúricos",
-      "Las BZD son moduladores alostéricos que requieren GABA endógeno; los barbitúricos a dosis altas abren directamente el canal sin GABA",
-      "Las BZD tienen menor afinidad por el receptor GABA-A",
-      "Los barbitúricos activan receptores adicionales que amplifican su efecto"
-    ],
-    ans:1,
-    exp:"Por el efecto techo, sobredosis de BZD raramente son fatales solas. Los barbitúricos son agonistas directos a dosis altas, por lo que su depresión del SNC es ilimitada. Esto hace a las BZD más seguras en sobredosis."
-  },
-  {
-    id:38, cat:"benzodiacepinas", diff:"medium",
-    q:"¿Cómo afecta la insuficiencia hepática a la farmacocinética del Midazolam?",
-    opts:[
-      "No la afecta porque el Midazolam se elimina principalmente por vía renal",
-      "Acelera su metabolismo por inducción enzimática compensatoria",
-      "Reduce el metabolismo por CYP3A4, aumenta el Vd por hipoalbuminemia y prolonga la vida media 2-3x — reducir dosis 50%",
-      "Solo afecta el metabolismo en cirrosis Child-Pugh C, no en estadios previos"
-    ],
-    ans:2,
-    exp:"En cirrosis: reducción del metabolismo de primer paso, aumento del Vd por hipoalbuminemia, vida media prolongada 2-3x. Se recomienda reducir dosis 50% y titular lentamente para evitar sedación prolongada."
-  },
-  {
-    id:39, cat:"benzodiacepinas", diff:"hard",
-    q:"¿Cuál es la implicación anestésica de la tolerancia cruzada entre benzodiacepinas y alcohol crónico?",
-    opts:[
-      "Los alcohólicos crónicos son hipersensibles a las BZD y requieren dosis menores",
-      "No hay tolerancia cruzada real, solo farmacocinética alterada por hepatopatía",
-      "Por downregulation de GABA-A requieren MAYORES dosis; riesgo de abstinencia perioperatoria — manejar con BZD acción larga + tiamina IV",
-      "Solo se manifiesta tolerancia cruzada con benzodiazepinas de acción larga como el Diazepam"
-    ],
-    ans:2,
-    exp:"El consumo crónico de alcohol produce downregulation de GABA-A y upregulation de NMDA. En alcohólicos: (1) requieren mayores dosis de BZD e inductores, (2) riesgo de delirium tremens si se suspende alcohol abruptamente, (3) manejo: Diazepam para abstinencia + tiamina IV + monitorización CIWA."
-  },
-  {
-    id:40, cat:"benzodiacepinas", diff:"hard",
-    q:"Para sedación prolongada en UCI, ¿cuál es la ventaja del Lorazepam sobre el Midazolam en falla multiorgánica?",
-    opts:[
-      "El Lorazepam tiene mayor efecto amnésico y sedante",
-      "El Lorazepam se metaboliza por glucuronidación (no CYP3A4/3A5) — no se acumula en falla hepática/renal como el Midazolam",
-      "El Lorazepam no produce tolerancia, el Midazolam sí",
-      "El Lorazepam tiene vida media más corta que el Midazolam en UCI"
-    ],
-    ans:1,
-    exp:"En falla multiorgánica: el Lorazepam se metaboliza por glucuronidación (vía no afectada por falla hepática), mientras el Midazolam depende de CYP3A4. Para el destete de BZD en UCI: reducción 10-20% cada 6-12h. La Dexmedetomidina como adyuvante reduce requerimientos de BZD 30-50% y facilita el destete sin depresión respiratoria."
-  }
-];
-
-// State
-let currentQuestions = [...ALL_QUESTIONS];
-let currentIndex = 0;
-let answered = false;
-let stats = { total: 0, correct: 0, wrong: 0, streak: 0 };
-let selectedCat = 'all';
-let selectedDiff = 'all';
-
-function setCategory(cat) {
-  selectedCat = cat;
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  filterAndShuffle();
-}
-
-function setDiff(diff) {
-  selectedDiff = diff;
-  document.querySelectorAll('.diff-btn').forEach(b => {
-    b.className = 'diff-btn';
-  });
-  const btn = document.getElementById('df-' + diff);
-  if (diff === 'easy') btn.classList.add('active-easy');
-  else if (diff === 'medium') btn.classList.add('active-medium');
-  else if (diff === 'hard') btn.classList.add('active-hard');
-  else btn.classList.add('diff-btn');
-  filterAndShuffle();
-}
-
-function filterAndShuffle() {
-  currentQuestions = ALL_QUESTIONS.filter(q => {
-    const catOk = selectedCat === 'all' || q.cat === selectedCat;
-    const diffOk = selectedDiff === 'all' || q.diff === selectedDiff;
-    return catOk && diffOk;
-  });
-  shuffle(currentQuestions);
-  currentIndex = 0;
-  stats = { total: 0, correct: 0, wrong: 0, streak: 0 };
-  updateScoreBar();
-  renderQuestion();
-}
-
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-}
-
-function updateScoreBar() {
-  document.getElementById('total-q').textContent = stats.total;
-  document.getElementById('correct-q').textContent = stats.correct;
-  document.getElementById('wrong-q').textContent = stats.wrong;
-  document.getElementById('streak-q').textContent = stats.streak;
-  document.getElementById('pct-q').textContent = stats.total > 0
-    ? Math.round(stats.correct / stats.total * 100) + '%' : '—';
-}
-
-function renderQuestion() {
-  const area = document.getElementById('game-area');
-
-  if (currentQuestions.length === 0) {
-    area.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>No hay preguntas con ese filtro.<br>Prueba otra combinación.</p></div>`;
-    return;
-  }
-
-  if (currentIndex >= currentQuestions.length) {
-    showFinished();
-    return;
-  }
-
-  answered = false;
-  const q = currentQuestions[currentIndex];
-  const progress = Math.round((currentIndex / currentQuestions.length) * 100);
-
-  document.getElementById('progress-text').textContent =
-    `Pregunta ${currentIndex + 1} de ${currentQuestions.length}`;
-  document.getElementById('progress-fill').style.width = progress + '%';
-
-  const diffLabel = q.diff === 'easy' ? '🟢 Fácil' : q.diff === 'medium' ? '🟡 Intermedio' : '🔴 Ultra Difícil';
-  const diffClass = q.diff === 'easy' ? 'easy' : q.diff === 'medium' ? 'medium' : 'hard';
-  const catLabel = {halogenados:'💨 Halogenados', etomidato:'💉 Etomidato', propofol:'🥛 Propofol', benzodiacepinas:'💊 Benzodiacepinas'}[q.cat];
-
-  const optsHtml = q.opts.map((opt, i) =>
-    `<button class="option-btn" onclick="selectAnswer(${i})">${String.fromCharCode(65+i)}. ${opt}</button>`
-  ).join('');
-
-  area.innerHTML = `
-    <div class="question-card">
-      <div class="question-meta">
-        <span>${catLabel}</span>
-        <span class="diff-badge ${diffClass}">${diffLabel}</span>
-      </div>
-      <div class="question-text">${q.q}</div>
-      <div class="options">${optsHtml}</div>
-      <div class="explanation" id="explanation">
-        <strong>✅ Respuesta correcta: ${String.fromCharCode(65+q.ans)}. ${q.opts[q.ans]}</strong><br><br>
-        ${q.exp}
-      </div>
-    </div>
-    <div class="nav-btns" id="nav-btns" style="display:none">
-      <button class="nav-btn btn-random" onclick="skipQuestion()">⏭ Saltar</button>
-      <button class="nav-btn btn-next" onclick="nextQuestion()">Siguiente →</button>
-    </div>
-  `;
-}
-
-function selectAnswer(idx) {
-  if (answered) return;
-  answered = true;
-
-  const q = currentQuestions[currentIndex];
-  const buttons = document.querySelectorAll('.option-btn');
-  const isCorrect = idx === q.ans;
-
-  buttons.forEach((b, i) => {
-    b.disabled = true;
-    if (i === q.ans) b.classList.add('correct-ans');
-    else if (i === idx && !isCorrect) b.classList.add('wrong-ans');
-  });
-
-  document.getElementById('explanation').classList.add('show');
-  document.getElementById('nav-btns').style.display = 'flex';
-
-  stats.total++;
-  if (isCorrect) {
-    stats.correct++;
-    stats.streak++;
-  } else {
-    stats.wrong++;
-    stats.streak = 0;
-  }
-  updateScoreBar();
-}
-
-function nextQuestion() {
-  currentIndex++;
-  renderQuestion();
-}
-
-function skipQuestion() {
-  currentIndex++;
-  renderQuestion();
-}
-
-function showFinished() {
-  const pct = Math.round(stats.correct / stats.total * 100);
-  let msg = pct >= 90 ? '🏆 ¡Excelente! Nivel Adscrito.' :
-            pct >= 70 ? '💪 ¡Muy bien! Sigue practicando.' :
-            pct >= 50 ? '📚 Vas bien, repasa los temas.' : '🔄 A estudiar más, residente.';
-
-  document.getElementById('game-area').innerHTML = `
-    <div class="finished-card">
-      <h2>¡Completado!</h2>
-      <div class="final-score">${pct}%</div>
-      <div class="final-msg">${stats.correct} de ${stats.total} correctas<br>${msg}</div>
-      <button class="nav-btn btn-next" onclick="filterAndShuffle()" style="margin:0 auto">🔄 Jugar de nuevo</button>
-    </div>
-  `;
-}
-
-// Init
-document.getElementById('df-all').classList.add('active-easy');
-filterAndShuffle();
-</script>
 </body>
 </html>
