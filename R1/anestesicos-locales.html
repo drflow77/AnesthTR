@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen: Anestésicos Locales | AnesthTR</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --surface: #111827;
+  --surface2: #1a2234;
+  --border: #2a3450;
+  --text: #e8ecf4;
+  --text-muted: #8892a8;
+  --lidocaina: #f59e0b;
+  --lidocaina-bg: rgba(245,158,11,0.08);
+  --lidocaina-border: rgba(245,158,11,0.25);
+  --bupivacaina: #6366f1;
+  --bupivacaina-bg: rgba(99,102,241,0.08);
+  --bupivacaina-border: rgba(99,102,241,0.25);
+  --ropivacaina: #10b981;
+  --ropivacaina-bg: rgba(16,185,129,0.08);
+  --ropivacaina-border: rgba(16,185,129,0.25);
+  --correct: #22c55e;
+  --correct-bg: rgba(34,197,94,0.12);
+  --incorrect: #ef4444;
+  --incorrect-bg: rgba(239,68,68,0.12);
+  --accent: #38bdf8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.container {
+  position: relative; z-index: 1;
+  max-width: 800px; margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  padding: 40px 0 30px;
+}
+
+.header-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 100px; padding: 6px 18px 6px 12px;
+  font-size: 13px; color: var(--accent); font-weight: 500;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+
+.header-badge .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity:1; } 50% { opacity:0.4; }
+}
+
+.header h1 {
+  font-size: clamp(28px,5vw,42px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.header h1 .grad {
+  background: linear-gradient(135deg, var(--lidocaina), var(--bupivacaina), var(--ropivacaina));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.header p {
+  color: var(--text-muted); font-size: 15px; font-weight: 300;
+}
+
+/* ── PROGRESS ── */
+.progress-wrap {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px 20px; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 16px;
+}
+
+.progress-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; color: var(--accent); font-weight: 600;
+  white-space: nowrap;
+}
+
+.progress-bar-bg {
+  flex: 1; height: 8px; background: var(--surface2);
+  border-radius: 100px; overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%; border-radius: 100px;
+  background: linear-gradient(90deg, var(--lidocaina), var(--bupivacaina), var(--ropivacaina));
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+/* ── DRUG TAG ── */
+.drug-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 100px;
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 14px;
+}
+
+.drug-tag.lidocaina { background: var(--lidocaina-bg); border: 1px solid var(--lidocaina-border); color: var(--lidocaina); }
+.drug-tag.bupivacaina { background: var(--bupivacaina-bg); border: 1px solid var(--bupivacaina-border); color: var(--bupivacaina); }
+.drug-tag.ropivacaina { background: var(--ropivacaina-bg); border: 1px solid var(--ropivacaina-border); color: var(--ropivacaina); }
+
+/* ── QUESTION CARD ── */
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(16px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.question-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--text-muted); margin-bottom: 4px;
+}
+
+.question-text {
+  font-size: 18px; font-weight: 500; line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+/* ── OPTIONS ── */
+.options { display: flex; flex-direction: column; gap: 10px; }
+
+.option-btn {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 14px 18px;
+  cursor: pointer; transition: all 0.2s;
+  text-align: left; font-size: 15px; color: var(--text);
+  font-family: 'Outfit', sans-serif; font-weight: 400;
+}
+
+.option-btn:hover:not(.disabled) {
+  border-color: var(--accent);
+  background: rgba(56,189,248,0.06);
+  transform: translateX(4px);
+}
+
+.option-letter {
+  width: 32px; height: 32px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 13px;
+  background: rgba(255,255,255,0.05); color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.option-btn.correct {
+  border-color: var(--correct) !important;
+  background: var(--correct-bg) !important;
+}
+.option-btn.correct .option-letter {
+  background: var(--correct); color: #fff;
+}
+
+.option-btn.incorrect {
+  border-color: var(--incorrect) !important;
+  background: var(--incorrect-bg) !important;
+}
+.option-btn.incorrect .option-letter {
+  background: var(--incorrect); color: #fff;
+}
+
+.option-btn.disabled { cursor: default; opacity: 0.5; }
+.option-btn.disabled.correct { opacity: 1; }
+.option-btn.disabled.incorrect { opacity: 1; }
+
+/* ── FEEDBACK ── */
+.feedback {
+  margin-top: 18px; padding: 16px 18px;
+  border-radius: 14px; font-size: 14px; line-height: 1.6;
+  display: none;
+}
+
+.feedback.show { display: block; animation: fadeIn 0.3s ease; }
+
+.feedback.correct-fb {
+  background: var(--correct-bg);
+  border: 1px solid rgba(34,197,94,0.25);
+  color: #86efac;
+}
+
+.feedback.incorrect-fb {
+  background: var(--incorrect-bg);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #fca5a5;
+}
+
+.feedback strong { color: #fff; }
+
+/* ── NEXT BUTTON ── */
+.next-btn {
+  display: none; margin-top: 20px; width: 100%;
+  padding: 14px; border-radius: 14px; border: none;
+  background: linear-gradient(135deg, var(--bupivacaina), var(--accent));
+  color: #fff; font-family: 'Outfit', sans-serif;
+  font-size: 16px; font-weight: 600; cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.next-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99,102,241,0.3); }
+.next-btn.show { display: block; animation: fadeIn 0.3s ease; }
+
+/* ── RESULTS ── */
+.results-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 36px 28px;
+  text-align: center; display: none;
+}
+
+.results-card.show { display: block; animation: fadeIn 0.5s ease; }
+
+.results-score {
+  font-size: 72px; font-weight: 800;
+  background: linear-gradient(135deg, var(--lidocaina), var(--ropivacaina));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+.results-label {
+  font-size: 16px; color: var(--text-muted); margin: 8px 0 32px; font-weight: 300;
+}
+
+.results-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin-bottom: 28px;
+}
+
+.results-drug {
+  background: var(--surface2); border-radius: 16px; padding: 20px 12px;
+  border: 1px solid var(--border);
+}
+
+.results-drug .drug-name {
+  font-size: 13px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.8px; margin-bottom: 8px;
+}
+
+.results-drug .drug-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px; font-weight: 700;
+}
+
+.results-drug .drug-detail {
+  font-size: 12px; color: var(--text-muted); margin-top: 4px;
+}
+
+.results-drug.lido .drug-name { color: var(--lidocaina); }
+.results-drug.lido .drug-score { color: var(--lidocaina); }
+.results-drug.bupi .drug-name { color: var(--bupivacaina); }
+.results-drug.bupi .drug-score { color: var(--bupivacaina); }
+.results-drug.ropi .drug-name { color: var(--ropivacaina); }
+.results-drug.ropi .drug-score { color: var(--ropivacaina); }
+
+.result-bar-wrap {
+  margin: 20px 0; text-align: left;
+}
+
+.result-bar-label {
+  display: flex; justify-content: space-between;
+  font-size: 13px; margin-bottom: 6px; color: var(--text-muted);
+}
+
+.result-bar-bg {
+  height: 10px; background: var(--surface2); border-radius: 100px; overflow: hidden;
+}
+
+.result-bar-fill {
+  height: 100%; border-radius: 100px; transition: width 1s ease;
+}
+
+.restart-btn {
+  margin-top: 12px; padding: 14px 40px;
+  border-radius: 14px; border: 2px solid var(--accent);
+  background: transparent; color: var(--accent);
+  font-family: 'Outfit', sans-serif; font-size: 15px;
+  font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+
+.restart-btn:hover { background: var(--accent); color: var(--bg); }
+
+/* ── START SCREEN ── */
+.start-screen {
+  text-align: center; padding: 40px 20px;
+}
+
+.start-screen .drug-pills {
+  display: flex; justify-content: center; gap: 10px;
+  flex-wrap: wrap; margin: 24px 0;
+}
+
+.start-screen .pill {
+  padding: 10px 20px; border-radius: 14px;
+  font-weight: 600; font-size: 14px;
+}
+
+.pill.lido { background: var(--lidocaina-bg); border: 1px solid var(--lidocaina-border); color: var(--lidocaina); }
+.pill.bupi { background: var(--bupivacaina-bg); border: 1px solid var(--bupivacaina-border); color: var(--bupivacaina); }
+.pill.ropi { background: var(--ropivacaina-bg); border: 1px solid var(--ropivacaina-border); color: var(--ropivacaina); }
+
+.start-info {
+  color: var(--text-muted); font-size: 15px;
+  line-height: 1.7; margin-bottom: 30px; font-weight: 300;
+}
+
+.start-btn {
+  padding: 16px 48px; border-radius: 14px; border: none;
+  background: linear-gradient(135deg, var(--lidocaina), var(--bupivacaina), var(--ropivacaina));
+  color: #fff; font-family: 'Outfit', sans-serif;
+  font-size: 18px; font-weight: 700; cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.start-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(99,102,241,0.35); }
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center; padding: 30px 0; color: var(--text-muted);
+  font-size: 12px; font-weight: 300;
+}
+
+.footer a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 600px) {
+  .results-grid { grid-template-columns: 1fr; }
+  .question-card { padding: 22px 18px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="container">
+  <div class="header">
+    <div class="header-badge"><span class="dot"></span> AnesthTR — Turno Vespertino</div>
+    <h1>Anestésicos <span class="grad">Locales</span></h1>
+    <p>Examen Interactivo · Clase R1</p>
+  </div>
+
+  <!-- START -->
+  <div id="startScreen" class="start-screen">
+    <div class="drug-pills">
+      <span class="pill lido">Lidocaína · 10 preguntas</span>
+      <span class="pill bupi">Bupivacaína · 10 preguntas</span>
+      <span class="pill ropi">Ropivacaína · 10 preguntas</span>
+    </div>
+    <p class="start-info">
+      30 preguntas de opción múltiple.<br>
+      Retroalimentación inmediata en cada pregunta.<br>
+      Calificación final global y por medicamento.
+    </p>
+    <button class="start-btn" onclick="startQuiz()">Iniciar Examen</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quizArea" style="display:none;">
+    <div class="progress-wrap">
+      <span class="progress-label" id="progressLabel">1 / 30</span>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+    </div>
+    <div class="question-card" id="questionCard">
+      <div class="drug-tag" id="drugTag"></div>
+      <div class="question-num" id="questionNum"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-card" id="resultsCard">
+    <div class="results-score" id="totalScore"></div>
+    <div class="results-label" id="totalLabel"></div>
+
+    <div class="results-grid">
+      <div class="results-drug lido">
+        <div class="drug-name">Lidocaína</div>
+        <div class="drug-score" id="scoreLido">0%</div>
+        <div class="drug-detail" id="detailLido">0/10</div>
+      </div>
+      <div class="results-drug bupi">
+        <div class="drug-name">Bupivacaína</div>
+        <div class="drug-score" id="scoreBupi">0%</div>
+        <div class="drug-detail" id="detailBupi">0/10</div>
+      </div>
+      <div class="results-drug ropi">
+        <div class="drug-name">Ropivacaína</div>
+        <div class="drug-score" id="scoreRopi">0%</div>
+        <div class="drug-detail" id="detailRopi">0/10</div>
+      </div>
+    </div>
+
+    <div class="result-bar-wrap">
+      <div class="result-bar-label"><span>Lidocaína</span><span id="barLabelLido">0%</span></div>
+      <div class="result-bar-bg"><div class="result-bar-fill" id="barLido" style="width:0%;background:var(--lidocaina)"></div></div>
+    </div>
+    <div class="result-bar-wrap">
+      <div class="result-bar-label"><span>Bupivacaína</span><span id="barLabelBupi">0%</span></div>
+      <div class="result-bar-bg"><div class="result-bar-fill" id="barBupi" style="width:0%;background:var(--bupivacaina)"></div></div>
+    </div>
+    <div class="result-bar-wrap">
+      <div class="result-bar-label"><span>Ropivacaína</span><span id="barLabelRopi">0%</span></div>
+      <div class="result-bar-bg"><div class="result-bar-fill" id="barRopi" style="width:0%;background:var(--ropivacaina)"></div></div>
+    </div>
+
+    <button class="restart-btn" onclick="restartQuiz()">Repetir Examen</button>
+  </div>
+
+  <div class="footer">
+    AnesthTR · HGR 200 Tecámac · Coordinación Turno Vespertino<br>
+    <a href="https://drflow77.github.io/AnesthTR">drflow77.github.io/AnesthTR</a>
+  </div>
+</div>
+
+<script>
+const questions = [
+  // ══════════════════════════════════
+  //         LIDOCAÍNA (10)
+  // ══════════════════════════════════
+  {
+    drug: "lidocaina",
+    q: "¿Cuál es el mecanismo de acción de la lidocaína?",
+    options: [
+      "Bloqueo de canales de potasio dependientes de voltaje",
+      "Bloqueo de canales de sodio dependientes de voltaje",
+      "Inhibición de la acetilcolinesterasa",
+      "Activación de receptores GABA"
+    ],
+    answer: 1,
+    explanation: "La lidocaína, como todos los anestésicos locales tipo amida, actúa bloqueando los canales de sodio dependientes de voltaje, impidiendo la despolarización y la conducción del impulso nervioso."
+  },
+  {
+    drug: "lidocaina",
+    q: "¿A qué grupo químico pertenece la lidocaína?",
+    options: [
+      "Éster",
+      "Amida",
+      "Cetona",
+      "Aminoéster"
+    ],
+    answer: 1,
+    explanation: "La lidocaína es una aminoamida. Se identifica porque tiene dos letras 'i' en su nombre (lIdocaína = amIda). Los ésteres tienen una sola 'i' (procaína, tetracaína)."
+  },
+  {
+    drug: "lidocaina",
+    q: "¿Cuál es la dosis máxima de lidocaína SIN epinefrina?",
+    options: [
+      "3 mg/kg",
+      "4.5 mg/kg",
+      "5 mg/kg",
+      "7 mg/kg"
+    ],
+    answer: 2,
+    explanation: "La dosis máxima de lidocaína sin epinefrina es 5 mg/kg. Con epinefrina aumenta a 7 mg/kg, ya que la vasoconstricción disminuye la absorción sistémica."
+  },
+  {
+    drug: "lidocaina",
+    q: "¿Cuál es la dosis máxima de lidocaína CON epinefrina?",
+    options: [
+      "5 mg/kg",
+      "6 mg/kg",
+      "7 mg/kg",
+      "10 mg/kg"
+    ],
+    answer: 2,
+    explanation: "Con epinefrina, la dosis máxima de lidocaína es 7 mg/kg. La epinefrina produce vasoconstricción local que retrasa la absorción sistémica, prolongando el efecto y permitiendo dosis mayores."
+  },
+  {
+    drug: "lidocaina",
+    q: "¿Cuál es la concentración habitual de lidocaína para infiltración local?",
+    options: [
+      "0.25%",
+      "0.5%",
+      "1%",
+      "5%"
+    ],
+    answer: 2,
+    explanation: "La concentración habitual para infiltración es al 1% (10 mg/mL). Para bloqueos regionales se usa al 1-2%, y para anestesia tópica al 2-4%."
+  },
+  {
+    drug: "lidocaina",
+    q: "¿Cuál es el pKa de la lidocaína y qué significado clínico tiene?",
+    options: [
+      "pKa 8.9 — inicio de acción lento",
+      "pKa 7.9 — inicio de acción rápido",
+      "pKa 6.9 — no puede usarse a pH fisiológico",
+      "pKa 9.3 — inicio de acción muy lento"
+    ],
+    answer: 1,
+    explanation: "La lidocaína tiene pKa de 7.9, cercano al pH fisiológico (7.4). Esto significa que a pH fisiológico, mayor proporción está en forma no ionizada (base libre), lo que permite una penetración más rápida al nervio y un inicio de acción rápido (1-3 min)."
+  },
+  {
+    drug: "lidocaina",
+    q: "El primer signo de toxicidad sistémica por lidocaína a nivel del SNC suele ser:",
+    options: [
+      "Convulsiones tónico-clónicas",
+      "Sabor metálico, acúfenos y adormecimiento perioral",
+      "Paro respiratorio",
+      "Bradicardia sinusal"
+    ],
+    answer: 1,
+    explanation: "Los primeros signos de toxicidad por anestésicos locales son neurológicos: sabor metálico, acúfenos, adormecimiento perioral, mareo y confusión. Si la concentración plasmática sigue aumentando aparecen convulsiones, depresión respiratoria y colapso cardiovascular."
+  },
+  {
+    drug: "lidocaina",
+    q: "¿Cuál es el tratamiento de primera línea para la intoxicación sistémica grave por anestésicos locales (LAST)?",
+    options: [
+      "Adrenalina 1 mg IV en bolo",
+      "Emulsión lipídica al 20% (Intralipid)",
+      "Difenhidramina IV",
+      "Bicarbonato de sodio"
+    ],
+    answer: 1,
+    explanation: "El tratamiento estándar del LAST (Local Anesthetic Systemic Toxicity) es la emulsión lipídica al 20%: bolo de 1.5 mL/kg seguido de infusión a 0.25 mL/kg/min. Actúa como 'trampa lipídica' secuestrando el anestésico local del plasma."
+  },
+  {
+    drug: "lidocaina",
+    q: "¿Cuál es la duración aproximada de acción de la lidocaína al 2% sin epinefrina en un bloqueo de nervio periférico?",
+    options: [
+      "15-30 minutos",
+      "60-120 minutos",
+      "3-5 horas",
+      "8-12 horas"
+    ],
+    answer: 1,
+    explanation: "La lidocaína tiene duración intermedia: 60-120 minutos sin epinefrina y hasta 120-180 minutos con epinefrina. Es más corta que bupivacaína y ropivacaína."
+  },
+  {
+    drug: "lidocaina",
+    q: "En la anestesia neuroaxial, ¿qué complicación neurológica transitoria se ha asociado clásicamente con la lidocaína espinal?",
+    options: [
+      "Meningitis aséptica",
+      "Síndrome de cauda equina permanente",
+      "Síntomas neurológicos transitorios (TNS) — dolor en glúteos y piernas",
+      "Neuropatía óptica isquémica"
+    ],
+    answer: 2,
+    explanation: "La lidocaína espinal se asocia con síntomas neurológicos transitorios (TNS): dolor en glúteos y extremidades inferiores que aparece dentro de las 24 h postoperatorias y se resuelve en 2-5 días. Por esta razón, muchos prefieren bupivacaína hiperbárica para anestesia espinal."
+  },
+
+  // ══════════════════════════════════
+  //       BUPIVACAÍNA (10)
+  // ══════════════════════════════════
+  {
+    drug: "bupivacaina",
+    q: "¿Cuál es la dosis máxima recomendada de bupivacaína?",
+    options: [
+      "1.5 mg/kg",
+      "2.5 mg/kg",
+      "3 mg/kg",
+      "5 mg/kg"
+    ],
+    answer: 1,
+    explanation: "La dosis máxima de bupivacaína es 2.5 mg/kg (con o sin epinefrina, la diferencia es mínima a ~3 mg/kg). Es más baja que lidocaína por su mayor cardiotoxicidad."
+  },
+  {
+    drug: "bupivacaina",
+    q: "¿Qué diferencia a la bupivacaína hiperbárica de la isobárica para uso espinal?",
+    options: [
+      "La hiperbárica contiene epinefrina añadida",
+      "La hiperbárica tiene dextrosa (glucosa) que la hace más densa que el LCR",
+      "La isobárica contiene preservadores",
+      "La hiperbárica tiene menor potencia anestésica"
+    ],
+    answer: 1,
+    explanation: "La bupivacaína hiperbárica contiene dextrosa (glucosa al 8%) que le confiere una densidad mayor al LCR (baricidad >1). Esto permite que la solución se desplace según la gravedad y la posición del paciente, haciéndola más predecible para anestesia espinal."
+  },
+  {
+    drug: "bupivacaina",
+    q: "La cardiotoxicidad de la bupivacaína se debe principalmente a:",
+    options: [
+      "Liberación masiva de histamina",
+      "Bloqueo prolongado de canales de sodio cardíacos (alta afinidad, disociación lenta)",
+      "Inhibición de la enzima convertidora de angiotensina",
+      "Estimulación directa de receptores beta-adrenérgicos"
+    ],
+    answer: 1,
+    explanation: "La bupivacaína tiene alta afinidad por los canales de sodio cardíacos y una disociación muy lenta ('fast-in, slow-out'). Esto produce bloqueo acumulativo que puede llevar a arritmias ventriculares refractarias y colapso cardiovascular. Es el AL más cardiotóxico."
+  },
+  {
+    drug: "bupivacaina",
+    q: "¿Cuál es la concentración habitual de bupivacaína hiperbárica para anestesia espinal?",
+    options: [
+      "0.125%",
+      "0.25%",
+      "0.5%",
+      "1%"
+    ],
+    answer: 2,
+    explanation: "La concentración estándar de bupivacaína hiperbárica para anestesia espinal es al 0.5% (5 mg/mL). La dosis habitual para cesárea es 10-12.5 mg (2-2.5 mL) y para cirugía de extremidades inferiores 10-15 mg."
+  },
+  {
+    drug: "bupivacaina",
+    q: "¿Cuál es el pKa de la bupivacaína y qué implica para su latencia?",
+    options: [
+      "pKa 7.1 — inicio ultrarápido",
+      "pKa 7.9 — inicio rápido similar a lidocaína",
+      "pKa 8.1 — inicio de acción más lento que lidocaína",
+      "pKa 9.0 — inicio de acción extremadamente lento"
+    ],
+    answer: 2,
+    explanation: "La bupivacaína tiene pKa de 8.1. Al estar más alejado del pH fisiológico que la lidocaína (pKa 7.9), menor proporción se encuentra en forma no ionizada a pH 7.4, lo que resulta en un inicio de acción más lento (5-15 minutos)."
+  },
+  {
+    drug: "bupivacaina",
+    q: "La duración de la bupivacaína en un bloqueo de nervio periférico es aproximadamente:",
+    options: [
+      "30-60 minutos",
+      "1-2 horas",
+      "4-8 horas",
+      "24-48 horas"
+    ],
+    answer: 2,
+    explanation: "La bupivacaína tiene duración prolongada: 4-8 horas para bloqueo de nervio periférico. Esto se debe a su alta liposolubilidad y unión a proteínas (~95%), lo que le permite mayor duración que la lidocaína."
+  },
+  {
+    drug: "bupivacaina",
+    q: "Para analgesia epidural durante trabajo de parto, la concentración más utilizada de bupivacaína es:",
+    options: [
+      "0.0625% - 0.125%",
+      "0.5%",
+      "0.75%",
+      "1%"
+    ],
+    answer: 0,
+    explanation: "Para analgesia obstétrica epidural se usan concentraciones diluidas (0.0625%-0.125%) para lograr bloqueo sensitivo con mínimo bloqueo motor. Se combina frecuentemente con fentanilo (2 mcg/mL) para reducir aún más la concentración necesaria."
+  },
+  {
+    drug: "bupivacaina",
+    q: "¿Por qué la bupivacaína al 0.75% está CONTRAINDICADA por vía epidural en obstetricia?",
+    options: [
+      "Produce bloqueo motor excesivo para el neonato",
+      "Se ha asociado con paros cardíacos refractarios en embarazadas",
+      "Causa hipotensión materna severa en el 100% de los casos",
+      "No atraviesa la duramadre en pacientes embarazadas"
+    ],
+    answer: 1,
+    explanation: "La bupivacaína al 0.75% epidural se contraindicó en obstetricia tras reportes de paros cardíacos refractarios en embarazadas (FDA, 1984). Los cambios fisiológicos del embarazo (aumento del gasto cardíaco, compresión aortocava, ingurgitación de venas epidurales) aumentan el riesgo de inyección intravascular inadvertida y toxicidad cardíaca."
+  },
+  {
+    drug: "bupivacaina",
+    q: "¿Qué porcentaje de unión a proteínas plasmáticas tiene la bupivacaína?",
+    options: [
+      "50-55%",
+      "65-70%",
+      "80-85%",
+      "93-96%"
+    ],
+    answer: 3,
+    explanation: "La bupivacaína tiene una unión a proteínas plasmáticas del 93-96%, principalmente a la alfa-1-glicoproteína ácida (AAG). Esta alta unión proteica explica su larga duración de acción. En pacientes con hipoproteinemia (cirrosis, embarazo, neonatos), la fracción libre aumenta y el riesgo de toxicidad es mayor."
+  },
+  {
+    drug: "bupivacaina",
+    q: "La bupivacaína es una mezcla racémica de:",
+    options: [
+      "Enantiómeros R(+) y S(-) en proporción 50:50",
+      "Formas cis y trans",
+      "Dextro y levo isómeros estructurales",
+      "Formas alfa y beta"
+    ],
+    answer: 0,
+    explanation: "La bupivacaína comercial es una mezcla racémica 50:50 de los enantiómeros R(+) y S(-). El enantiómero R(+) es el responsable principal de la cardiotoxicidad. La levobupivacaína (enantiómero S puro) se desarrolló para reducir esta toxicidad."
+  },
+
+  // ══════════════════════════════════
+  //       ROPIVACAÍNA (10)
+  // ══════════════════════════════════
+  {
+    drug: "ropivacaina",
+    q: "¿Cuál es la principal ventaja de la ropivacaína sobre la bupivacaína?",
+    options: [
+      "Mayor potencia anestésica",
+      "Menor cardiotoxicidad y neurotoxicidad",
+      "Inicio de acción más rápido",
+      "Mayor duración de acción"
+    ],
+    answer: 1,
+    explanation: "La ropivacaína tiene un perfil de seguridad cardiovascular y neurológico superior al de la bupivacaína. Al ser un enantiómero S(-) puro, tiene menor afinidad por los canales de sodio cardíacos y menor potencial de toxicidad sistémica."
+  },
+  {
+    drug: "ropivacaina",
+    q: "A diferencia de la bupivacaína, la ropivacaína es:",
+    options: [
+      "Una mezcla racémica",
+      "Un enantiómero S(-) puro",
+      "Un éster",
+      "Un enantiómero R(+) puro"
+    ],
+    answer: 1,
+    explanation: "La ropivacaína es el enantiómero S(-) puro de la propivacaína. Los enantiómeros S(-) tienen menor toxicidad cardíaca que los R(+), lo que fue la base para su desarrollo clínico."
+  },
+  {
+    drug: "ropivacaina",
+    q: "¿Cuál es la dosis máxima recomendada de ropivacaína?",
+    options: [
+      "2 mg/kg",
+      "3 mg/kg",
+      "5 mg/kg",
+      "7 mg/kg"
+    ],
+    answer: 1,
+    explanation: "La dosis máxima de ropivacaína es 3 mg/kg (hasta un máximo absoluto de ~300 mg). Es ligeramente mayor que la de bupivacaína (2.5 mg/kg) gracias a su mejor perfil de toxicidad."
+  },
+  {
+    drug: "ropivacaina",
+    q: "¿Cuál es una propiedad vasomotora única de la ropivacaína comparada con la bupivacaína?",
+    options: [
+      "Produce vasodilatación intensa",
+      "Produce vasoconstricción intrínseca a bajas concentraciones",
+      "No tiene efecto sobre el tono vascular",
+      "Produce broncoconstricción refleja"
+    ],
+    answer: 1,
+    explanation: "La ropivacaína tiene efecto vasoconstrictor intrínseco a concentraciones bajas (0.0625%-0.2%), a diferencia de la bupivacaína que produce vasodilatación. Esta propiedad reduce la absorción sistémica, prolonga su duración y disminuye el sangrado local."
+  },
+  {
+    drug: "ropivacaina",
+    q: "Para bloqueo epidural quirúrgico con ropivacaína, la concentración habitual es:",
+    options: [
+      "0.1%",
+      "0.2%",
+      "0.5% - 0.75%",
+      "1%"
+    ],
+    answer: 2,
+    explanation: "Para anestesia epidural quirúrgica se usa ropivacaína al 0.5%-0.75%. Para analgesia epidural (trabajo de parto) se usan concentraciones menores (0.1%-0.2%) combinadas con opioides."
+  },
+  {
+    drug: "ropivacaina",
+    q: "Comparada con bupivacaína a concentraciones equipotentes, la ropivacaína produce:",
+    options: [
+      "Mayor bloqueo motor",
+      "Bloqueo motor y sensitivo equivalente",
+      "Menor bloqueo motor con bloqueo sensitivo similar",
+      "Solo bloqueo motor sin componente sensitivo"
+    ],
+    answer: 2,
+    explanation: "La ropivacaína produce un bloqueo diferencial más marcado: bloqueo sensitivo adecuado con MENOR bloqueo motor que la bupivacaína. Esta propiedad es especialmente valiosa en analgesia obstétrica y rehabilitación postoperatoria, donde se busca movilización temprana."
+  },
+  {
+    drug: "ropivacaina",
+    q: "¿Cuál es el pKa de la ropivacaína?",
+    options: [
+      "7.4",
+      "7.9",
+      "8.1",
+      "8.9"
+    ],
+    answer: 2,
+    explanation: "La ropivacaína tiene pKa de 8.1, similar a la bupivacaína. Esto le confiere un inicio de acción intermedio (5-15 minutos), más lento que la lidocaína (pKa 7.9) pero clínicamente aceptable."
+  },
+  {
+    drug: "ropivacaina",
+    q: "¿Cuál es la unión a proteínas plasmáticas de la ropivacaína?",
+    options: [
+      "55%",
+      "70%",
+      "85%",
+      "94%"
+    ],
+    answer: 3,
+    explanation: "La ropivacaína tiene una unión a proteínas del 94%, muy similar a la bupivacaína (95%). Esto contribuye a su larga duración de acción (3-6 horas en bloqueos periféricos)."
+  },
+  {
+    drug: "ropivacaina",
+    q: "La ropivacaína es metabolizada principalmente por:",
+    options: [
+      "Pseudocolinesterasa plasmática",
+      "CYP1A2 y CYP3A4 hepáticos",
+      "Esterasas tisulares locales",
+      "Monoaminooxidasa (MAO)"
+    ],
+    answer: 1,
+    explanation: "Como aminoamida, la ropivacaína se metaboliza en el hígado, principalmente por CYP1A2 (principal) y CYP3A4. Esto tiene relevancia clínica: fármacos como fluvoxamina (inhibidor CYP1A2) pueden aumentar los niveles plasmáticos. En insuficiencia hepática se debe reducir la dosis."
+  },
+  {
+    drug: "ropivacaina",
+    q: "En un bloqueo de plexo braquial, ¿cuál es la concentración y volumen habitual de ropivacaína?",
+    options: [
+      "0.1%, 5 mL",
+      "0.375%-0.5%, 20-30 mL",
+      "1%, 5 mL",
+      "0.75%, 50 mL"
+    ],
+    answer: 1,
+    explanation: "Para bloqueo de plexo braquial se usa ropivacaína al 0.375%-0.5% en volumen de 20-30 mL (75-150 mg). Concentraciones mayores (0.75%) proporcionan mayor bloqueo motor pero no son necesarias si se busca principalmente analgesia."
+  }
+];
+
+let currentQ = 0;
+let answers = [];
+let shuffledQuestions = [];
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  shuffledQuestions = shuffleArray(questions);
+  currentQ = 0;
+  answers = [];
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'block';
+  document.getElementById('resultsCard').classList.remove('show');
+  document.getElementById('resultsCard').style.display = 'none';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = shuffledQuestions[currentQ];
+  const card = document.getElementById('questionCard');
+  card.style.animation = 'none'; card.offsetHeight; card.style.animation = 'fadeIn 0.4s ease';
+
+  document.getElementById('progressLabel').textContent = `${currentQ + 1} / 30`;
+  document.getElementById('progressBar').style.width = `${((currentQ + 1) / 30) * 100}%`;
+
+  const tag = document.getElementById('drugTag');
+  const drugNames = { lidocaina: 'Lidocaína', bupivacaina: 'Bupivacaína', ropivacaina: 'Ropivacaína' };
+  tag.className = 'drug-tag ' + q.drug;
+  tag.textContent = drugNames[q.drug];
+
+  document.getElementById('questionNum').textContent = `Pregunta ${currentQ + 1} de 30`;
+  document.getElementById('questionText').textContent = q.q;
+
+  const letters = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+
+function selectAnswer(idx) {
+  const q = shuffledQuestions[currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+  const isCorrect = idx === q.answer;
+
+  answers.push({ drug: q.drug, correct: isCorrect });
+
+  btns.forEach((btn, i) => {
+    btn.classList.add('disabled');
+    btn.onclick = null;
+    if (i === q.answer) btn.classList.add('correct');
+    if (i === idx && !isCorrect) btn.classList.add('incorrect');
+  });
+
+  const fb = document.getElementById('feedback');
+  if (isCorrect) {
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `<strong>✓ ¡Correcto!</strong><br>${q.explanation}`;
+  } else {
+    fb.className = 'feedback incorrect-fb show';
+    fb.innerHTML = `<strong>✗ Incorrecto</strong><br>${q.explanation}`;
+  }
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = currentQ < 29 ? 'Siguiente →' : 'Ver Resultados';
+  nextBtn.classList.add('show');
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= 30) {
+    showResults();
+  } else {
+    showQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quizArea').style.display = 'none';
+
+  const drugs = ['lidocaina', 'bupivacaina', 'ropivacaina'];
+  const scores = {};
+  let total = 0;
+
+  drugs.forEach(d => {
+    const drugAnswers = answers.filter(a => a.drug === d);
+    const correctCount = drugAnswers.filter(a => a.correct).length;
+    scores[d] = { correct: correctCount, total: drugAnswers.length };
+    total += correctCount;
+  });
+
+  const pct = Math.round((total / 30) * 100);
+  document.getElementById('totalScore').textContent = `${pct}%`;
+  document.getElementById('totalLabel').textContent = `${total} de 30 respuestas correctas`;
+
+  const ids = { lidocaina: 'Lido', bupivacaina: 'Bupi', ropivacaina: 'Ropi' };
+  drugs.forEach(d => {
+    const s = scores[d];
+    const p = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+    document.getElementById('score' + ids[d]).textContent = `${p}%`;
+    document.getElementById('detail' + ids[d]).textContent = `${s.correct}/${s.total}`;
+    document.getElementById('barLabel' + ids[d]).textContent = `${p}%`;
+    setTimeout(() => {
+      document.getElementById('bar' + ids[d]).style.width = `${p}%`;
+    }, 300);
+  });
+
+  const rc = document.getElementById('resultsCard');
+  rc.style.display = 'block';
+  setTimeout(() => rc.classList.add('show'), 10);
+}
+
+function restartQuiz() {
+  document.getElementById('resultsCard').classList.remove('show');
+  document.getElementById('resultsCard').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'block';
+}
+</script>
+</body>
+</html>
