@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen: Vía Aérea y Evaluación Preanestésica | AnesthTR</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --surface: #111827;
+  --surface2: #1a2234;
+  --border: #2a3450;
+  --text: #e8ecf4;
+  --text-muted: #8892a8;
+  --escalas: #f59e0b;
+  --escalas-bg: rgba(245,158,11,0.08);
+  --escalas-border: rgba(245,158,11,0.25);
+  --valoracion: #6366f1;
+  --valoracion-bg: rgba(99,102,241,0.08);
+  --valoracion-border: rgba(99,102,241,0.25);
+  --dificil: #f43f5e;
+  --dificil-bg: rgba(244,63,94,0.08);
+  --dificil-border: rgba(244,63,94,0.25);
+  --manejo: #10b981;
+  --manejo-bg: rgba(16,185,129,0.08);
+  --manejo-border: rgba(16,185,129,0.25);
+  --equipo: #38bdf8;
+  --equipo-bg: rgba(56,189,248,0.08);
+  --equipo-border: rgba(56,189,248,0.25);
+  --correct: #22c55e;
+  --correct-bg: rgba(34,197,94,0.12);
+  --incorrect: #ef4444;
+  --incorrect-bg: rgba(239,68,68,0.12);
+  --accent: #38bdf8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.container {
+  position: relative; z-index: 1;
+  max-width: 800px; margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+/* ── HEADER ── */
+.header { text-align: center; padding: 40px 0 30px; }
+
+.header-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 100px; padding: 6px 18px 6px 12px;
+  font-size: 13px; color: var(--accent); font-weight: 500;
+  margin-bottom: 20px; letter-spacing: 0.5px;
+}
+
+.header-badge .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); animation: pulse 2s infinite;
+}
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.header h1 {
+  font-size: clamp(26px,5vw,40px); font-weight: 800;
+  letter-spacing: -1px; line-height: 1.1; margin-bottom: 8px;
+}
+
+.header h1 .grad {
+  background: linear-gradient(135deg, var(--escalas), var(--valoracion), var(--manejo));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.header p { color: var(--text-muted); font-size: 15px; font-weight: 300; }
+
+/* ── START SCREEN ── */
+.start-screen { text-align: center; padding: 20px 20px 40px; }
+
+.cat-pills { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 24px 0; }
+
+.pill { padding: 10px 16px; border-radius: 14px; font-weight: 600; font-size: 13px; }
+.pill.escalas { background: var(--escalas-bg); border: 1px solid var(--escalas-border); color: var(--escalas); }
+.pill.valoracion { background: var(--valoracion-bg); border: 1px solid var(--valoracion-border); color: var(--valoracion); }
+.pill.dificil { background: var(--dificil-bg); border: 1px solid var(--dificil-border); color: var(--dificil); }
+.pill.manejo { background: var(--manejo-bg); border: 1px solid var(--manejo-border); color: var(--manejo); }
+.pill.equipo { background: var(--equipo-bg); border: 1px solid var(--equipo-border); color: var(--equipo); }
+
+.start-info { color: var(--text-muted); font-size: 15px; line-height: 1.7; margin-bottom: 24px; font-weight: 300; }
+
+/* NAME INPUT */
+.name-wrap { max-width: 400px; margin: 0 auto 24px; }
+.name-wrap label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.name-input { width:100%; padding:14px 18px; background:var(--surface2); border:1.5px solid var(--border); border-radius:14px; color:var(--text); font-family:'Outfit',sans-serif; font-size:16px; outline:none; transition:border-color 0.2s; }
+.name-input:focus { border-color: var(--accent); }
+.name-input::placeholder { color: var(--text-muted); opacity:0.5; }
+.name-error { color:var(--incorrect); font-size:13px; margin-top:6px; display:none; }
+
+/* MODE SELECTOR */
+.mode-selector { display:flex; gap:12px; justify-content:center; margin-bottom:28px; flex-wrap:wrap; }
+.mode-btn { flex:1; max-width:220px; min-width:180px; padding:20px 16px; border-radius:16px; border:2px solid var(--border); background:var(--surface); cursor:pointer; transition:all 0.25s; text-align:center; font-family:'Outfit',sans-serif; }
+.mode-btn:hover { border-color:var(--accent); transform:translateY(-2px); }
+.mode-btn.selected { border-color:var(--accent); background:rgba(56,189,248,0.08); }
+.mode-btn .mode-icon { font-size:28px; margin-bottom:8px; }
+.mode-btn .mode-title { font-size:16px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.mode-btn .mode-desc { font-size:12px; color:var(--text-muted); font-weight:300; line-height:1.4; }
+
+.start-btn { padding:16px 48px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--escalas),var(--valoracion),var(--manejo)); color:#fff; font-family:'Outfit',sans-serif; font-size:18px; font-weight:700; cursor:pointer; transition:transform 0.15s,box-shadow 0.15s; }
+.start-btn:hover { transform:translateY(-3px); box-shadow:0 12px 40px rgba(99,102,241,0.35); }
+
+/* ── PROGRESS & TIMER ── */
+.progress-wrap { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:16px 20px; margin-bottom:24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.progress-label { font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--accent); font-weight:600; white-space:nowrap; }
+.progress-bar-bg { flex:1; height:8px; background:var(--surface2); border-radius:100px; overflow:hidden; min-width:100px; }
+.progress-bar-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--escalas),var(--valoracion),var(--manejo)); transition:width 0.5s ease; width:0%; }
+.timer-display { font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; white-space:nowrap; padding:4px 12px; border-radius:8px; }
+.timer-display.normal { color:var(--accent); background:rgba(56,189,248,0.1); }
+.timer-display.warning { color:var(--escalas); background:rgba(245,158,11,0.1); animation:pulse 1s infinite; }
+.timer-display.danger { color:var(--incorrect); background:var(--incorrect-bg); animation:pulse 0.5s infinite; }
+.mode-indicator { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
+
+/* ── CAT TAG ── */
+.cat-tag { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:100px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px; }
+.cat-tag.escalas { background:var(--escalas-bg); border:1px solid var(--escalas-border); color:var(--escalas); }
+.cat-tag.valoracion { background:var(--valoracion-bg); border:1px solid var(--valoracion-border); color:var(--valoracion); }
+.cat-tag.dificil { background:var(--dificil-bg); border:1px solid var(--dificil-border); color:var(--dificil); }
+.cat-tag.manejo { background:var(--manejo-bg); border:1px solid var(--manejo-border); color:var(--manejo); }
+.cat-tag.equipo { background:var(--equipo-bg); border:1px solid var(--equipo-border); color:var(--equipo); }
+
+/* ── QUESTION CARD ── */
+.question-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:28px 24px; animation:fadeIn 0.4s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.question-num { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-muted); margin-bottom:4px; }
+.question-text { font-size:18px; font-weight:500; line-height:1.5; margin-bottom:22px; }
+
+/* ── OPTIONS ── */
+.options { display:flex; flex-direction:column; gap:10px; }
+.option-btn { display:flex; align-items:center; gap:14px; background:var(--surface2); border:1.5px solid var(--border); border-radius:14px; padding:14px 18px; cursor:pointer; transition:all 0.2s; text-align:left; font-size:15px; color:var(--text); font-family:'Outfit',sans-serif; font-weight:400; }
+.option-btn:hover:not(.disabled) { border-color:var(--accent); background:rgba(56,189,248,0.06); transform:translateX(4px); }
+.option-letter { width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px; background:rgba(255,255,255,0.05); color:var(--text-muted); flex-shrink:0; }
+.option-btn.correct { border-color:var(--correct)!important; background:var(--correct-bg)!important; }
+.option-btn.correct .option-letter { background:var(--correct); color:#fff; }
+.option-btn.incorrect { border-color:var(--incorrect)!important; background:var(--incorrect-bg)!important; }
+.option-btn.incorrect .option-letter { background:var(--incorrect); color:#fff; }
+.option-btn.disabled { cursor:default; opacity:0.5; }
+.option-btn.disabled.correct,.option-btn.disabled.incorrect { opacity:1; }
+
+/* ── FEEDBACK ── */
+.feedback { margin-top:18px; padding:16px 18px; border-radius:14px; font-size:14px; line-height:1.6; display:none; }
+.feedback.show { display:block; animation:fadeIn 0.3s ease; }
+.feedback.correct-fb { background:var(--correct-bg); border:1px solid rgba(34,197,94,0.25); color:#86efac; }
+.feedback.incorrect-fb { background:var(--incorrect-bg); border:1px solid rgba(239,68,68,0.25); color:#fca5a5; }
+.feedback strong { color:#fff; }
+
+/* ── NEXT BUTTON ── */
+.next-btn { display:none; margin-top:20px; width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--valoracion),var(--accent)); color:#fff; font-family:'Outfit',sans-serif; font-size:16px; font-weight:600; cursor:pointer; transition:transform 0.15s,box-shadow 0.15s; }
+.next-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(99,102,241,0.3); }
+.next-btn.show { display:block; animation:fadeIn 0.3s ease; }
+
+/* ── RESULTS ── */
+.results-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:36px 28px; text-align:center; display:none; }
+.results-card.show { display:block; animation:fadeIn 0.5s ease; }
+.results-name { font-size:18px; font-weight:600; color:var(--accent); margin-bottom:4px; }
+.results-mode-tag { display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; padding:4px 14px; border-radius:100px; margin-bottom:16px; }
+.results-mode-tag.repaso { background:rgba(99,102,241,0.15); color:var(--valoracion); }
+.results-mode-tag.examen { background:rgba(244,63,94,0.15); color:var(--dificil); }
+/* SCORE CIRCLE */
+.score-circle-wrap { position:relative; width:180px; height:180px; margin:0 auto 16px; }
+.score-circle-svg { width:100%; height:100%; transform:rotate(-90deg); }
+.score-circle-bg { fill:none; stroke:var(--surface2); stroke-width:8; }
+.score-circle-fill { fill:none; stroke:url(#scoreGrad); stroke-width:8; stroke-linecap:round; stroke-dasharray:502; stroke-dashoffset:502; transition:stroke-dashoffset 1.5s ease; }
+.score-circle-text { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.results-score { font-size:52px; font-weight:800; background:linear-gradient(135deg,var(--escalas),var(--manejo)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+.results-detail { font-size:14px; color:var(--text-muted); margin-top:4px; font-weight:400; }
+.results-label { font-size:16px; color:var(--text-muted); margin:8px 0 8px; font-weight:300; }
+.results-time { font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-muted); margin-bottom:12px; }
+.share-btn-top { display:inline-block; padding:10px 24px; border-radius:12px; border:none; background:#25D366; color:#fff; font-family:'Outfit',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; margin-bottom:28px; }
+.share-btn-top:hover { background:#1da851; transform:translateY(-2px); }
+
+.results-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin-bottom:28px; }
+.results-cat { background:var(--surface2); border-radius:16px; padding:18px 12px; border:1px solid var(--border); }
+.results-cat .rcat-name { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:6px; }
+.results-cat .rcat-score { font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700; }
+.results-cat .rcat-detail { font-size:12px; color:var(--text-muted); margin-top:4px; }
+
+.result-bar-wrap { margin:16px 0; text-align:left; }
+.result-bar-label { display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px; color:var(--text-muted); }
+.result-bar-bg { height:10px; background:var(--surface2); border-radius:100px; overflow:hidden; }
+.result-bar-fill { height:100%; border-radius:100px; transition:width 1s ease; }
+
+/* INCORRECT LIST */
+.incorrect-section { text-align:left; margin-top:28px; border-top:1px solid var(--border); padding-top:24px; }
+.incorrect-section h3 { font-size:16px; font-weight:700; margin-bottom:16px; color:var(--incorrect); }
+.incorrect-item { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin-bottom:10px; }
+.incorrect-item .inc-q { font-size:14px; font-weight:500; margin-bottom:8px; line-height:1.4; }
+.incorrect-item .inc-your { font-size:13px; color:var(--incorrect); margin-bottom:4px; }
+.incorrect-item .inc-correct { font-size:13px; color:var(--correct); margin-bottom:8px; }
+.incorrect-item .inc-explanation { font-size:12px; color:var(--text-muted); line-height:1.5; border-top:1px solid var(--border); padding-top:8px; margin-top:4px; }
+.incorrect-item .inc-cat-tag { display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; padding:2px 10px; border-radius:100px; margin-bottom:8px; }
+.all-correct-msg { padding:20px; border-radius:14px; background:var(--correct-bg); border:1px solid rgba(34,197,94,0.25); color:#86efac; font-size:15px; text-align:center; font-weight:500; }
+
+/* BUTTONS */
+.results-buttons { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:24px; }
+.restart-btn,.share-btn { padding:14px 28px; border-radius:14px; font-family:'Outfit',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.restart-btn { border:2px solid var(--accent); background:transparent; color:var(--accent); }
+.restart-btn:hover { background:var(--accent); color:var(--bg); }
+.share-btn { border:none; background:#25D366; color:#fff; }
+.share-btn:hover { background:#1da851; transform:translateY(-2px); }
+
+/* FOOTER */
+.footer { text-align:center; padding:30px 0; color:var(--text-muted); font-size:12px; font-weight:300; }
+.footer a { color:var(--accent); text-decoration:none; }
+
+@media(max-width:600px) {
+  .results-grid { grid-template-columns:repeat(2,1fr); }
+  .question-card { padding:22px 18px; }
+  .mode-btn { max-width:100%; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="container">
+  <div class="header">
+    <div class="header-badge"><span class="dot"></span> AnesthTR — Turno Vespertino</div>
+    <h1>Vía Aérea y <span class="grad">Evaluación Preanestésica</span></h1>
+    <p>Examen Interactivo · Clase R1</p>
+  </div>
+
+  <!-- START -->
+  <div id="startScreen" class="start-screen">
+    <div class="cat-pills">
+      <span class="pill escalas">Escalas VA · 5</span>
+      <span class="pill valoracion">Evaluación Pre · 5</span>
+      <span class="pill dificil">VA Difícil · 5</span>
+      <span class="pill manejo">Manejo VA · 5</span>
+      <span class="pill equipo">Equipo · 5</span>
+    </div>
+    <p class="start-info">
+      25 preguntas de opción múltiple en 5 categorías.<br>
+      <strong>Repaso:</strong> retroalimentación inmediata, sin tiempo.<br>
+      <strong>Examen:</strong> temporizador 25 min, retroalimentación al final.
+    </p>
+    <div class="name-wrap">
+      <label for="nameInput">Nombre del residente</label>
+      <input type="text" id="nameInput" class="name-input" placeholder="Ej: Arteaga R1" autocomplete="off">
+      <div class="name-error" id="nameError">Ingresa tu nombre para continuar</div>
+    </div>
+    <div class="mode-selector">
+      <div class="mode-btn selected" id="modeRepaso" onclick="selectMode('repaso')">
+        <div class="mode-icon">📖</div>
+        <div class="mode-title">Repaso</div>
+        <div class="mode-desc">Retroalimentación inmediata. Sin límite de tiempo.</div>
+      </div>
+      <div class="mode-btn" id="modeExamen" onclick="selectMode('examen')">
+        <div class="mode-icon">⏱️</div>
+        <div class="mode-title">Examen</div>
+        <div class="mode-desc">25 minutos. Retroalimentación al finalizar.</div>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">Iniciar Examen</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quizArea" style="display:none;">
+    <div class="progress-wrap">
+      <span class="progress-label" id="progressLabel">1 / 25</span>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+      <span class="timer-display normal" id="timerDisplay" style="display:none;">25:00</span>
+      <span class="mode-indicator" id="modeIndicator"></span>
+    </div>
+    <div class="question-card" id="questionCard">
+      <div class="cat-tag" id="catTag"></div>
+      <div class="question-num" id="questionNum"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-card" id="resultsCard">
+    <div class="results-name" id="resultsName"></div>
+    <div class="results-mode-tag" id="resultsModeTag"></div>
+    <div class="score-circle-wrap">
+      <svg class="score-circle-svg" viewBox="0 0 180 180">
+        <defs><linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--escalas)"/><stop offset="100%" stop-color="var(--manejo)"/></linearGradient></defs>
+        <circle class="score-circle-bg" cx="90" cy="90" r="80"/>
+        <circle class="score-circle-fill" id="scoreCircle" cx="90" cy="90" r="80"/>
+      </svg>
+      <div class="score-circle-text">
+        <div class="results-score" id="totalScore"></div>
+        <div class="results-detail" id="totalDetail"></div>
+      </div>
+    </div>
+    <div class="results-label" id="totalLabel"></div>
+    <div class="results-time" id="resultsTime"></div>
+    <button class="share-btn-top" onclick="shareWhatsApp()">📲 Compartir por WhatsApp</button>
+    <div class="results-grid" id="resultsGrid"></div>
+    <div id="resultsBars"></div>
+    <div class="incorrect-section" id="incorrectSection"></div>
+    <div class="results-buttons">
+      <button class="restart-btn" onclick="restartQuiz()">Repetir Examen</button>
+      <button class="share-btn" onclick="shareWhatsApp()">📲 Compartir por WhatsApp</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    AnesthTR · HGR 200 Tecámac · Coordinación Turno Vespertino<br>
+    <a href="https://drflow77.github.io/AnesthTR">drflow77.github.io/AnesthTR</a>
+  </div>
+</div>
+
+<script>
+const TOTAL_Q = 25;
+const EXAM_TIME = 25 * 60;
+
+const catMeta = {
+  escalas:    { name:"Escalas de Vía Aérea",    css:"escalas",    color:"var(--escalas)" },
+  valoracion: { name:"Evaluación Preanestésica", css:"valoracion", color:"var(--valoracion)" },
+  dificil:    { name:"Vía Aérea Difícil",        css:"dificil",    color:"var(--dificil)" },
+  manejo:     { name:"Manejo de Vía Aérea",      css:"manejo",     color:"var(--manejo)" },
+  equipo:     { name:"Equipo y Dispositivos",    css:"equipo",     color:"var(--equipo)" }
+};
+
+const questions = [
+  // ═══════════════════════════════════════════
+  //   ESCALAS DE VÍA AÉREA (5)
+  // ═══════════════════════════════════════════
+  {
+    cat:"escalas",
+    q:"En la clasificación de Mallampati modificada (Samsoon y Young), ¿qué estructuras se visualizan en la Clase III?",
+    options:[
+      "Paladar blando, fauces, úvula y pilares amigdalinos",
+      "Paladar blando, fauces y úvula completa",
+      "Paladar blando y base de la úvula únicamente",
+      "Exclusivamente el paladar duro"
+    ],
+    answer:2,
+    explanation:"La Clase III permite visualizar el paladar blando y la base de la úvula. No se ven los pilares ni las fauces completas. Se evalúa con el paciente sentado, boca abierta al máximo y lengua protruida SIN fonación. Clase IV: solo paladar duro visible.",
+    ref:"📚 Samsoon GLT, Young JRB. Anaesthesia 1987;42:487-490 · Miller's Anesthesia, 9th Ed, Cap. 44"
+  },
+  {
+    cat:"escalas",
+    q:"Según la escala de Cormack-Lehane, ¿qué grado corresponde a la visualización exclusiva de la epiglotis sin ver las cuerdas vocales?",
+    options:["Grado I","Grado II","Grado III","Grado IV"],
+    answer:2,
+    explanation:"Cormack-Lehane Grado III: solo se visualiza la epiglotis, sin apertura glótica ni cuerdas vocales. Grado I: glotis completa. Grado II: solo comisura posterior o aritenoides. Grado IV: no se ve ni la epiglotis. Se aplica DURANTE la laringoscopia directa.",
+    ref:"📚 Cormack RS, Lehane J. Anaesthesia 1984;39:1105-1111 · Barash Clinical Anesthesia, 8th Ed, Cap. 28"
+  },
+  {
+    cat:"escalas",
+    q:"Una distancia tiromentoniana (Patil) menor a qué valor sugiere vía aérea potencialmente difícil:",
+    options:["< 3 cm","< 6 cm (3 traveses de dedo)","< 9 cm","< 12 cm"],
+    answer:1,
+    explanation:"La distancia tiromentoniana (mentón a escotadura tiroidea, cuello en extensión, boca cerrada) < 6 cm (~3 traveses de dedo) se asocia con intubación difícil. Indica laringe más anterior y menor espacio submandibular para desplazar la lengua.",
+    ref:"📚 Patil VU, et al. Anesthesiology Review 1983 · Morgan & Mikhail's Clinical Anesthesiology, 7th Ed, Cap. 19"
+  },
+  {
+    cat:"escalas",
+    q:"¿Cuál es la apertura oral interincisiva mínima aceptable para laringoscopia convencional?",
+    options:["1 cm","2 cm","3 cm (2 traveses de dedo)","5 cm"],
+    answer:2,
+    explanation:"Se requiere apertura oral mínima de 3 cm (~2 traveses de dedo) para introducir el laringoscopio convencional. Menor a 3 cm dificulta severamente la laringoscopia y puede requerir dispositivos alternativos (videolaringoscopio, fibroscopio).",
+    ref:"📚 Miller's Anesthesia, 9th Ed, Cap. 44 · Hagberg CA. Benumof and Hagberg's Airway Management, 4th Ed, Cap. 9"
+  },
+  {
+    cat:"escalas",
+    q:"La escala de Bellhouse-Doré evalúa la extensión de la articulación atlanto-occipital. Se considera limitada cuando es menor a:",
+    options:["15°","25°","35°","45°"],
+    answer:2,
+    explanation:"La extensión atlanto-occipital normal es ~35°. Una extensión reducida (<35°) limita la capacidad de alinear los ejes oral, faríngeo y laríngeo, dificultando la laringoscopia directa. Se evalúa pidiendo al paciente extensión máxima del cuello.",
+    ref:"📚 Bellhouse CP, Doré C. Anaesth Intensive Care 1988;16:329-337 · Barash Clinical Anesthesia, 8th Ed, Cap. 28"
+  },
+
+  // ═══════════════════════════════════════════
+  //   EVALUACIÓN PREANESTÉSICA (5)
+  // ═══════════════════════════════════════════
+  {
+    cat:"valoracion",
+    q:"¿Cuál es el objetivo principal de la evaluación preanestésica?",
+    options:[
+      "Administrar la premedicación al paciente",
+      "Identificar factores de riesgo, optimizar al paciente y planificar el manejo anestésico",
+      "Solicitar todos los estudios de laboratorio posibles",
+      "Obtener el consentimiento informado únicamente"
+    ],
+    answer:1,
+    explanation:"La evaluación preanestésica busca identificar comorbilidades y factores de riesgo, optimizar la condición del paciente, planificar la técnica anestésica y reducir la morbimortalidad perioperatoria. Incluye historia clínica, exploración física dirigida, evaluación de vía aérea y estudios complementarios según indicación.",
+    ref:"📚 ASA Practice Advisory for Preanesthesia Evaluation. Anesthesiology 2012;116:522-538 · Miller's Anesthesia, 9th Ed, Cap. 31"
+  },
+  {
+    cat:"valoracion",
+    q:"Un paciente de 55 años con DM2 bien controlada y obesidad leve, para colecistectomía electiva, se clasifica como:",
+    options:["ASA I","ASA II","ASA III","ASA IV"],
+    answer:1,
+    explanation:"ASA II incluye pacientes con enfermedad sistémica leve sin limitación funcional significativa: DM controlada, obesidad leve (IMC 30-35), tabaquismo. La clasificación ASA tiene 6 categorías (I-VI, donde VI es muerte cerebral/donador de órganos). ASA III implica enfermedad sistémica grave con limitación funcional.",
+    ref:"📚 ASA Physical Status Classification System. Última actualización 2020. www.asahq.org · Barash Clinical Anesthesia, 8th Ed, Cap. 23"
+  },
+  {
+    cat:"valoracion",
+    q:"Según las guías de la ASA, ¿cuántas horas de ayuno se recomiendan para líquidos claros en un adulto?",
+    options:["1 hora","2 horas","4 horas","8 horas"],
+    answer:1,
+    explanation:"Las guías ASA recomiendan: 2 horas para líquidos claros (agua, jugo sin pulpa, té, café negro), 6 horas para alimentos ligeros y leche, 8 horas para comida grasa o carne. El objetivo es reducir el riesgo de broncoaspiración.",
+    ref:"📚 ASA Practice Guidelines for Preoperative Fasting. Anesthesiology 2017;126:376-393 · Morgan & Mikhail, 7th Ed, Cap. 15"
+  },
+  {
+    cat:"valoracion",
+    q:"Un paciente con capacidad funcional ≥ 4 METs puede realizar actividades como:",
+    options:[
+      "Solo comer, vestirse, caminar por la casa",
+      "Subir un piso de escaleras, caminar rápido en plano (~6 km/h), trabajo doméstico moderado",
+      "Correr maratón, natación competitiva",
+      "Exclusivamente reposo en cama"
+    ],
+    answer:1,
+    explanation:"4 METs equivale a subir un tramo de escaleras, caminar cuesta arriba o rápido en plano. ≥4 METs se considera adecuada reserva cardiovascular y se asocia con menor riesgo perioperatorio. <4 METs = capacidad funcional pobre.",
+    ref:"📚 Fleisher LA, et al. ACC/AHA Guideline on Perioperative Cardiovascular Evaluation. Circulation 2014;130:e278-e333 · Hlatky MA, et al. Am J Cardiol 1989;64:651-654"
+  },
+  {
+    cat:"valoracion",
+    q:"En el Índice de Riesgo Cardíaco Revisado (RCRI/Lee), ¿cuál de los siguientes NO es una de sus 6 variables?",
+    options:[
+      "Enfermedad coronaria",
+      "Historia de EVC o AIT",
+      "Edad mayor a 65 años",
+      "Cirugía de alto riesgo (suprainguinal, intratorácica, intraperitoneal)"
+    ],
+    answer:2,
+    explanation:"La edad NO es variable del índice de Lee. Las 6 variables son: cirugía de alto riesgo, cardiopatía isquémica, insuficiencia cardíaca, EVC/AIT, DM insulinodependiente y creatinina >2 mg/dL. Cada factor suma un punto; ≥3 = alto riesgo.",
+    ref:"📚 Lee TH, et al. Circulation 1999;100:1043-1049 · Fleisher LA, et al. ACC/AHA Guidelines 2014"
+  },
+
+  // ═══════════════════════════════════════════
+  //   VÍA AÉREA DIFÍCIL (5)
+  // ═══════════════════════════════════════════
+  {
+    cat:"dificil",
+    q:"¿Cuál es la definición de vía aérea difícil según la ASA?",
+    options:[
+      "Cualquier paciente con Mallampati III o IV",
+      "Situación donde un anestesiólogo capacitado experimenta dificultad con la ventilación con mascarilla facial, laringoscopia, intubación o ambas",
+      "Exclusivamente la imposibilidad de intubación en 3 intentos",
+      "Paciente con antecedente de traqueostomía"
+    ],
+    answer:1,
+    explanation:"La ASA define VAD como la situación donde un anestesiólogo con entrenamiento convencional experimenta dificultad con ventilación con mascarilla facial, laringoscopia directa, intubación traqueal, uso de DSG o cualquier combinación. No se basa en un solo predictor.",
+    ref:"📚 Apfelbaum JL, et al. ASA Practice Guidelines for Management of the Difficult Airway. Anesthesiology 2022;136:31-81"
+  },
+  {
+    cat:"dificil",
+    q:"En la nemotecnia LEMON para evaluación rápida de VAD, ¿qué evalúa la 'E'?",
+    options:[
+      "Experiencia del operador",
+      "Evaluate: regla 3-3-2 (apertura oral 3 dedos, hioides-mentón 3 dedos, tiroides-piso de boca 2 dedos)",
+      "Estado de conciencia del paciente",
+      "Escala de Glasgow"
+    ],
+    answer:1,
+    explanation:"LEMON: L=Look externally (habitus, obesidad, trauma); E=Evaluate 3-3-2 rule; M=Mallampati; O=Obstruction (epiglotitis, absceso, tumor); N=Neck mobility (movilidad cervical).",
+    ref:"📚 Reed MJ, et al. Emerg Med J 2005;22:99-102 · Walls RM. Manual of Emergency Airway Management, 5th Ed, Cap. 2"
+  },
+  {
+    cat:"dificil",
+    q:"Los predictores de ventilación difícil con mascarilla facial (nemotecnia OBESE) son:",
+    options:[
+      "Obesidad, Barba, Edentulismo (sin dientes), Snoring (SAOS), Elderly (>55 años)",
+      "Obesidad, Bradicardia, Escoliosis, Sepsis, Embarazo",
+      "Obstrucción, Broncoespasmo, Edema, Sangrado, Estridor",
+      "Odinofagia, Boca pequeña, Epiglotitis, Sialorrea, Estenosis"
+    ],
+    answer:0,
+    explanation:"OBESE: O=Obese (IMC>26); B=Bearded (barba impide sello); E=Edentulous (sin dientes dificulta sello); S=Snorer/Sleep apnea (SAOS); E=Elderly (>55 años, pérdida de tono tisular). Dos o más factores predicen ventilación difícil.",
+    ref:"📚 Langeron O, et al. Anesthesiology 2000;92:1229-1236 · Kheterpal S, et al. Anesthesiology 2006;105:885-891"
+  },
+  {
+    cat:"dificil",
+    q:"El algoritmo ASA 2022, ante VAD anticipada en cirugía electiva, recomienda como vía principal:",
+    options:[
+      "Secuencia rápida de intubación con rocuronio",
+      "Intubación en paciente despierto manteniendo ventilación espontánea",
+      "Cricotiroidotomía profiláctica",
+      "Inducción inhalatoria exclusiva"
+    ],
+    answer:1,
+    explanation:"Si hay VAD anticipada donde se prevé dificultad tanto para intubación como para ventilación, la recomendación principal es intubación despierto (con fibroscopio), manteniendo ventilación espontánea durante todo el procedimiento. Requiere preparación con antisialagogo, anestesia tópica y sedación consciente.",
+    ref:"📚 Apfelbaum JL, et al. ASA Difficult Airway Algorithm 2022. Anesthesiology 2022;136:31-81 · Hagberg CA. Benumof's Airway Management, 4th Ed, Cap. 11"
+  },
+  {
+    cat:"dificil",
+    q:"En el escenario 'No puedo intubar, No puedo oxigenar' (CICO/NINV), el paso mandatorio es:",
+    options:[
+      "Repetir intentos de laringoscopia directa",
+      "Solicitar ayuda e insertar un dispositivo supraglótico como puente",
+      "Acceso cervical de emergencia: cricotiroidotomía (FONA)",
+      "Esperar a que revierta el bloqueador neuromuscular"
+    ],
+    answer:2,
+    explanation:"Si falla la intubación, falla la ventilación con mascarilla y fallan los DSG, se declara CICO/NINV y se debe proceder de inmediato a la cricotiroidotomía (FONA — Front of Neck Access). La opción B (DSG) es el paso PREVIO al CICO. Una vez declarado CICO, la cricotiroidotomía es mandatoria.",
+    ref:"📚 ASA Difficult Airway Algorithm 2022 · Frerk C, et al. DAS Guidelines for Unanticipated Difficult Intubation. Br J Anaesth 2015;115:827-848"
+  },
+
+  // ═══════════════════════════════════════════
+  //   MANEJO DE VÍA AÉREA (5)
+  // ═══════════════════════════════════════════
+  {
+    cat:"manejo",
+    q:"La maniobra BURP (Backward-Upward-Rightward Pressure) se aplica sobre qué estructura:",
+    options:[
+      "Cartílago cricoides para prevenir regurgitación",
+      "Cartílago tiroides para mejorar la visualización glótica",
+      "Hueso hioides para elevar la laringe",
+      "Tráquea para centrar el tubo"
+    ],
+    answer:1,
+    explanation:"BURP: presión hacia atrás (posterior), arriba (cefálica) y a la derecha sobre el cartílago TIROIDES (no cricoides). La realiza un asistente bajo dirección del laringoscopista para mejorar la visualización glótica. No confundir con la presión cricoidea (Sellick).",
+    ref:"📚 Knill RL. Can J Anaesth 1993;40:775-776 · Miller's Anesthesia, 9th Ed, Cap. 44"
+  },
+  {
+    cat:"manejo",
+    q:"La posición de olfateo ('sniffing position') para laringoscopia directa consiste en:",
+    options:[
+      "Extensión máxima del cuello sin flexión",
+      "Flexión del cuello inferior (~35°) con extensión de la articulación atlanto-occipital (~15°)",
+      "Posición neutra sin ninguna modificación",
+      "Flexión completa del cuello sobre el tórax"
+    ],
+    answer:1,
+    explanation:"La posición de olfateo alinea los tres ejes (oral, faríngeo y laríngeo) mediante: 1) Flexión del cuello inferior ~35° (almohada bajo el occipucio, elevación ~7-10 cm) y 2) Extensión atlanto-occipital ~15°. Facilita la visualización de la glotis durante laringoscopia directa.",
+    ref:"📚 Bannister FB, Macbeth RG. Lancet 1944;244:651-654 · Hagberg CA. Benumof's Airway Management, 4th Ed, Cap. 8"
+  },
+  {
+    cat:"manejo",
+    q:"¿Cuál es la diferencia fundamental entre la maniobra de Sellick y la maniobra BURP?",
+    options:[
+      "Son la misma maniobra con diferente nombre",
+      "Sellick = presión cricoidea para prevenir regurgitación; BURP = presión tiroidea para mejorar visualización glótica",
+      "Sellick se usa en pediatría y BURP en adultos",
+      "Sellick es lateralizante y BURP es puramente posterior"
+    ],
+    answer:1,
+    explanation:"Sellick: presión posteroanterior sobre el cartílago CRICOIDES (anillo completo) para comprimir el esófago contra la columna vertebral y prevenir regurgitación (ISR). BURP: presión sobre el cartílago TIROIDES (atrás, arriba, derecha) para mejorar visualización de la glotis. Objetivos completamente diferentes.",
+    ref:"📚 Sellick BA. Lancet 1961;2:404-406 · Knill RL. Can J Anaesth 1993;40:775-776 · Morgan & Mikhail, 7th Ed, Cap. 19"
+  },
+  {
+    cat:"manejo",
+    q:"En una Inducción de Secuencia Rápida (ISR), ¿cuál es el paso que NO se realiza rutinariamente?",
+    options:[
+      "Preoxigenación adecuada de 3-5 minutos con FiO₂ 100%",
+      "Ventilación con presión positiva con mascarilla antes de intubar",
+      "Uso de relajante neuromuscular de acción rápida (succinilcolina o rocuronio dosis alta)",
+      "Aplicación de presión cricoidea (Sellick)"
+    ],
+    answer:1,
+    explanation:"La ISR clásica EVITA la ventilación con presión positiva antes de asegurar la vía aérea, para no producir distensión gástrica y reducir el riesgo de broncoaspiración. Secuencia: preoxigenación → inducción IV → Sellick → relajante rápido → intubación SIN ventilar.",
+    ref:"📚 El-Orbany M, Connolly LA. Anesth Analg 2010;110:1318-1325 · Miller's Anesthesia, 9th Ed, Cap. 45"
+  },
+  {
+    cat:"manejo",
+    q:"Tras la intubación endotraqueal, el método más confiable para confirmar la posición correcta del tubo es:",
+    options:[
+      "Auscultación bilateral de campos pulmonares",
+      "Capnografía con detección continua de CO₂ espirado (forma de onda)",
+      "Observación del movimiento torácico bilateral",
+      "Empañamiento del tubo endotraqueal"
+    ],
+    answer:1,
+    explanation:"La capnografía con forma de onda es el estándar de oro (y requisito medicolegal) para confirmar intubación endotraqueal. La presencia de CO₂ espirado con curva característica confirma posición traqueal. La auscultación puede ser engañosa. Es mandatoria según las guías ASA.",
+    ref:"📚 ASA Standards for Basic Anesthetic Monitoring 2020 · Barash Clinical Anesthesia, 8th Ed, Cap. 27 · Gravenstein JS. Capnography, 2nd Ed"
+  },
+
+  // ═══════════════════════════════════════════
+  //   EQUIPO Y DISPOSITIVOS (5)
+  // ═══════════════════════════════════════════
+  {
+    cat:"equipo",
+    q:"¿Cuál es la diferencia principal entre la hoja Macintosh y la hoja Miller?",
+    options:[
+      "Macintosh es recta y Miller es curva",
+      "Macintosh es curva (se coloca en la vallécula) y Miller es recta (levanta directamente la epiglotis)",
+      "Ambas son idénticas de diferentes fabricantes",
+      "Miller solo se usa en adultos"
+    ],
+    answer:1,
+    explanation:"Macintosh = CURVA, punta en la vallécula, tracciona indirectamente la epiglotis mediante el ligamento hioepiglótico. Miller = RECTA, levanta directamente la epiglotis. Miller es preferida en neonatos/lactantes por su epiglotis larga y fláccida.",
+    ref:"📚 Miller's Anesthesia, 9th Ed, Cap. 44 · Hagberg CA. Benumof's Airway Management, 4th Ed, Cap. 17"
+  },
+  {
+    cat:"equipo",
+    q:"¿Cuál de estos dispositivos es un Dispositivo Supraglótico de segunda generación?",
+    options:[
+      "Mascarilla Laríngea Clásica (LMA Classic)",
+      "I-gel o LMA ProSeal (con canal de succión gástrica)",
+      "Tubo endotraqueal armado",
+      "Tubo de Combitube"
+    ],
+    answer:1,
+    explanation:"Los DSG de segunda generación incorporan un canal de acceso gástrico separado del canal ventilatorio, reduciendo el riesgo de aspiración (ProSeal, Supreme, I-gel). La LMA clásica es primera generación (sin canal gástrico). Los DSG se posicionan por encima de la glotis, sin pasar cuerdas vocales.",
+    ref:"📚 Cook TM, et al. Br J Anaesth 2011;107:i46-i59 · Timmermann A. Curr Opin Anaesthesiol 2015;28:652-658"
+  },
+  {
+    cat:"equipo",
+    q:"En el uso de videolaringoscopio de hoja hiperangulada (GlideScope), ¿qué accesorio es indispensable?",
+    options:[
+      "Pinzas de Magill obligatorias",
+      "Intercambiador de tubo de Cook",
+      "Estilete rígido preformado con curvatura de 60-90°",
+      "Fibroscopio flexible a través del tubo"
+    ],
+    answer:2,
+    explanation:"Debido al gran ángulo de la hoja hiperangulada, aunque provee excelente vista glótica, es muy difícil dirigir el tubo a la glotis sin un estilete rígido angulado. El videolaringoscopio es el dispositivo de rescate de primera línea ante laringoscopia directa fallida y no requiere alinear los tres ejes.",
+    ref:"📚 Niforopoulou P, et al. Anesthesiology 2010;112:1-7 · Lewis SR, et al. Cochrane Database Syst Rev 2017;9:CD011136"
+  },
+  {
+    cat:"equipo",
+    q:"El bougie (introductor de Eschmann) es especialmente útil ante un Cormack-Lehane:",
+    options:[
+      "Grado I (glotis completamente visible)",
+      "Grado IIb o III (solo epiglotis visible, sin cuerdas)",
+      "Exclusivamente Grado IV",
+      "Cualquier grado sin importar la vista"
+    ],
+    answer:1,
+    explanation:"El bougie es ideal cuando se ve la epiglotis pero no las cuerdas (Grado III) o solo la comisura posterior (Grado IIb). Su punta angulada permite sentir los clicks al deslizar sobre los anillos traqueales, confirmando posición traqueal. Luego se desliza el TET sobre él. Es el primer recurso ante Cormack III.",
+    ref:"📚 Gataure PS, et al. Anaesthesia 1996;51:935-938 · Hagberg CA. Benumof's Airway Management, 4th Ed, Cap. 19"
+  },
+  {
+    cat:"equipo",
+    q:"En el escenario CICO, el acceso cervical de emergencia se realiza a través de:",
+    options:[
+      "Membrana tirohioidea",
+      "Cartílago tiroides directamente",
+      "Membrana cricotiroidea (cricotiroidotomía)",
+      "Primer y segundo anillo traqueal"
+    ],
+    answer:2,
+    explanation:"La cricotiroidotomía se realiza a través de la membrana cricotiroidea: zona avascular, superficial y de fácil acceso, situada entre el cartílago tiroides y el cricoides. Puede ser por punción con aguja (jet ventilation) o quirúrgica. La traqueostomía formal (anillos traqueales) es más lenta y no es apropiada como acceso de emergencia.",
+    ref:"📚 Frerk C, et al. DAS Guidelines 2015. Br J Anaesth 2015;115:827-848 · ASA Difficult Airway Algorithm 2022 · Miller's Anesthesia, 9th Ed, Cap. 44"
+  }
+];
+
+// ── STATE ──
+let currentQ = 0, answersLog = [], shuffledQuestions = [];
+let mode = 'repaso', playerName = '', timerInterval = null, timeRemaining = EXAM_TIME, startTime = null;
+
+function selectMode(m) {
+  mode = m;
+  document.getElementById('modeRepaso').classList.toggle('selected', m === 'repaso');
+  document.getElementById('modeExamen').classList.toggle('selected', m === 'examen');
+}
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+function startQuiz() {
+  playerName = document.getElementById('nameInput').value.trim();
+  if (!playerName) { document.getElementById('nameError').style.display = 'block'; document.getElementById('nameInput').focus(); return; }
+  document.getElementById('nameError').style.display = 'none';
+  shuffledQuestions = shuffleArray(questions);
+  currentQ = 0; answersLog = []; startTime = Date.now();
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'block';
+  document.getElementById('resultsCard').classList.remove('show');
+  document.getElementById('resultsCard').style.display = 'none';
+  const timerEl = document.getElementById('timerDisplay');
+  const modeInd = document.getElementById('modeIndicator');
+  if (mode === 'examen') { timeRemaining = EXAM_TIME; timerEl.style.display = 'inline-block'; updateTimerDisplay(); timerInterval = setInterval(timerTick, 1000); modeInd.textContent = '⏱️ EXAMEN'; }
+  else { timerEl.style.display = 'none'; modeInd.textContent = '📖 REPASO'; }
+  showQuestion();
+}
+
+function timerTick() {
+  timeRemaining--;
+  updateTimerDisplay();
+  if (timeRemaining <= 0) {
+    clearInterval(timerInterval);
+    while (answersLog.length < TOTAL_Q) { const q = shuffledQuestions[answersLog.length]; answersLog.push({ cat: q.cat, correct: false, selectedIdx: -1, questionIdx: answersLog.length }); }
+    showResults();
+  }
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeRemaining / 60), s = timeRemaining % 60;
+  const el = document.getElementById('timerDisplay');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className = 'timer-display';
+  if (timeRemaining <= 60) el.classList.add('danger');
+  else if (timeRemaining <= 300) el.classList.add('warning');
+  else el.classList.add('normal');
+}
+
+function showQuestion() {
+  const q = shuffledQuestions[currentQ];
+  const card = document.getElementById('questionCard');
+  card.style.animation = 'none'; card.offsetHeight; card.style.animation = 'fadeIn 0.4s ease';
+  document.getElementById('progressLabel').textContent = `${currentQ + 1} / ${TOTAL_Q}`;
+  document.getElementById('progressBar').style.width = `${((currentQ + 1) / TOTAL_Q) * 100}%`;
+  const tag = document.getElementById('catTag');
+  const meta = catMeta[q.cat];
+  tag.className = 'cat-tag ' + meta.css;
+  tag.textContent = meta.name;
+  document.getElementById('questionNum').textContent = `Pregunta ${currentQ + 1} de ${TOTAL_Q}`;
+  document.getElementById('questionText').textContent = q.q;
+  const letters = ['A','B','C','D'];
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    container.appendChild(btn);
+  });
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+
+function selectAnswer(idx) {
+  const q = shuffledQuestions[currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+  const isCorrect = idx === q.answer;
+  answersLog.push({ cat: q.cat, correct: isCorrect, selectedIdx: idx, questionIdx: currentQ });
+  btns.forEach(btn => { btn.classList.add('disabled'); btn.onclick = null; });
+  if (mode === 'repaso') {
+    btns.forEach((btn, i) => { if (i === q.answer) btn.classList.add('correct'); if (i === idx && !isCorrect) btn.classList.add('incorrect'); });
+    const fb = document.getElementById('feedback');
+    const refHtml = q.ref ? `<br><span style="font-size:12px;color:var(--text-muted);margin-top:8px;display:block;border-top:1px solid rgba(255,255,255,0.08);padding-top:8px">${q.ref}</span>` : '';
+    if (isCorrect) { fb.className = 'feedback correct-fb show'; fb.innerHTML = `<strong>✓ ¡Correcto!</strong><br>${q.explanation}${refHtml}`; }
+    else { fb.className = 'feedback incorrect-fb show'; fb.innerHTML = `<strong>✗ Incorrecto</strong><br>${q.explanation}${refHtml}`; }
+  } else {
+    btns[idx].style.borderColor = 'var(--accent)';
+    btns[idx].style.background = 'rgba(56,189,248,0.08)';
+  }
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = currentQ < TOTAL_Q - 1 ? 'Siguiente →' : 'Ver Resultados';
+  nextBtn.classList.add('show');
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= TOTAL_Q) { if (timerInterval) clearInterval(timerInterval); showResults(); }
+  else showQuestion();
+}
+
+function showResults() {
+  document.getElementById('quizArea').style.display = 'none';
+  const elapsed = Math.round((Date.now() - startTime) / 1000);
+  const elapsedMin = Math.floor(elapsed / 60), elapsedSec = elapsed % 60;
+  document.getElementById('resultsName').textContent = playerName;
+  const modeTag = document.getElementById('resultsModeTag');
+  modeTag.textContent = mode === 'repaso' ? '📖 Modo Repaso' : '⏱️ Modo Examen';
+  modeTag.className = 'results-mode-tag ' + (mode === 'repaso' ? 'repaso' : 'examen');
+  const totalCorrect = answersLog.filter(a => a.correct).length;
+  const pct = Math.round((totalCorrect / TOTAL_Q) * 100);
+  document.getElementById('totalScore').textContent = `${pct}%`;
+  document.getElementById('totalDetail').textContent = `${totalCorrect} / ${TOTAL_Q}`;
+  document.getElementById('totalLabel').textContent = `${totalCorrect} de ${TOTAL_Q} respuestas correctas`;
+  document.getElementById('resultsTime').textContent = `Tiempo: ${elapsedMin}m ${String(elapsedSec).padStart(2,'0')}s`;
+  // Animate circle
+  const circumference = 2 * Math.PI * 80; // r=80
+  const offset = circumference - (pct / 100) * circumference;
+  setTimeout(() => { document.getElementById('scoreCircle').style.strokeDashoffset = offset; }, 100);
+
+  const catKeys = Object.keys(catMeta);
+  const catScores = {};
+  catKeys.forEach(k => { const ca = answersLog.filter(a => a.cat === k); catScores[k] = { correct: ca.filter(a => a.correct).length, total: ca.length }; });
+
+  const grid = document.getElementById('resultsGrid');
+  grid.innerHTML = '';
+  catKeys.forEach(k => { const s = catScores[k]; const p = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+    grid.innerHTML += `<div class="results-cat"><div class="rcat-name" style="color:${catMeta[k].color}">${catMeta[k].name}</div><div class="rcat-score" style="color:${catMeta[k].color}">${p}%</div><div class="rcat-detail">${s.correct}/${s.total}</div></div>`;
+  });
+
+  const barsDiv = document.getElementById('resultsBars');
+  barsDiv.innerHTML = '';
+  catKeys.forEach(k => { const s = catScores[k]; const p = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+    barsDiv.innerHTML += `<div class="result-bar-wrap"><div class="result-bar-label"><span>${catMeta[k].name}</span><span>${p}%</span></div><div class="result-bar-bg"><div class="result-bar-fill" id="bar-${k}" style="width:0%;background:${catMeta[k].color}"></div></div></div>`;
+  });
+  setTimeout(() => { catKeys.forEach(k => { const s = catScores[k]; const p = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0; document.getElementById('bar-' + k).style.width = p + '%'; }); }, 300);
+
+  const incorrectSection = document.getElementById('incorrectSection');
+  const incorrectAnswers = answersLog.filter(a => !a.correct);
+  if (incorrectAnswers.length === 0) {
+    incorrectSection.innerHTML = `<h3>Preguntas Incorrectas</h3><div class="all-correct-msg">🎉 ¡Felicidades! Respondiste todas las preguntas correctamente.</div>`;
+  } else {
+    const letters = ['A','B','C','D'];
+    let html = `<h3>❌ Preguntas Incorrectas (${incorrectAnswers.length})</h3>`;
+    incorrectAnswers.forEach(a => {
+      const q = shuffledQuestions[a.questionIdx]; const meta = catMeta[q.cat];
+      const yourAns = a.selectedIdx >= 0 ? `${letters[a.selectedIdx]}) ${q.options[a.selectedIdx]}` : 'Sin respuesta (tiempo agotado)';
+      const correctAns = `${letters[q.answer]}) ${q.options[q.answer]}`;
+      html += `<div class="incorrect-item"><span class="inc-cat-tag" style="background:${meta.color}20;color:${meta.color};border:1px solid ${meta.color}40">${meta.name}</span><div class="inc-q">${q.q}</div><div class="inc-your">✗ Tu respuesta: ${yourAns}</div><div class="inc-correct">✓ Correcta: ${correctAns}</div><div class="inc-explanation">${q.explanation}${q.ref ? '<br><span style="font-size:11px;color:var(--text-muted);margin-top:6px;display:block">' + q.ref + '</span>' : ''}</div></div>`;
+    });
+    incorrectSection.innerHTML = html;
+  }
+
+  const rc = document.getElementById('resultsCard');
+  rc.style.display = 'block';
+  setTimeout(() => rc.classList.add('show'), 10);
+}
+
+function shareWhatsApp() {
+  const totalCorrect = answersLog.filter(a => a.correct).length;
+  const pct = Math.round((totalCorrect / TOTAL_Q) * 100);
+  const catKeys = Object.keys(catMeta);
+  let catText = '';
+  catKeys.forEach(k => { const ca = answersLog.filter(a => a.cat === k); const cc = ca.filter(a => a.correct).length; const p = ca.length > 0 ? Math.round((cc / ca.length) * 100) : 0;
+    catText += `  • ${catMeta[k].name}: ${p}% (${cc}/${ca.length})\n`;
+  });
+  const modeText = mode === 'repaso' ? '📖 Repaso' : '⏱️ Examen';
+  const msg = `📋 *AnesthTR — Resultado de Examen*\n━━━━━━━━━━━━━━━\n👤 *${playerName}*\n📝 Vía Aérea y Evaluación Preanestésica\n🎯 Modo: ${modeText}\n\n🏆 *Calificación: ${pct}%* (${totalCorrect}/${TOTAL_Q})\n\n📊 *Desglose por categoría:*\n${catText}\n━━━━━━━━━━━━━━━\n🔗 drflow77.github.io/AnesthTR`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function restartQuiz() {
+  if (timerInterval) clearInterval(timerInterval);
+  document.getElementById('scoreCircle').style.strokeDashoffset = 502;
+  document.getElementById('resultsCard').classList.remove('show');
+  document.getElementById('resultsCard').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'block';
+}
+</script>
+</body>
+</html>
