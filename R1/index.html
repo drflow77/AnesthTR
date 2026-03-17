@@ -27,19 +27,17 @@
     margin-bottom: 12px; border: 1px solid #334155;
     transition: all 0.25s ease; position: relative; overflow: hidden;
   }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+  .card:hover { transform: translateY(-2px); }
   .card.ref:hover  { border-color: #8B5CF6; box-shadow: 0 8px 30px rgba(139,92,246,0.15); }
   .card.ag:hover   { border-color: #F59E0B; box-shadow: 0 8px 30px rgba(245,158,11,0.15); }
-  .card.prev:hover { border-color: #3B82F6; box-shadow: 0 8px 30px rgba(59,130,246,0.15); }
+  .card.local:hover { border-color: #22C55E; box-shadow: 0 8px 30px rgba(34,197,94,0.15); }
 
   .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
 
-  .badge-row { display: flex; gap: 8px; align-items: center; }
-
   .badge { font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 8px; letter-spacing: 0.02em; }
-  .badge.ref  { background: #8B5CF622; color: #A78BFA; border: 1px solid #8B5CF644; }
-  .badge.ag   { background: #F59E0B22; color: #FCD34D; border: 1px solid #F59E0B44; }
-  .badge.prev { background: #3B82F622; color: #60A5FA; border: 1px solid #3B82F644; }
+  .badge.ref   { background: #8B5CF622; color: #A78BFA; border: 1px solid #8B5CF644; }
+  .badge.ag    { background: #F59E0B22; color: #FCD34D; border: 1px solid #F59E0B44; }
+  .badge.local { background: #22C55E22; color: #86EFAC; border: 1px solid #22C55E44; }
 
   .card-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
   .card-status.active { background: #22C55E22; color: #86EFAC; }
@@ -50,9 +48,9 @@
   .card-meta span { display: flex; align-items: center; gap: 4px; }
 
   .card-arrow { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #334155; transition: all 0.25s; }
-  .card.ref:hover  .card-arrow { color: #8B5CF6; right: 16px; }
-  .card.ag:hover   .card-arrow { color: #F59E0B; right: 16px; }
-  .card.prev:hover .card-arrow { color: #3B82F6; right: 16px; }
+  .card.ref:hover   .card-arrow { color: #8B5CF6; right: 16px; }
+  .card.ag:hover    .card-arrow { color: #F59E0B; right: 16px; }
+  .card.local:hover .card-arrow { color: #22C55E; right: 16px; }
 
   .divider { border: none; border-top: 1px solid #1E293B; margin: 20px 0; }
 
@@ -77,9 +75,7 @@
 
   <a href="via-aerea.html" class="card ref">
     <div class="card-header">
-      <div class="badge-row">
-        <span class="badge ref">Ref.</span>
-      </div>
+      <span class="badge ref">Ref.</span>
       <span class="card-status active">● Activo</span>
     </div>
     <div class="card-title">Vía Aérea y Evaluación Preanestésica</div>
@@ -93,9 +89,7 @@
 
   <a href="via-aerea-ag.html" class="card ag">
     <div class="card-header">
-      <div class="badge-row">
-        <span class="badge ag">AG.</span>
-      </div>
+      <span class="badge ag">AG.</span>
       <span class="card-status active">● Activo</span>
     </div>
     <div class="card-title">Vía Aérea y Evaluación Preanestésica</div>
@@ -109,20 +103,18 @@
 
   <hr class="divider">
 
-  <div class="section-label">Versión anterior</div>
+  <div class="section-label">Farmacología</div>
 
-  <a href="combinado.html" class="card prev">
+  <a href="anestesicos-locales.html" class="card local">
     <div class="card-header">
-      <div class="badge-row">
-        <span class="badge prev">R1</span>
-      </div>
+      <span class="badge local">R1</span>
       <span class="card-status active">● Activo</span>
     </div>
-    <div class="card-title">Examen Mensual — Versión anterior</div>
-    <div class="card-desc">Escalas de vía aérea, Cormack-Lehane, clasificación ASA y valoración pre-anestésica.</div>
+    <div class="card-title">Anestésicos Locales</div>
+    <div class="card-desc">Mecanismo de acción, clasificación, propiedades y usos clínicos de los anestésicos locales.</div>
     <div class="card-meta">
-      <span>📝 25 preguntas</span>
-      <span>⏱ ~15 min</span>
+      <span>📝 Preguntas</span>
+      <span>💊 Farmacología</span>
     </div>
     <div class="card-arrow">→</div>
   </a>
