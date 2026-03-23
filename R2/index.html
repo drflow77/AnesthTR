@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exámenes R2 — AnesthTR</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0F172A; font-family: 'DM Sans', sans-serif; color: #E2E8F0; min-height: 100vh; }
+
+  .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; color: #64748B; font-size: 13px; font-weight: 600; text-decoration: none; margin-bottom: 28px; transition: color 0.2s; }
+  .back-link:hover { color: #94A3B8; }
+
+  .header { margin-bottom: 32px; }
+  .header-grade { display: inline-block; background: #8B5CF622; color: #A78BFA; border: 1px solid #8B5CF644; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 8px; margin-bottom: 10px; }
+  .header-title { font-size: 24px; font-weight: 800; color: #F1F5F9; letter-spacing: -0.03em; }
+  .header-sub { font-size: 14px; color: #64748B; margin-top: 4px; }
+
+  .section-label { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; padding-left: 4px; }
+
+  .card {
+    display: block; text-decoration: none; color: inherit;
+    background: #1E293B; border-radius: 16px; padding: 22px 24px;
+    margin-bottom: 12px; border: 1px solid #334155;
+    transition: all 0.25s ease; position: relative; overflow: hidden;
+  }
+  .card:hover { transform: translateY(-2px); border-color: #8B5CF6; box-shadow: 0 8px 30px rgba(139,92,246,0.15); }
+
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+
+  .badge { font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 8px; letter-spacing: 0.02em; background: #06b6d422; color: #67e8f9; border: 1px solid #06b6d444; }
+
+  .card-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
+  .card-status.active { background: #22C55E22; color: #86EFAC; }
+
+  .card-title { font-size: 16px; font-weight: 700; color: #F1F5F9; margin-bottom: 5px; }
+  .card-desc  { font-size: 13px; color: #94A3B8; line-height: 1.5; }
+  .card-meta  { display: flex; gap: 16px; margin-top: 12px; font-size: 12px; color: #64748B; }
+  .card-meta span { display: flex; align-items: center; gap: 4px; }
+
+  .card-arrow { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #334155; transition: all 0.25s; }
+  .card:hover .card-arrow { color: #8B5CF6; right: 16px; }
+
+  .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1E293B; }
+  .footer-text { font-size: 12px; color: #475569; line-height: 1.6; }
+  .footer-text a { color: #3B82F6; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <a href="../" class="back-link">← Inicio</a>
+
+  <div class="header">
+    <div class="header-grade">R2</div>
+    <div class="header-title">Exámenes R2 — Marzo 2026</div>
+    <div class="header-sub">Anestesiología · HGR 200 Tecámac</div>
+  </div>
+
+  <div class="section-label">Anestesia Regional</div>
+
+  <a href="bloqueos-regionales.html" class="card">
+    <div class="card-header">
+      <span class="badge">R2</span>
+      <span class="card-status active">● Activo</span>
+    </div>
+    <div class="card-title">Anestesia Regional y Bloqueos</div>
+    <div class="card-desc">Principios de anestesia regional, tipos de bloqueo, anatomía de referencia y técnicas guiadas por ultrasonido.</div>
+    <div class="card-meta">
+      <span>📝 Preguntas</span>
+      <span>🫀 Anestesia Regional</span>
+    </div>
+    <div class="card-arrow">→</div>
+  </a>
+
+  <div class="footer">
+    <div class="footer-text">
+      Coordinación de Anestesiología — Turno Vespertino<br>
+      HGR 200 Tecámac · IMSS<br><br>
+      Desarrollado por <a href="https://ropicalc.com" target="_blank">DFC Medical Apps</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
