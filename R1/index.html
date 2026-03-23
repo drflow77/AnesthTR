@@ -29,15 +29,12 @@
   }
   .card:hover { transform: translateY(-2px); }
   .card.ref:hover  { border-color: #8B5CF6; box-shadow: 0 8px 30px rgba(139,92,246,0.15); }
-  .card.ag:hover   { border-color: #F59E0B; box-shadow: 0 8px 30px rgba(245,158,11,0.15); }
   .card.local:hover { border-color: #22C55E; box-shadow: 0 8px 30px rgba(34,197,94,0.15); }
-  .card.regional:hover { border-color: #06b6d4; box-shadow: 0 8px 30px rgba(6,182,212,0.15); }
 
   .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
 
   .badge { font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 8px; letter-spacing: 0.02em; }
   .badge.ref   { background: #8B5CF622; color: #A78BFA; border: 1px solid #8B5CF644; }
-  .badge.ag    { background: #F59E0B22; color: #FCD34D; border: 1px solid #F59E0B44; }
   .badge.local { background: #22C55E22; color: #86EFAC; border: 1px solid #22C55E44; }
 
   .card-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
@@ -50,9 +47,7 @@
 
   .card-arrow { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #334155; transition: all 0.25s; }
   .card.ref:hover   .card-arrow { color: #8B5CF6; right: 16px; }
-  .card.ag:hover    .card-arrow { color: #F59E0B; right: 16px; }
   .card.local:hover .card-arrow { color: #22C55E; right: 16px; }
-  .card.regional:hover .card-arrow { color: #06b6d4; right: 16px; }
 
   .divider { border: none; border-top: 1px solid #1E293B; margin: 20px 0; }
 
@@ -77,11 +72,11 @@
 
   <a href="via-aerea.html" class="card ref">
     <div class="card-header">
-      <span class="badge ref">Ref.</span>
+      <span class="badge ref">R1</span>
       <span class="card-status active">● Activo</span>
     </div>
     <div class="card-title">Vía Aérea y Evaluación Preanestésica</div>
-    <div class="card-desc">Versión con referencias bibliográficas. Escalas de vía aérea, Cormack-Lehane, ASA y valoración preanestésica.</div>
+    <div class="card-desc">Escalas de vía aérea, Cormack-Lehane, clasificación ASA, Caprini y valoración preanestésica.</div>
     <div class="card-meta">
       <span>📝 25 preguntas</span>
       <span>📚 Con referencias</span>
@@ -101,26 +96,8 @@
     <div class="card-title">Anestésicos Locales</div>
     <div class="card-desc">Mecanismo de acción, clasificación, propiedades y usos clínicos de los anestésicos locales.</div>
     <div class="card-meta">
-      <span>📝 Preguntas</span>
+      <span>📝 30 preguntas</span>
       <span>💊 Farmacología</span>
-    </div>
-    <div class="card-arrow">→</div>
-  </a>
-
-  <hr class="divider">
-
-  <div class="section-label">Anestesia Regional</div>
-
-  <a href="../general/bloqueos-regionales.html" class="card regional">
-    <div class="card-header">
-      <span class="badge regional" style="background:#06b6d422;color:#67e8f9;border:1px solid #06b6d444">R1</span>
-      <span class="card-status active">● Activo</span>
-    </div>
-    <div class="card-title">Anestesia Regional y Bloqueos</div>
-    <div class="card-desc">Principios de anestesia regional, tipos de bloqueo, anatomía de referencia y técnicas básicas.</div>
-    <div class="card-meta">
-      <span>📝 Preguntas</span>
-      <span>🫀 Anestesia Regional</span>
     </div>
     <div class="card-arrow">→</div>
   </a>
