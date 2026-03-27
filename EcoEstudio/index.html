@@ -34,7 +34,6 @@
       overflow-x: hidden;
     }
 
-    /* Subtle animated background */
     body::before {
       content: '';
       position: fixed;
@@ -64,11 +63,7 @@
       z-index: 1;
     }
 
-    /* Header */
-    .header {
-      text-align: center;
-      margin-bottom: 48px;
-    }
+    .header { text-align: center; margin-bottom: 48px; }
 
     .header-badge {
       display: inline-flex;
@@ -89,8 +84,7 @@
 
     .header-badge::before {
       content: '';
-      width: 6px;
-      height: 6px;
+      width: 6px; height: 6px;
       background: var(--accent-cyan);
       border-radius: 50%;
       animation: pulse 2s ease-in-out infinite;
@@ -144,7 +138,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Section label */
     .section-label {
       display: flex;
       align-items: center;
@@ -165,7 +158,6 @@
       background: linear-gradient(90deg, var(--border), transparent);
     }
 
-    /* Game cards */
     .game-card {
       display: flex;
       align-items: center;
@@ -203,11 +195,12 @@
       pointer-events: none;
     }
 
-    .game-card[data-color="cyan"]::before { background: radial-gradient(ellipse at 20% 50%, var(--glow-cyan), transparent 70%); }
-    .game-card[data-color="blue"]::before { background: radial-gradient(ellipse at 20% 50%, var(--glow-blue), transparent 70%); }
-    .game-card[data-color="emerald"]::before { background: radial-gradient(ellipse at 20% 50%, rgba(16, 185, 129, 0.1), transparent 70%); }
-    .game-card[data-color="amber"]::before { background: radial-gradient(ellipse at 20% 50%, rgba(245, 158, 11, 0.1), transparent 70%); }
-    .game-card[data-color="violet"]::before { background: radial-gradient(ellipse at 20% 50%, rgba(139, 92, 246, 0.1), transparent 70%); }
+    .game-card[data-color="cyan"]::before     { background: radial-gradient(ellipse at 20% 50%, var(--glow-cyan), transparent 70%); }
+    .game-card[data-color="blue"]::before     { background: radial-gradient(ellipse at 20% 50%, var(--glow-blue), transparent 70%); }
+    .game-card[data-color="emerald"]::before  { background: radial-gradient(ellipse at 20% 50%, rgba(16, 185, 129, 0.1), transparent 70%); }
+    .game-card[data-color="amber"]::before    { background: radial-gradient(ellipse at 20% 50%, rgba(245, 158, 11, 0.1), transparent 70%); }
+    .game-card[data-color="violet"]::before   { background: radial-gradient(ellipse at 20% 50%, rgba(139, 92, 246, 0.1), transparent 70%); }
+    .game-card[data-color="rose"]::before     { background: radial-gradient(ellipse at 20% 50%, rgba(244, 63, 94, 0.1), transparent 70%); }
 
     .game-card:hover {
       border-color: var(--border-hover);
@@ -217,15 +210,10 @@
     }
 
     .game-card:hover::before { opacity: 1; }
-
-    .game-card:active {
-      transform: translateY(0);
-      transition-duration: 0.1s;
-    }
+    .game-card:active { transform: translateY(0); transition-duration: 0.1s; }
 
     .card-icon {
-      width: 52px;
-      height: 52px;
+      width: 52px; height: 52px;
       border-radius: 14px;
       display: flex;
       align-items: center;
@@ -236,11 +224,12 @@
       z-index: 1;
     }
 
-    .game-card[data-color="cyan"] .card-icon { background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.2); }
-    .game-card[data-color="blue"] .card-icon { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); }
-    .game-card[data-color="emerald"] .card-icon { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
-    .game-card[data-color="amber"] .card-icon { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); }
-    .game-card[data-color="violet"] .card-icon { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2); }
+    .game-card[data-color="cyan"]    .card-icon { background: rgba(34, 211, 238, 0.1);  border: 1px solid rgba(34, 211, 238, 0.2); }
+    .game-card[data-color="blue"]    .card-icon { background: rgba(59, 130, 246, 0.1);  border: 1px solid rgba(59, 130, 246, 0.2); }
+    .game-card[data-color="emerald"] .card-icon { background: rgba(16, 185, 129, 0.1);  border: 1px solid rgba(16, 185, 129, 0.2); }
+    .game-card[data-color="amber"]   .card-icon { background: rgba(245, 158, 11, 0.1);  border: 1px solid rgba(245, 158, 11, 0.2); }
+    .game-card[data-color="violet"]  .card-icon { background: rgba(139, 92, 246, 0.1);  border: 1px solid rgba(139, 92, 246, 0.2); }
+    .game-card[data-color="rose"]    .card-icon { background: rgba(244, 63, 94, 0.1);   border: 1px solid rgba(244, 63, 94, 0.2); }
 
     .card-content {
       flex: 1;
@@ -274,7 +263,7 @@
     }
 
     .tag-active { background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald); }
-    .tag-soon { background: rgba(245, 158, 11, 0.12); color: var(--accent-amber); }
+    .tag-soon   { background: rgba(245, 158, 11, 0.12);  color: var(--accent-amber); }
 
     .card-arrow {
       font-size: 18px;
@@ -285,18 +274,10 @@
       z-index: 1;
     }
 
-    .game-card:hover .card-arrow {
-      color: var(--text-secondary);
-      transform: translateX(4px);
-    }
+    .game-card:hover .card-arrow { color: var(--text-secondary); transform: translateX(4px); }
 
-    /* Disabled card */
-    .game-card.disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
+    .game-card.disabled { opacity: 0.5; pointer-events: none; }
 
-    /* Stats bar */
     .stats-bar {
       display: flex;
       gap: 1px;
@@ -331,7 +312,6 @@
       margin-top: 4px;
     }
 
-    /* Back link */
     .back-link {
       display: inline-flex;
       align-items: center;
@@ -347,7 +327,6 @@
 
     .back-link:hover { color: var(--text-secondary); }
 
-    /* Footer */
     .footer {
       text-align: center;
       margin-top: 48px;
@@ -369,7 +348,6 @@
 
     .footer-text a:hover { color: var(--accent-cyan); }
 
-    /* Responsive */
     @media (max-width: 480px) {
       .container { padding: 32px 16px 48px; }
       .header-title { font-size: 28px; }
@@ -384,10 +362,8 @@
 
   <div class="container">
 
-    <!-- Back -->
     <a href="../index.html" class="back-link">← Volver a AnesthTR</a>
 
-    <!-- Header -->
     <div class="header">
       <div class="header-badge">Módulo interactivo</div>
       <div class="header-icon">🔊</div>
@@ -399,7 +375,7 @@
     <!-- Stats -->
     <div class="stats-bar">
       <div class="stat-item">
-        <div class="stat-value">2</div>
+        <div class="stat-value">3</div>
         <div class="stat-label">Disponibles</div>
       </div>
       <div class="stat-item">
@@ -407,12 +383,12 @@
         <div class="stat-label">Próximamente</div>
       </div>
       <div class="stat-item">
-        <div class="stat-value">6</div>
+        <div class="stat-value">7</div>
         <div class="stat-label">Total planeado</div>
       </div>
     </div>
 
-    <!-- Available -->
+    <!-- Disponibles -->
     <div class="section-label">Bloqueos disponibles</div>
 
     <a href="supraclavicular-final.html" class="game-card" data-color="cyan">
@@ -435,7 +411,17 @@
       <div class="card-arrow">→</div>
     </a>
 
-    <!-- Coming soon -->
+    <a href="plexo-braquial.html" class="game-card" data-color="rose">
+      <div class="card-icon">🧠</div>
+      <div class="card-content">
+        <div class="card-title">Plexo Braquial Interactivo</div>
+        <div class="card-desc">Mapa visual con conexiones, drag & drop por niveles y flash cards. Raíces → Troncos → Divisiones → Fascículos → Ramas.</div>
+        <span class="card-tag tag-active">Disponible</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <!-- Próximamente -->
     <div class="section-label" style="margin-top:32px;">Próximamente</div>
 
     <div class="game-card disabled" data-color="emerald">
@@ -478,7 +464,6 @@
       <div class="card-arrow">→</div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
       <div class="footer-text">
         Coordinación de Anestesiología — Turno Vespertino<br>
