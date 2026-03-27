@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plexo Braquial — AnesthTR</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;600;700;800&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --panel: #111827;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --green: #00e5a0;
+    --red: #ff4466;
+    --yellow: #ffd166;
+    --text: #e2eaf5;
+    --muted: #5a7a9a;
+
+    --c-raiz: #7c3aed;
+    --c-tronco: #0891b2;
+    --c-division: #0d9488;
+    --c-fasciculo: #d97706;
+    --c-rama: #dc2626;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .logo {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 300;
+    margin-top: 8px;
+  }
+
+  /* MODE TABS */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: 8px 20px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+  }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ═══════════════════════════════ PANEL 1: MAPA VISUAL ═══════════════════════════════ */
+  .flow-map {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    overflow-x: auto;
+  }
+
+  .flow-levels {
+    display: flex;
+    gap: 0;
+    min-width: 820px;
+  }
+
+  .level-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+
+  .level-header {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .lh-raiz      { background: #7c3aed22; color: #a78bfa; border: 1px solid #7c3aed44; }
+  .lh-tronco    { background: #0891b222; color: #38bdf8; border: 1px solid #0891b244; }
+  .lh-division  { background: #0d948822; color: #2dd4bf; border: 1px solid #0d948844; }
+  .lh-fasciculo { background: #d9770622; color: #fbbf24; border: 1px solid #d9770644; }
+  .lh-rama      { background: #dc262622; color: #f87171; border: 1px solid #dc262644; }
+
+  .node {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    width: 110px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    z-index: 2;
+    line-height: 1.3;
+  }
+
+  .node:hover { transform: scale(1.05); }
+
+  .node-raiz      { border: 1.5px solid #7c3aed; color: #a78bfa; }
+  .node-tronco    { border: 1.5px solid #0891b2; color: #38bdf8; }
+  .node-division  { border: 1.5px solid #0d9488; color: #2dd4bf; }
+  .node-fasciculo { border: 1.5px solid #d97706; color: #fbbf24; }
+  .node-rama      { border: 1.5px solid #dc2626; color: #f87171; }
+
+  .node.highlighted {
+    box-shadow: 0 0 20px currentColor;
+  }
+
+  .spacer { height: 14px; }
+
+  /* SVG connections */
+  .connections-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .flow-wrapper {
+    position: relative;
+  }
+
+  /* INFO PANEL FIJO */
+  .info-panel {
+    margin-top: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .info-panel.empty .info-panel-body { opacity: 0.3; }
+
+  .info-panel-bar {
+    width: 4px;
+    align-self: stretch;
+    border-radius: 4px;
+    background: var(--border);
+    flex-shrink: 0;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+
+  .info-panel-body { flex: 1; }
+
+  .info-panel-tag {
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .info-panel-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 5px;
+  }
+
+  .info-panel-desc {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  .info-panel-hint {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ═══════════════════════════════ PANEL 2: DRAG & DROP ═══════════════════════════════ */
+  .dd-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 680px) {
+    .dd-layout { grid-template-columns: 1fr; }
+  }
+
+  .dd-bank {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .dd-bank h3 {
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .dd-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 60px;
+  }
+
+  .dd-item {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: grab;
+    user-select: none;
+    transition: all 0.15s;
+    border: 1.5px solid transparent;
+  }
+
+  .dd-item:active { cursor: grabbing; transform: scale(0.97); }
+  .dd-item.dragging { opacity: 0.4; }
+
+  .dd-zones {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .dd-zone {
+    background: var(--panel);
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    transition: all 0.2s;
+  }
+
+  .dd-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(0,212,255,0.05);
+  }
+
+  .dd-zone h4 {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.7;
+  }
+
+  .dd-zone .zone-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 40px;
+  }
+
+  .dd-zone.correct { border-color: var(--green) !important; border-style: solid !important; }
+  .dd-zone.incorrect { border-color: var(--red) !important; border-style: solid !important; }
+
+  .zone-feedback {
+    font-size: 11px;
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary { background: var(--accent); color: var(--bg); }
+  .btn-primary:hover { background: #33ddff; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ═══════════════════════════════ PANEL 3: FLASH CARDS ═══════════════════════════════ */
+  .flash-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .flash-progress {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .fp-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .fp-dot.done { background: var(--green); }
+  .fp-dot.current { background: var(--accent); }
+
+  .flash-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 32px;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    perspective: 600px;
+  }
+
+  .flash-card:hover { border-color: var(--muted); }
+
+  .card-front, .card-back {
+    transition: all 0.3s;
+  }
+
+  .card-back { display: none; }
+  .flash-card.flipped .card-front { display: none; }
+  .flash-card.flipped .card-back { display: block; }
+  .flash-card.flipped { background: #0f1e30; border-color: var(--accent); }
+
+  .card-q-tag {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .card-question {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #fff;
+  }
+
+  .card-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 20px;
+    font-weight: 300;
+  }
+
+  .card-answer {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .card-answer strong {
+    color: var(--accent);
+    font-size: 18px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .flash-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .nav-btn {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .flash-counter {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+  }
+
+  /* legend */
+  .legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+
+  .dd-item-raiz      { background: #7c3aed22; color: #a78bfa; border-color: #7c3aed; }
+  .dd-item-tronco    { background: #0891b222; color: #38bdf8; border-color: #0891b2; }
+  .dd-item-division  { background: #0d948822; color: #2dd4bf; border-color: #0d9488; }
+  .dd-item-fasciculo { background: #d9770622; color: #fbbf24; border-color: #d97706; }
+  .dd-item-rama      { background: #dc262622; color: #f87171; border-color: #dc2626; }
+
+  .empty-hint {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    align-self: center;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">AnesthTR · HGR 200</div>
+    <h1>Plexo Braquial</h1>
+    <p class="subtitle">Raíces → Troncos → Divisiones → Fascículos → Ramas terminales</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('map')">🗺 Mapa Visual</button>
+    <button class="tab" onclick="switchTab('drag')">🧩 Drag & Drop</button>
+    <button class="tab" onclick="switchTab('flash')">🃏 Flash Cards</button>
+  </div>
+
+  <!-- ═══════ PANEL 1: MAPA ═══════ -->
+  <div class="panel active" id="panel-map">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>Raíces</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#38bdf8"></div>Troncos</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2dd4bf"></div>Divisiones</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>Fascículos</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>Ramas term.</div>
+    </div>
+    <div class="flow-map">
+      <div class="flow-wrapper" id="flow-wrapper">
+        <div class="flow-levels" id="flow-levels">
+
+          <!-- RAÍCES -->
+          <div class="level-col" id="col-raiz">
+            <div class="level-header lh-raiz">Raíces</div>
+            <div class="node node-raiz" data-id="C5" data-level="raiz" data-info="C5: Porción superior del plexo. Contribuye al tronco superior. Origen del nervio frénico (junto a C3-C4) y ramo al serrato anterior.">C5</div>
+            <div class="spacer"></div>
+            <div class="node node-raiz" data-id="C6" data-level="raiz" data-info="C6: Se une a C5 para formar el tronco superior. Informa sensibilidad del pulgar e índice.">C6</div>
+            <div class="spacer"></div>
+            <div class="node node-raiz" data-id="C7" data-level="raiz" data-info="C7: Forma sola el tronco medio. La raíz más grande del plexo. Informa el dedo medio.">C7</div>
+            <div class="spacer"></div>
+            <div class="node node-raiz" data-id="C8" data-level="raiz" data-info="C8: Se une a T1 para formar el tronco inferior. Informa anular y meñique.">C8</div>
+            <div class="spacer"></div>
+            <div class="node node-raiz" data-id="T1" data-level="raiz" data-info="T1: Se une a C8 → tronco inferior. Pequeño ramo cutáneo medial del brazo (nervio intercostobraquial).">T1</div>
+          </div>
+
+          <!-- TRONCOS -->
+          <div class="level-col" id="col-tronco">
+            <div class="level-header lh-tronco">Troncos</div>
+            <div style="height:10px"></div>
+            <div class="node node-tronco" data-id="T-sup" data-level="tronco" data-info="Tronco Superior (C5+C6): Origen del nervio supraescapular y del nervio para subclavio. Bloqueo interescalénico actúa principalmente aquí.">T. Superior<br><small style='font-size:10px;opacity:0.7'>C5+C6</small></div>
+            <div style="height:46px"></div>
+            <div class="node node-tronco" data-id="T-med" data-level="tronco" data-info="Tronco Medio (C7): Formado exclusivamente por C7. Sin ramos colaterales propios.">T. Medio<br><small style='font-size:10px;opacity:0.7'>C7</small></div>
+            <div style="height:46px"></div>
+            <div class="node node-tronco" data-id="T-inf" data-level="tronco" data-info="Tronco Inferior (C8+T1): Pasa posterior a la arteria subclavia. Relevante en síndrome de Pancoast y costilla cervical.">T. Inferior<br><small style='font-size:10px;opacity:0.7'>C8+T1</small></div>
+          </div>
+
+          <!-- DIVISIONES -->
+          <div class="level-col" id="col-division">
+            <div class="level-header lh-division">Divisiones</div>
+            <div class="node node-division" data-id="D-sup-ant" data-level="division" data-info="División anterior del tronco superior → fascículo lateral (junto con div. ant. tronco medio).">Ant.<br><small style='font-size:10px;opacity:0.7'>Sup.</small></div>
+            <div class="spacer"></div>
+            <div class="node node-division" data-id="D-sup-pos" data-level="division" data-info="División posterior del tronco superior → fascículo posterior (junto con div. post. de medio e inferior).">Post.<br><small style='font-size:10px;opacity:0.7'>Sup.</small></div>
+            <div class="spacer"></div>
+            <div class="node node-division" data-id="D-med-ant" data-level="division" data-info="División anterior del tronco medio → fascículo lateral.">Ant.<br><small style='font-size:10px;opacity:0.7'>Med.</small></div>
+            <div class="spacer"></div>
+            <div class="node node-division" data-id="D-med-pos" data-level="division" data-info="División posterior del tronco medio → fascículo posterior.">Post.<br><small style='font-size:10px;opacity:0.7'>Med.</small></div>
+            <div class="spacer"></div>
+            <div class="node node-division" data-id="D-inf-ant" data-level="division" data-info="División anterior del tronco inferior → fascículo medial.">Ant.<br><small style='font-size:10px;opacity:0.7'>Inf.</small></div>
+            <div class="spacer"></div>
+            <div class="node node-division" data-id="D-inf-pos" data-level="division" data-info="División posterior del tronco inferior → fascículo posterior.">Post.<br><small style='font-size:10px;opacity:0.7'>Inf.</small></div>
+          </div>
+
+          <!-- FASCÍCULOS -->
+          <div class="level-col" id="col-fasciculo">
+            <div class="level-header lh-fasciculo">Fascículos</div>
+            <div style="height:10px"></div>
+            <div class="node node-fasciculo" data-id="F-lat" data-level="fasciculo" data-info="Fascículo Lateral: Ant. Sup + Ant. Med → musculocutáneo + raíz lateral del mediano. Relación lateral con arteria axilar.">F. Lateral<br><small style='font-size:10px;opacity:0.7'>Ant Sup+Med</small></div>
+            <div style="height:40px"></div>
+            <div class="node node-fasciculo" data-id="F-pos" data-level="fasciculo" data-info="Fascículo Posterior: Todas las div. posteriores → radial + axilar. Posterior a la arteria axilar.">F. Posterior<br><small style='font-size:10px;opacity:0.7'>Post. Sup+Med+Inf</small></div>
+            <div style="height:40px"></div>
+            <div class="node node-fasciculo" data-id="F-med" data-level="fasciculo" data-info="Fascículo Medial: Ant. Inf. → cubital + raíz medial del mediano + cutáneos mediales. Medial a la arteria axilar.">F. Medial<br><small style='font-size:10px;opacity:0.7'>Ant. Inf.</small></div>
+          </div>
+
+          <!-- RAMAS TERMINALES -->
+          <div class="level-col" id="col-rama">
+            <div class="level-header lh-rama">Ramas Terminales</div>
+            <div class="node node-rama" data-id="R-musc" data-level="rama" data-info="N. Musculocutáneo (C5-C7): Del fascículo lateral. Perfora coracobraquial. Motor: flexores del brazo (bíceps, braquial, coracobraquial). Sensitivo: n. cutáneo lat. del antebrazo.">Musculo-<br>cutáneo<br><small style='font-size:10px;opacity:0.7'>C5-C7</small></div>
+            <div class="spacer"></div>
+            <div class="node node-rama" data-id="R-med" data-level="rama" data-info="N. Mediano (C6-T1): Raíz lateral (F.Lat) + raíz medial (F.Med). Forma la M con los fascículos sobre la arteria axilar. Motor: pronadores, flexores muñeca/dedos, músculos tenares. Sensitivo: 3.5 dedos radiales.">Mediano<br><small style='font-size:10px;opacity:0.7'>C6-T1</small></div>
+            <div class="spacer"></div>
+            <div class="node node-rama" data-id="R-rad" data-level="rama" data-info="N. Radial (C5-T1): El mayor del plexo. Del fascículo posterior. Rodea húmero (surco de torsión). Motor: extensores del codo/muñeca/dedos, supinador. Sensitivo: dorso lateral mano.">Radial<br><small style='font-size:10px;opacity:0.7'>C5-T1</small></div>
+            <div class="spacer"></div>
+            <div class="node node-rama" data-id="R-ax" data-level="rama" data-info="N. Axilar (C5-C6): Del fascículo posterior. Pasa por espacio cuadrilateral. Motor: deltoides, redondo menor. Sensitivo: hombro en charretera (badge area). Lesión en fractura cuello humerol.">Axilar<br><small style='font-size:10px;opacity:0.7'>C5-C6</small></div>
+            <div class="spacer"></div>
+            <div class="node node-rama" data-id="R-cub" data-level="rama" data-info="N. Cubital (C8-T1): Del fascículo medial. Pasa por epitróclea (nervio del codo). Motor: intrínsecos (hipotenar, interóseos, lumbricales 3°-4°). Sensitivo: 1.5 dedos cubitales. Lesión: mano en garra.">Cubital<br><small style='font-size:10px;opacity:0.7'>C8-T1</small></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de info fijo debajo del mapa -->
+    <div class="info-panel empty" id="map-info-panel">
+      <div class="info-panel-bar" id="map-info-bar"></div>
+      <div class="info-panel-body">
+        <div class="info-panel-tag" id="map-info-tag">PLEXO BRAQUIAL</div>
+        <div class="info-panel-name" id="map-info-name">—</div>
+        <div class="info-panel-desc" id="map-info-desc">
+          <span class="info-panel-hint">Pasa el cursor sobre cualquier nodo para ver sus detalles</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ PANEL 2: DRAG & DROP ═══════ -->
+  <div class="panel" id="panel-drag">
+    <div class="dd-layout">
+      <div>
+        <div class="dd-bank">
+          <h3>🧩 Elementos — arrastra al nivel correcto</h3>
+          <div class="dd-items" id="dd-bank"></div>
+        </div>
+        <div class="btn-row" style="margin-top:16px">
+          <button class="btn btn-primary" onclick="checkDrag()">Verificar</button>
+          <button class="btn btn-ghost" onclick="resetDrag()">Reiniciar</button>
+          <div id="drag-score"></div>
+        </div>
+      </div>
+      <div class="dd-zones" id="dd-zones"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ PANEL 3: FLASH CARDS ═══════ -->
+  <div class="panel" id="panel-flash">
+    <div class="flash-wrapper">
+      <div class="flash-progress" id="flash-progress"></div>
+      <div class="flash-card" id="flash-card" onclick="flipCard()">
+        <div class="card-front">
+          <div class="card-q-tag" id="card-tag"></div>
+          <div class="card-question" id="card-question"></div>
+          <div class="card-hint">👆 Toca para revelar respuesta</div>
+        </div>
+        <div class="card-back">
+          <div class="card-answer" id="card-answer"></div>
+        </div>
+      </div>
+      <div class="flash-nav">
+        <button class="nav-btn" onclick="prevCard()">←</button>
+        <div class="flash-counter" id="flash-counter">1 / 1</div>
+        <button class="nav-btn" onclick="nextCard()">→</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════ DATA ══════════════
+const PLEXO = {
+  raiz: [
+    { id: 'C5', label: 'C5', color: 'raiz' },
+    { id: 'C6', label: 'C6', color: 'raiz' },
+    { id: 'C7', label: 'C7', color: 'raiz' },
+    { id: 'C8', label: 'C8', color: 'raiz' },
+    { id: 'T1', label: 'T1', color: 'raiz' },
+  ],
+  tronco: [
+    { id: 'T-sup', label: 'Superior (C5+C6)', color: 'tronco' },
+    { id: 'T-med', label: 'Medio (C7)', color: 'tronco' },
+    { id: 'T-inf', label: 'Inferior (C8+T1)', color: 'tronco' },
+  ],
+  division: [
+    { id: 'D-ant-sup', label: 'Ant. del Superior', color: 'division' },
+    { id: 'D-pos-sup', label: 'Post. del Superior', color: 'division' },
+    { id: 'D-ant-med', label: 'Ant. del Medio', color: 'division' },
+    { id: 'D-pos-med', label: 'Post. del Medio', color: 'division' },
+    { id: 'D-ant-inf', label: 'Ant. del Inferior', color: 'division' },
+    { id: 'D-pos-inf', label: 'Post. del Inferior', color: 'division' },
+  ],
+  fasciculo: [
+    { id: 'F-lat', label: 'Lateral', color: 'fasciculo' },
+    { id: 'F-pos', label: 'Posterior', color: 'fasciculo' },
+    { id: 'F-med', label: 'Medial', color: 'fasciculo' },
+  ],
+  rama: [
+    { id: 'R-musc', label: 'Musculocutáneo', color: 'rama' },
+    { id: 'R-med', label: 'Mediano', color: 'rama' },
+    { id: 'R-rad', label: 'Radial', color: 'rama' },
+    { id: 'R-ax', label: 'Axilar', color: 'rama' },
+    { id: 'R-cub', label: 'Cubital', color: 'rama' },
+  ]
+};
+
+const FLASH_CARDS = [
+  { tag: 'RAÍCES', q: '¿Qué raíces forman el tronco superior?', a: '<strong>C5 + C6</strong>Origen del nervio supraescapular. Bloqueo interescalénico actúa principalmente aquí.' },
+  { tag: 'RAÍCES', q: '¿Qué raíz forma sola el tronco medio?', a: '<strong>C7</strong>La raíz más gruesa del plexo. Sola → tronco medio. Informa el dedo medio.' },
+  { tag: 'RAÍCES', q: '¿Qué raíces forman el tronco inferior?', a: '<strong>C8 + T1</strong>Pasa posterior a la subclavia. Costilla cervical → síndrome del desfiladero torácico.' },
+  { tag: 'TRONCOS', q: '¿Cuántos troncos tiene el plexo y cómo se llaman?', a: '<strong>3 troncos</strong>Superior (C5+C6), Medio (C7), Inferior (C8+T1). Están entre escalenos anterior y medio.' },
+  { tag: 'DIVISIONES', q: '¿Qué forman las divisiones ANTERIORES de los 3 troncos?', a: '<strong>Fascículo Lateral + Medial</strong>Ant. Sup + Ant. Med → Lat. Ant. Inf. → Medial. Anterior = flexión/pronación.' },
+  { tag: 'DIVISIONES', q: '¿Qué forman las 3 divisiones posteriores?', a: '<strong>Fascículo Posterior</strong>Post. Sup + Post. Med + Post. Inf → Fascículo posterior. Posterior = extensión/abducción.' },
+  { tag: 'FASCÍCULOS', q: '¿Qué nervios da el fascículo lateral?', a: '<strong>Musculocutáneo + raíz lateral del Mediano</strong>Con la arteria axilar como referencia: Lateral = afuera.' },
+  { tag: 'FASCÍCULOS', q: '¿Qué nervios da el fascículo posterior?', a: '<strong>Radial + Axilar</strong>El más grande del plexo. Posterior a la arteria axilar.' },
+  { tag: 'FASCÍCULOS', q: '¿Qué nervios da el fascículo medial?', a: '<strong>Cubital + raíz medial del Mediano + cutáneos mediales</strong>Medial a la arteria axilar.' },
+  { tag: 'RAMAS', q: 'N. Axilar: raíces, fascículo y estructura que atraviesa', a: '<strong>C5-C6 · Fasc. Posterior</strong>Espacio cuadrilateral. Deltoides + redondo menor. Lesión en fractura cuello humeral.' },
+  { tag: 'RAMAS', q: 'N. Musculocutáneo: raíces, fascículo y músculo que perfora', a: '<strong>C5-C7 · Fasc. Lateral</strong>Perfora el coracobraquial. Flexores brazo (bíceps). Sensitivo: cutáneo lat. antebrazo.' },
+  { tag: 'RAMAS', q: 'N. Mediano: fascículos que lo forman y mnemotecnia', a: '<strong>Lat. + Medial → "M" sobre la arteria axilar</strong>Motor: LOAF (Lumbricales 1-2, Oponente pulgar, Abductor pulgar, Flexor corto pulgar).' },
+  { tag: 'RAMAS', q: 'N. Radial: raíces, surco y lesión clásica', a: '<strong>C5-T1 · Fasc. Posterior</strong>Surco de torsión humeral → "parálisis del sábado por la noche". Extensores + muñeca caída.' },
+  { tag: 'RAMAS', q: 'N. Cubital: punto de vulnerabilidad y lesión característica', a: '<strong>C8-T1 · Fasc. Medial</strong>Canal epitroclear (codo). Mano en garra (4°-5° dedos). Signo de Froment (+).' },
+  { tag: 'BLOQUEOS', q: '¿Qué abordaje bloquea el plexo a nivel de troncos y qué nivel no alcanza?', a: '<strong>Interescalénico (C5-C7)</strong>Troncos superior y medio. No cubre C8-T1 (tronco inferior). Riesgo: parálisis frénica ipsilateral.' },
+  { tag: 'BLOQUEOS', q: '¿Qué abordaje da bloqueo completo del plexo a nivel de fascículos?', a: '<strong>Infraclavicular / Axilar</strong>Los 3 fascículos alrededor de la arteria axilar. Referencia USG: arteria axilar + pulsatilidad.' },
+];
+
+// ══════════════ TAB SWITCHING ══════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['map','drag','flash'][i] === tab);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  if (tab === 'map') setTimeout(drawConnections, 80);
+}
+
+// ══════════════ SVG CONNECTIONS ══════════════
+// Define connections: [fromId, toId]
+const CONNECTIONS = [
+  // Raíces → Troncos
+  ['C5','T-sup'], ['C6','T-sup'],
+  ['C7','T-med'],
+  ['C8','T-inf'], ['T1','T-inf'],
+  // Troncos → Divisiones
+  ['T-sup','D-sup-ant'], ['T-sup','D-sup-pos'],
+  ['T-med','D-med-ant'], ['T-med','D-med-pos'],
+  ['T-inf','D-inf-ant'], ['T-inf','D-inf-pos'],
+  // Divisiones → Fascículos
+  ['D-sup-ant','F-lat'], ['D-med-ant','F-lat'],
+  ['D-sup-pos','F-pos'], ['D-med-pos','F-pos'], ['D-inf-pos','F-pos'],
+  ['D-inf-ant','F-med'],
+  // Fascículos → Ramas
+  ['F-lat','R-musc'], ['F-lat','R-med'],
+  ['F-pos','R-rad'], ['F-pos','R-ax'],
+  ['F-med','R-cub'], ['F-med','R-med'],
+];
+
+// Color per source level
+const CONN_COLORS = {
+  raiz: '#7c3aed', tronco: '#0891b2', division: '#0d9488', fasciculo: '#d97706'
+};
+
+function getNodeLevel(id) {
+  if (['C5','C6','C7','C8','T1'].includes(id)) return 'raiz';
+  if (id.startsWith('T-')) return 'tronco';
+  if (id.startsWith('D-')) return 'division';
+  if (id.startsWith('F-')) return 'fasciculo';
+  return 'rama';
+}
+
+function drawConnections() {
+  const wrapper = document.getElementById('flow-wrapper');
+  const existingSvg = wrapper.querySelector('.connections-svg');
+  if (existingSvg) existingSvg.remove();
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.classList.add('connections-svg');
+  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible;';
+  wrapper.insertBefore(svg, wrapper.firstChild);
+
+  const wRect = wrapper.getBoundingClientRect();
+
+  CONNECTIONS.forEach(([fromId, toId]) => {
+    const fromEl = wrapper.querySelector(`[data-id="${fromId}"]`);
+    const toEl   = wrapper.querySelector(`[data-id="${toId}"]`);
+    if (!fromEl || !toEl) return;
+
+    const fR = fromEl.getBoundingClientRect();
+    const tR = toEl.getBoundingClientRect();
+
+    const x1 = fR.right  - wRect.left;
+    const y1 = fR.top + fR.height/2 - wRect.top;
+    const x2 = tR.left   - wRect.left;
+    const y2 = tR.top + tR.height/2 - wRect.top;
+    const cx = (x1 + x2) / 2;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`);
+    const color = CONN_COLORS[getNodeLevel(fromId)] || '#fff';
+    path.setAttribute('stroke', color);
+    path.setAttribute('stroke-width', '1.5');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('opacity', '0.25');
+    path.dataset.from = fromId;
+    path.dataset.to   = toId;
+    path.classList.add('conn-line');
+    svg.appendChild(path);
+  });
+}
+
+function highlightConnections(nodeId) {
+  document.querySelectorAll('.conn-line').forEach(line => {
+    const active = line.dataset.from === nodeId || line.dataset.to === nodeId;
+    line.setAttribute('opacity', active ? '1' : '0.06');
+    line.setAttribute('stroke-width', active ? '2.5' : '1.5');
+  });
+  document.querySelectorAll('.node').forEach(n => {
+    const id = n.dataset.id;
+    const connected = CONNECTIONS.some(([f,t]) =>
+      (f === nodeId && t === id) || (t === nodeId && f === id) || id === nodeId
+    );
+    n.style.opacity = connected ? '1' : '0.3';
+  });
+}
+
+function resetConnections() {
+  document.querySelectorAll('.conn-line').forEach(line => {
+    line.setAttribute('opacity', '0.25');
+    line.setAttribute('stroke-width', '1.5');
+  });
+  document.querySelectorAll('.node').forEach(n => n.style.opacity = '1');
+}
+
+// Draw after DOM paints
+setTimeout(drawConnections, 120);
+window.addEventListener('resize', drawConnections);
+
+// ══════════════ INFO PANEL FIJO ══════════════
+const LEVEL_COLORS = {
+  raiz: '#a78bfa', tronco: '#38bdf8', division: '#2dd4bf',
+  fasciculo: '#fbbf24', rama: '#f87171'
+};
+
+function showInfoPanel(node) {
+  const info  = node.dataset.info;
+  const level = node.dataset.level;
+  const id    = node.dataset.id;
+  const color = LEVEL_COLORS[level] || '#00d4ff';
+
+  const panel = document.getElementById('map-info-panel');
+  const bar   = document.getElementById('map-info-bar');
+
+  panel.classList.remove('empty');
+  panel.style.borderColor = color + '66';
+  bar.style.background   = color;
+  bar.style.boxShadow    = `0 0 10px ${color}`;
+
+  document.getElementById('map-info-tag').textContent  = level?.toUpperCase() || '';
+  document.getElementById('map-info-name').textContent = id || '';
+  document.getElementById('map-info-desc').textContent = info || '';
+}
+
+function clearInfoPanel() {
+  const panel = document.getElementById('map-info-panel');
+  panel.classList.add('empty');
+  panel.style.borderColor = '';
+  document.getElementById('map-info-bar').style.background  = '';
+  document.getElementById('map-info-bar').style.boxShadow   = '';
+  document.getElementById('map-info-tag').textContent  = 'PLEXO BRAQUIAL';
+  document.getElementById('map-info-name').textContent = '—';
+  document.getElementById('map-info-desc').innerHTML   =
+    '<span class="info-panel-hint">Pasa el cursor sobre cualquier nodo para ver sus detalles</span>';
+}
+
+document.querySelectorAll('.node').forEach(n => {
+  n.addEventListener('mouseenter', () => {
+    highlightConnections(n.dataset.id);
+    showInfoPanel(n);
+  });
+  n.addEventListener('mouseleave', () => {
+    resetConnections();
+    clearInfoPanel();
+  });
+});
+
+// ══════════════ DRAG & DROP ══════════════
+const LEVELS_LABELS = {
+  raiz: 'Raíces (C5–T1)',
+  tronco: 'Troncos',
+  division: 'Divisiones',
+  fasciculo: 'Fascículos',
+  rama: 'Ramas Terminales'
+};
+
+let dragItem = null;
+
+function buildDrag() {
+  const bank = document.getElementById('dd-bank');
+  const zonesEl = document.getElementById('dd-zones');
+  bank.innerHTML = '';
+  zonesEl.innerHTML = '';
+
+  // shuffle all items
+  const allItems = Object.entries(PLEXO).flatMap(([level, items]) =>
+    items.map(item => ({ ...item, level }))
+  );
+  allItems.sort(() => Math.random() - 0.5);
+
+  allItems.forEach(item => {
+    const el = document.createElement('div');
+    el.className = `dd-item dd-item-${item.color}`;
+    el.textContent = item.label;
+    el.dataset.id = item.id;
+    el.dataset.level = item.level;
+    el.draggable = true;
+    el.addEventListener('dragstart', onDragStart);
+    bank.appendChild(el);
+  });
+
+  // build zones
+  Object.entries(LEVELS_LABELS).forEach(([level, label]) => {
+    const zone = document.createElement('div');
+    zone.className = 'dd-zone';
+    zone.dataset.level = level;
+    zone.innerHTML = `<h4>${label}</h4><div class="zone-items"></div><div class="zone-feedback"></div>`;
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', onDrop);
+    zonesEl.appendChild(zone);
+  });
+}
+
+function onDragStart(e) {
+  dragItem = e.target;
+  e.target.classList.add('dragging');
+  setTimeout(() => e.target.classList.add('dragging'), 0);
+}
+
+function onDrop(e) {
+  e.preventDefault();
+  const zone = e.currentTarget;
+  zone.classList.remove('drag-over');
+  if (!dragItem) return;
+  const itemsEl = zone.querySelector('.zone-items');
+  dragItem.classList.remove('dragging');
+  itemsEl.appendChild(dragItem);
+  // clear feedback
+  zone.querySelector('.zone-feedback').textContent = '';
+  zone.classList.remove('correct', 'incorrect');
+  dragItem = null;
+}
+
+function checkDrag() {
+  let correct = 0, total = 0;
+  document.querySelectorAll('.dd-zone').forEach(zone => {
+    const level = zone.dataset.level;
+    const items = zone.querySelectorAll('.dd-item');
+    const fb = zone.querySelector('.zone-feedback');
+    if (items.length === 0) return;
+
+    let allCorrect = true;
+    items.forEach(item => {
+      total++;
+      if (item.dataset.level === level) correct++;
+      else allCorrect = false;
+    });
+
+    if (allCorrect && items.length > 0) {
+      zone.classList.add('correct');
+      zone.classList.remove('incorrect');
+      fb.style.color = 'var(--green)';
+      fb.textContent = '✓ Correcto';
+    } else {
+      zone.classList.add('incorrect');
+      zone.classList.remove('correct');
+      fb.style.color = 'var(--red)';
+      const wrong = [...items].filter(i => i.dataset.level !== level);
+      fb.textContent = `✗ Fuera de lugar: ${wrong.map(i => i.textContent).join(', ')}`;
+    }
+  });
+
+  // items still in bank
+  const bankItems = document.querySelectorAll('#dd-bank .dd-item');
+  bankItems.forEach(i => { total++; });
+
+  const scoreEl = document.getElementById('drag-score');
+  scoreEl.innerHTML = `<div class="score-badge">${correct} / ${total - bankItems.length} correctos</div>`;
+}
+
+function resetDrag() {
+  document.getElementById('drag-score').innerHTML = '';
+  buildDrag();
+}
+
+buildDrag();
+
+// ══════════════ FLASH CARDS ══════════════
+let flashIdx = 0;
+
+function buildFlash() {
+  const prog = document.getElementById('flash-progress');
+  prog.innerHTML = FLASH_CARDS.map((_, i) =>
+    `<div class="fp-dot ${i === 0 ? 'current' : ''}" id="fp-${i}"></div>`
+  ).join('');
+  showCard(0);
+}
+
+function showCard(idx) {
+  const card = FLASH_CARDS[idx];
+  document.getElementById('card-tag').textContent = card.tag;
+  document.getElementById('card-question').textContent = card.q;
+  document.getElementById('card-answer').innerHTML = card.a;
+  document.getElementById('flash-card').classList.remove('flipped');
+  document.getElementById('flash-counter').textContent = `${idx + 1} / ${FLASH_CARDS.length}`;
+
+  document.querySelectorAll('.fp-dot').forEach((d, i) => {
+    d.classList.toggle('current', i === idx);
+    d.classList.toggle('done', i < idx);
+  });
+}
+
+function flipCard() {
+  document.getElementById('flash-card').classList.toggle('flipped');
+}
+
+function nextCard() {
+  if (flashIdx < FLASH_CARDS.length - 1) {
+    flashIdx++;
+    showCard(flashIdx);
+  }
+}
+
+function prevCard() {
+  if (flashIdx > 0) {
+    flashIdx--;
+    showCard(flashIdx);
+  }
+}
+
+buildFlash();
+</script>
+</body>
+</html>
