@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Exámenes R1 — AnesthTR</title>
+<title>Exámenes R2 — AnesthTR</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,7 +15,7 @@
   .back-link:hover { color: #94A3B8; }
 
   .header { margin-bottom: 32px; }
-  .header-grade { display: inline-block; background: #3B82F622; color: #60A5FA; border: 1px solid #3B82F644; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 8px; margin-bottom: 10px; }
+  .header-grade { display: inline-block; background: #8B5CF622; color: #A78BFA; border: 1px solid #8B5CF644; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 8px; margin-bottom: 10px; }
   .header-title { font-size: 24px; font-weight: 800; color: #F1F5F9; letter-spacing: -0.03em; }
   .header-sub { font-size: 14px; color: #64748B; margin-top: 4px; }
 
@@ -27,15 +27,11 @@
     margin-bottom: 12px; border: 1px solid #334155;
     transition: all 0.25s ease; position: relative; overflow: hidden;
   }
-  .card:hover { transform: translateY(-2px); }
-  .card.ref:hover  { border-color: #8B5CF6; box-shadow: 0 8px 30px rgba(139,92,246,0.15); }
-  .card.local:hover { border-color: #22C55E; box-shadow: 0 8px 30px rgba(34,197,94,0.15); }
+  .card:hover { transform: translateY(-2px); border-color: #8B5CF6; box-shadow: 0 8px 30px rgba(139,92,246,0.15); }
 
   .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
 
-  .badge { font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 8px; letter-spacing: 0.02em; }
-  .badge.ref   { background: #8B5CF622; color: #A78BFA; border: 1px solid #8B5CF644; }
-  .badge.local { background: #22C55E22; color: #86EFAC; border: 1px solid #22C55E44; }
+  .badge { font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 8px; letter-spacing: 0.02em; background: #06b6d422; color: #67e8f9; border: 1px solid #06b6d444; }
 
   .card-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
   .card-status.active { background: #22C55E22; color: #86EFAC; }
@@ -46,10 +42,7 @@
   .card-meta span { display: flex; align-items: center; gap: 4px; }
 
   .card-arrow { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #334155; transition: all 0.25s; }
-  .card.ref:hover   .card-arrow { color: #8B5CF6; right: 16px; }
-  .card.local:hover .card-arrow { color: #22C55E; right: 16px; }
-
-  .divider { border: none; border-top: 1px solid #1E293B; margin: 20px 0; }
+  .card:hover .card-arrow { color: #8B5CF6; right: 16px; }
 
   .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1E293B; }
   .footer-text { font-size: 12px; color: #475569; line-height: 1.6; }
@@ -63,41 +56,23 @@
   <a href="../" class="back-link">← Inicio</a>
 
   <div class="header">
-    <div class="header-grade">R1</div>
-    <div class="header-title">Exámenes R1 — Marzo 2026</div>
+    <div class="header-grade">R2</div>
+    <div class="header-title">Exámenes R2 — Marzo 2026</div>
     <div class="header-sub">Anestesiología · DFC Medical Apps</div>
   </div>
 
-  <div class="section-label">Vía Aérea y Evaluación Preanestésica</div>
+  <div class="section-label">Anestesia Regional</div>
 
-  <a href="via-aerea.html" class="card ref">
+  <a href="bloqueos-regionales.html" class="card">
     <div class="card-header">
-      <span class="badge ref">R1</span>
+      <span class="badge">R2</span>
       <span class="card-status active">● Activo</span>
     </div>
-    <div class="card-title">Vía Aérea y Evaluación Preanestésica</div>
-    <div class="card-desc">Escalas de vía aérea, Cormack-Lehane, clasificación ASA, Caprini y valoración preanestésica.</div>
+    <div class="card-title">Anestesia Regional y Bloqueos</div>
+    <div class="card-desc">Principios de anestesia regional, tipos de bloqueo, anatomía de referencia y técnicas guiadas por ultrasonido.</div>
     <div class="card-meta">
-      <span>📝 25 preguntas</span>
-      <span>📚 Con referencias</span>
-    </div>
-    <div class="card-arrow">→</div>
-  </a>
-
-  <hr class="divider">
-
-  <div class="section-label">Farmacología</div>
-
-  <a href="anestesicos-locales.html" class="card local">
-    <div class="card-header">
-      <span class="badge local">R1</span>
-      <span class="card-status active">● Activo</span>
-    </div>
-    <div class="card-title">Anestésicos Locales</div>
-    <div class="card-desc">Mecanismo de acción, clasificación, propiedades y usos clínicos de los anestésicos locales.</div>
-    <div class="card-meta">
-      <span>📝 30 preguntas</span>
-      <span>💊 Farmacología</span>
+      <span>📝 Preguntas</span>
+      <span>🫀 Anestesia Regional</span>
     </div>
     <div class="card-arrow">→</div>
   </a>

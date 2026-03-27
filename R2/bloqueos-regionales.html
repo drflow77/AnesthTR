@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloqueos Regionales — AnesthTR</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --surface3: #212d45;
+    --border: #2a3a5c;
+    --text: #e8ecf4;
+    --text-dim: #8896b3;
+    --accent: #38bdf8;
+    --accent-glow: rgba(56, 189, 248, 0.15);
+    --correct: #34d399;
+    --correct-bg: rgba(52, 211, 153, 0.1);
+    --correct-border: rgba(52, 211, 153, 0.4);
+    --wrong: #f87171;
+    --wrong-bg: rgba(248, 113, 113, 0.1);
+    --wrong-border: rgba(248, 113, 113, 0.4);
+    --gold: #fbbf24;
+    --purple: #a78bfa;
+    --pink: #f472b6;
+    --radius: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .header-badge span { font-size: 1rem; }
+  .header h1 {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header p {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 12px 20px;
+    margin: 20px 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .progress-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: var(--surface3);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--purple));
+    border-radius: 100px;
+    transition: width 0.5s ease;
+  }
+  .progress-text {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* QUESTION CARD */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    margin-bottom: 20px;
+    animation: slideIn 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--purple), var(--pink));
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+  .cat-supra { background: rgba(56,189,248,0.12); color: var(--accent); }
+  .cat-axilar { background: rgba(167,139,250,0.12); color: var(--purple); }
+  .cat-popliteo { background: rgba(244,114,182,0.12); color: var(--pink); }
+  .cat-plexo { background: rgba(251,191,36,0.12); color: var(--gold); }
+  .cat-general { background: rgba(52,211,153,0.12); color: var(--correct); }
+
+  .q-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.55;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-size: 0.92rem;
+    color: var(--text);
+    font-family: inherit;
+    line-height: 1.5;
+    width: 100%;
+  }
+  .option-btn:hover:not(.disabled) {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+    transform: translateX(4px);
+  }
+  .option-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--surface3);
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .option-btn.correct-answer {
+    border-color: var(--correct-border);
+    background: var(--correct-bg);
+  }
+  .option-btn.correct-answer .option-letter {
+    background: var(--correct);
+    color: var(--bg);
+  }
+  .option-btn.wrong-answer {
+    border-color: var(--wrong-border);
+    background: var(--wrong-bg);
+  }
+  .option-btn.wrong-answer .option-letter {
+    background: var(--wrong);
+    color: var(--bg);
+  }
+  .option-btn.disabled { cursor: default; opacity: 0.6; }
+  .option-btn.disabled:hover { transform: none; }
+
+  /* FEEDBACK */
+  .feedback {
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    animation: fadeIn 0.3s ease;
+    display: none;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .feedback.show { display: block; }
+  .feedback.correct-fb {
+    background: var(--correct-bg);
+    border: 1px solid var(--correct-border);
+    color: var(--correct);
+  }
+  .feedback.wrong-fb {
+    background: var(--wrong-bg);
+    border: 1px solid var(--wrong-border);
+    color: #fca5a5;
+  }
+  .feedback-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .feedback .tip {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  .feedback .tip strong { color: var(--gold); }
+  .feedback .ref {
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  /* NEXT BUTTON */
+  .next-btn {
+    display: none;
+    margin: 20px auto 0;
+    padding: 12px 32px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    color: var(--bg);
+    border: none;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .next-btn:hover { transform: scale(1.05); box-shadow: 0 4px 24px var(--accent-glow); }
+  .next-btn.show { display: block; }
+
+  /* RESULTS PANEL */
+  .results { display: none; animation: slideIn 0.5s ease; }
+  .results.show { display: block; }
+
+  .results-header {
+    text-align: center;
+    padding: 30px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .results-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--correct), var(--accent), var(--purple), var(--pink));
+  }
+  .score-big {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--correct), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .score-label {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .score-msg {
+    margin-top: 12px;
+    font-size: 0.95rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* CHARTS */
+  .chart-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    margin-bottom: 20px;
+  }
+  .chart-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chart-title span { font-size: 1.1rem; }
+
+  /* Bar chart */
+  .bar-chart { display: flex; flex-direction: column; gap: 14px; }
+  .bar-row { display: flex; align-items: center; gap: 12px; }
+  .bar-label {
+    width: 120px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: right;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1;
+    height: 28px;
+    background: var(--surface3);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 1s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--bg);
+    min-width: fit-content;
+  }
+
+  /* Donut chart */
+  .donut-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  .donut-svg { width: 160px; height: 160px; }
+  .donut-legend { display: flex; flex-direction: column; gap: 10px; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.84rem;
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  /* Review */
+  .review-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+  .review-card.review-correct { border-left: 4px solid var(--correct); }
+  .review-card.review-wrong { border-left: 4px solid var(--wrong); }
+  .review-q {
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .review-answer {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .review-answer strong { color: var(--correct); }
+  .review-answer em { color: var(--wrong); font-style: normal; }
+
+  /* Retry button */
+  .retry-btn {
+    display: block;
+    margin: 28px auto;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    color: var(--bg);
+    border: none;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .retry-btn:hover { transform: scale(1.05); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    opacity: 0.5;
+  }
+
+  @media (max-width: 500px) {
+    .container { padding: 12px 10px 30px; }
+    .question-card { padding: 20px 16px; }
+    .bar-label { width: 80px; font-size: 0.72rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-badge"><span>🎯</span> AnesthTR · Bloqueos Regionales</div>
+    <h1>Bloqueos de Nervio Periférico</h1>
+    <p>Supraclavicular · Axilar · Poplíteo · Plexo Braquial</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+    <div class="progress-text" id="progressText">0 / 30</div>
+  </div>
+
+  <div id="quizArea"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Siguiente →</button>
+  <div class="results" id="resultsArea"></div>
+</div>
+
+<div class="footer">AnesthTR — DFC Medical Apps · Dr. David Flores Carrasco · 2026</div>
+
+<script>
+const questions = [
+  // === PLEXO BRAQUIAL: ANATOMÍA Y GENERALIDADES ===
+  {
+    cat: "plexo", catName: "Plexo Braquial",
+    q: "¿Cuáles son las raíces nerviosas que forman el plexo braquial?",
+    opts: ["C3-C7", "C5-T1", "C4-T2", "C6-T1"],
+    ans: 1,
+    exp: "El plexo braquial se origina de las raíces anteriores de C5, C6, C7, C8 y T1. Estas raíces forman troncos → divisiones → fascículos → ramos terminales.",
+    tip: "Mnemotecnia clásica: <strong>Raíces, Troncos, Divisiones, Fascículos, Ramos</strong> — 'Robert Taylor Drinks Cold Beer'.",
+    ref: "Hadzic A. Textbook of Regional Anesthesia, 2nd Ed. 2017; Cap. 3."
+  },
+  {
+    cat: "plexo", catName: "Plexo Braquial",
+    q: "Los troncos superior, medio e inferior del plexo braquial se forman a nivel de:",
+    opts: ["Espacio interescalénico", "Triángulo posterior del cuello", "Fosa supraclavicular", "Axila"],
+    ans: 0,
+    exp: "Las raíces emergen entre los músculos escaleno anterior y medio (espacio interescalénico), y ahí forman los tres troncos: superior (C5-C6), medio (C7) e inferior (C8-T1).",
+    tip: "El espacio interescalénico es donde se realiza el bloqueo interescalénico. A este nivel aún no se ha formado el nervio frénico lateral, pero la proximidad al nervio frénico (C3-C5) explica la paresia diafragmática.",
+    ref: "Neal JM. Upper Extremity Regional Anesthesia. Reg Anesth Pain Med. 2009;34(2):134-170."
+  },
+  {
+    cat: "plexo", catName: "Plexo Braquial",
+    q: "¿Cuál fascículo del plexo braquial da origen al nervio musculocutáneo?",
+    opts: ["Lateral", "Posterior", "Medial", "Superior"],
+    ans: 0,
+    exp: "El fascículo lateral (C5-C7) da origen al nervio musculocutáneo y contribuye a la raíz lateral del nervio mediano.",
+    tip: "El musculocutáneo perfora el coracobraquial: si un paciente no puede flexionar el codo (bíceps) tras un bloqueo, el musculocutáneo está bloqueado.",
+    ref: "Miller RD. Miller's Anesthesia, 9th Ed. 2020; Cap. 46."
+  },
+  {
+    cat: "plexo", catName: "Plexo Braquial",
+    q: "El nervio radial se origina del fascículo:",
+    opts: ["Lateral", "Medial", "Posterior", "Lateral + Medial"],
+    ans: 2,
+    exp: "El nervio radial (C5-T1) es el ramo terminal más grande del fascículo posterior. También del fascículo posterior se originan los nervios axilar, toracodorsal y subescapulares.",
+    tip: "Fascículo posterior = extensores. Si tu paciente no extiende la muñeca ('mano caída'), piensa en nervio radial.",
+    ref: "Hadzic A. Textbook of Regional Anesthesia, 2nd Ed. 2017; Cap. 3."
+  },
+  {
+    cat: "plexo", catName: "Plexo Braquial",
+    q: "¿Qué nervio NO forma parte de los ramos terminales del plexo braquial?",
+    opts: ["Nervio mediano", "Nervio axilar", "Nervio intercostobraquial", "Nervio cubital (ulnar)"],
+    ans: 2,
+    exp: "El nervio intercostobraquial (T2) NO pertenece al plexo braquial. Es un ramo cutáneo lateral del segundo nervio intercostal que inerva la cara medial del brazo. Los 5 ramos terminales del plexo son: musculocutáneo, mediano, radial, cubital y axilar.",
+    tip: "Para cirugía con torniquete en brazo, siempre considerar bloquear el intercostobraquial por separado (infiltración subcutánea medial del brazo) o el paciente sentirá dolor por el torniquete.",
+    ref: "Tsui BCH, Rosenquist RW. Peripheral Nerve Blockade. En: Barash PG et al. Clinical Anesthesia, 8th Ed. 2017."
+  },
+  // === BLOQUEO SUPRACLAVICULAR ===
+  {
+    cat: "supra", catName: "Supraclavicular",
+    q: "¿Cuál es la referencia anatómica principal para el abordaje supraclavicular guiado por ultrasonido?",
+    opts: ["Músculo esternocleidomastoideo", "Arteria subclavia y primera costilla", "Vena yugular externa", "Músculo trapecio"],
+    ans: 1,
+    exp: "En el abordaje supraclavicular con USG, la imagen objetivo son los troncos/divisiones del plexo braquial agrupados ('racimo de uvas') lateral y posterior a la arteria subclavia, sobre la primera costilla.",
+    tip: "La primera costilla actúa como tu 'piso de seguridad' — la aguja nunca debe pasar por debajo de ella para evitar neumotórax.",
+    ref: "Soares LG et al. Supraclavicular brachial plexus block. Curr Opin Anaesthesiol. 2014;27(5):533-537."
+  },
+  {
+    cat: "supra", catName: "Supraclavicular",
+    q: "¿Cuál es la complicación más temida del bloqueo supraclavicular?",
+    opts: ["Paresia del nervio frénico", "Neumotórax", "Bloqueo del ganglio estrellado", "Paresia del nervio laríngeo recurrente"],
+    ans: 1,
+    exp: "Históricamente, el neumotórax era la complicación más temida del bloqueo supraclavicular por la cercanía de la cúpula pleural. Con ultrasonido la incidencia ha disminuido drásticamente (<1%), pero sigue siendo el riesgo principal.",
+    tip: "Siempre visualizar la pleura en USG. Si no puedes identificarla con certeza, NO procedas. La punción pleural puede no manifestarse clínicamente hasta horas después.",
+    ref: "Perlas A, Lobo G, Lo N et al. Ultrasound-guided supraclavicular block. J Ultrasound Med. 2009;28(9):1223-1228."
+  },
+  {
+    cat: "supra", catName: "Supraclavicular",
+    q: "El bloqueo supraclavicular se considera ideal para cirugía de:",
+    opts: ["Hombro", "Codo, antebrazo y mano", "Solo mano y muñeca", "Solo codo"],
+    ans: 1,
+    exp: "El supraclavicular es conocido como la 'anestesia espinal del miembro superior' porque bloquea de forma consistente los tres troncos del plexo. Cubre codo, antebrazo y mano de manera confiable.",
+    tip: "Para hombro preferimos interescalénico (C5-C6). El supraclavicular puede fallar en el territorio del nervio supraescapular para cirugía de hombro.",
+    ref: "Tran DQ, Russo G, Muñoz L et al. A prospective randomized comparison between ultrasound-guided supraclavicular and infraclavicular brachial plexus blocks. Reg Anesth Pain Med. 2009;34(5):420-424."
+  },
+  {
+    cat: "supra", catName: "Supraclavicular",
+    q: "¿Cuál es el volumen recomendado de anestésico local para el bloqueo supraclavicular guiado por USG?",
+    opts: ["5-10 mL", "10-15 mL", "20-30 mL", "40-50 mL"],
+    ans: 2,
+    exp: "Con guía ultrasonográfica, 20-30 mL de anestésico local son suficientes para un bloqueo supraclavicular efectivo. La visualización directa permite reducir volúmenes respecto a la técnica a ciegas.",
+    tip: "Puedes usar ropivacaína 0.5% (20-25 mL) para bloqueo quirúrgico con mejor perfil motor-sensitivo, o agregar dexametasona perineural (4 mg) para prolongar la analgesia hasta 18-24 h.",
+    ref: "Duggan E et al. Minimum effective volume of local anesthetic for supraclavicular brachial plexus block. Reg Anesth Pain Med. 2009;34(3):215-218."
+  },
+  {
+    cat: "supra", catName: "Supraclavicular",
+    q: "¿Cuál estructura se describe como 'corner pocket' en el bloqueo supraclavicular por USG?",
+    opts: ["Espacio entre la arteria subclavia y el escaleno anterior", "Ángulo entre la arteria subclavia y la primera costilla", "La vaina del plexo braquial", "El espacio entre los troncos superior e inferior"],
+    ans: 1,
+    exp: "El 'corner pocket' es el ángulo formado entre la arteria subclavia (medial) y la primera costilla (inferior). Es el punto donde se deposita parte del anestésico local para alcanzar el tronco inferior (C8-T1), que frecuentemente se encuentra en esa esquina.",
+    tip: "Si no depositas AL en el corner pocket, puedes tener falla de bloqueo en territorio cubital (C8-T1). Inyecta en dos puntos: lateral al plexo y en el corner pocket.",
+    ref: "Soares LG et al. Supraclavicular brachial plexus block. Curr Opin Anaesthesiol. 2014;27(5):533-537."
+  },
+  {
+    cat: "supra", catName: "Supraclavicular",
+    q: "¿Cuál es la incidencia aproximada de paresia frénica con bloqueo supraclavicular guiado por USG?",
+    opts: ["<1%", "5-10%", "25-30%", "50-67%"],
+    ans: 2,
+    exp: "La paresia frénica ocurre en aproximadamente 25-30% de los bloqueos supraclaviculares (menor que el interescalénico donde alcanza 100% con volúmenes convencionales). Se debe a la difusión cefálica del anestésico local hacia las raíces C3-C5.",
+    tip: "Evitar supraclavicular bilateral y tener precaución en pacientes con enfermedad pulmonar severa, parálisis frénica contralateral o EPOC severo. Considera infraclavicular o axilar como alternativas.",
+    ref: "Renes SH et al. Ipsilateral hemidiaphragmatic paresis after supraclavicular brachial plexus block. Reg Anesth Pain Med. 2009;34(1):64-68."
+  },
+  // === BLOQUEO AXILAR ===
+  {
+    cat: "axilar", catName: "Axilar",
+    q: "¿Qué nervios terminales se bloquean en el abordaje axilar del plexo braquial?",
+    opts: ["Mediano, cubital, radial y musculocutáneo", "Mediano, cubital y radial solamente", "Solo mediano y cubital", "Radial, axilar y musculocutáneo"],
+    ans: 0,
+    exp: "El bloqueo axilar busca anestesiar los 4 nervios principales: mediano, cubital, radial y musculocutáneo. Los tres primeros están dentro o alrededor de la vaina neurovascular axilar; el musculocutáneo suele estar fuera, dentro del coracobraquial.",
+    tip: "El musculocutáneo es el nervio que más frecuentemente se 'escapa' en el bloqueo axilar. Siempre búscalo con USG dentro del coracobraquial (imagen hiperecoica entre las fibras musculares) y bloquéalo por separado.",
+    ref: "Chan VW, Perlas A, McCartney CJ et al. Ultrasound guidance improves success rate of axillary brachial plexus block. Can J Anaesth. 2007;54(3):176-182."
+  },
+  {
+    cat: "axilar", catName: "Axilar",
+    q: "¿Cuál es la posición del paciente para el bloqueo axilar?",
+    opts: ["Decúbito lateral con brazo pegado al cuerpo", "Supino con brazo en abducción 90° y rotación externa", "Sentado con brazo colgando", "Prono con brazo en extensión"],
+    ans: 1,
+    exp: "El paciente se posiciona en decúbito supino con el brazo en abducción de 90° y flexión del codo (mano detrás de la cabeza). Esta posición expone la axila y permite identificar la arteria axilar como referencia.",
+    tip: "No sobreabducir (>110°) porque puede comprimir el paquete neurovascular y dificultar el bloqueo.",
+    ref: "Gray AT. Ultrasound-Guided Regional Anesthesia. 2nd Ed. 2013; Cap. 10."
+  },
+  {
+    cat: "axilar", catName: "Axilar",
+    q: "En el bloqueo axilar guiado por USG, ¿cuál nervio se localiza típicamente entre la arteria y la vena axilar?",
+    opts: ["Radial", "Mediano", "Cubital", "Musculocutáneo"],
+    ans: 1,
+    exp: "En la imagen ultrasonográfica a nivel axilar, el nervio mediano típicamente se encuentra superficial y lateral a la arteria axilar (entre la arteria y la vena o adyacente a la pared anterolateral de la arteria). Las posiciones varían, pero el mediano suele estar entre las 9-12 en el 'reloj' de la arteria.",
+    tip: "Recuerda la regla MAR en sentido horario desde superficial: <strong>Mediano</strong> (superficial/lateral), <strong>cUbital</strong> (medial/superficial), <strong>Radial</strong> (posterior/profundo a la arteria). Pero siempre confirma con USG, la anatomía varía.",
+    ref: "Christophe JL et al. Assessment of topographic brachial plexus nerves variations at the axilla using ultrasonography. Br J Anaesth. 2009;103(4):606-612."
+  },
+  {
+    cat: "axilar", catName: "Axilar",
+    q: "¿Cuál es la principal ventaja del bloqueo axilar sobre el supraclavicular?",
+    opts: ["Mayor cobertura del hombro", "Ausencia de riesgo de neumotórax y paresia frénica", "Inicio más rápido", "Menor volumen de anestésico local"],
+    ans: 1,
+    exp: "El bloqueo axilar es el abordaje más seguro del plexo braquial: no hay riesgo de neumotórax ni paresia frénica porque está anatómicamente alejado de la pleura y del recorrido del nervio frénico.",
+    tip: "En pacientes con EPOC severo, pulmón único, o patología diafragmática, el axilar es el bloqueo de elección para cirugía de codo, antebrazo y mano.",
+    ref: "Tran DQ et al. A prospective randomized comparison between ultrasound-guided supraclavicular and axillary brachial plexus blocks. Reg Anesth Pain Med. 2009."
+  },
+  {
+    cat: "axilar", catName: "Axilar",
+    q: "¿Cuál es la cobertura territorial del bloqueo axilar?",
+    opts: ["Hombro, brazo, antebrazo y mano", "Codo (parcial), antebrazo y mano", "Solo mano y muñeca", "Brazo completo incluyendo hombro"],
+    ans: 1,
+    exp: "El bloqueo axilar cubre de forma confiable antebrazo y mano, con cobertura parcial del codo. NO cubre hombro ni la cara medial del brazo (territorio del intercostobraquial T2 y cutáneo medial del brazo).",
+    tip: "Para torniquete de brazo, necesitas agregar bloqueo de intercostobraquial y cutáneo medial del brazo (infiltración subcutánea en cara medial del brazo proximal).",
+    ref: "Neal JM. Upper Extremity Regional Anesthesia. Reg Anesth Pain Med. 2009;34(2):134-170."
+  },
+  {
+    cat: "axilar", catName: "Axilar",
+    q: "¿Cuántas inyecciones separadas se recomiendan para el bloqueo axilar con guía ecográfica?",
+    opts: ["1 inyección única perivascular", "2 inyecciones (mediano/cubital + radial)", "3-4 inyecciones (una por cada nervio)", "Depende del cirujano"],
+    ans: 2,
+    exp: "La técnica de inyección múltiple (3-4 puntos, uno por cada nervio identificado) tiene mayor tasa de éxito que la inyección única perivascular. Se inyecta por separado alrededor del mediano, cubital, radial y musculocutáneo.",
+    tip: "5-7 mL por nervio suele ser suficiente con USG (total 20-30 mL). La hidrodisección permite confirmar la distribución circunferencial del AL alrededor de cada nervio.",
+    ref: "Bernucci F, Gonzalez AP, Finlayson RJ, Tran DQ. A prospective randomized comparison between perivascular and perineural ultrasound-guided axillary brachial plexus block. Reg Anesth Pain Med. 2012;37(5):473-477."
+  },
+  // === BLOQUEO POPLÍTEO ===
+  {
+    cat: "popliteo", catName: "Poplíteo",
+    q: "El bloqueo poplíteo es un bloqueo a nivel de:",
+    opts: ["Nervio femoral", "Nervio ciático en la fosa poplítea", "Plexo lumbar", "Nervio obturador"],
+    ans: 1,
+    exp: "El bloqueo poplíteo es un abordaje distal al nervio ciático en la fosa poplítea, antes de su bifurcación en nervio tibial y peroneo común (fibular).",
+    tip: "Técnicamente 'bloqueo ciático poplíteo', no es un nervio diferente — es el ciático a nivel de la rodilla.",
+    ref: "Hadzic A. Textbook of Regional Anesthesia, 2nd Ed. 2017; Cap. 34."
+  },
+  {
+    cat: "popliteo", catName: "Poplíteo",
+    q: "¿A qué nivel aproximado se bifurca el nervio ciático en tibial y peroneo común?",
+    opts: ["2-3 cm proximal al pliegue poplíteo", "5-8 cm proximal al pliegue poplíteo", "A nivel del pliegue poplíteo exacto", "10-15 cm proximal al pliegue poplíteo"],
+    ans: 1,
+    exp: "La bifurcación del nervio ciático ocurre en promedio 5-8 cm proximal al pliegue poplíteo, aunque existe gran variabilidad interindividual (puede ser desde 3 hasta 12 cm).",
+    tip: "Con USG, desliza el transductor desde distal hacia proximal identificando tibial y peroneo: cuando se unen, has encontrado la bifurcación. Deposita el AL justo proximal a este punto para máxima efectividad.",
+    ref: "Vloka JD, Hadzic A et al. The division of the sciatic nerve in the popliteal fossa. J Clin Anesth. 2001;13(8):565-569."
+  },
+  {
+    cat: "popliteo", catName: "Poplíteo",
+    q: "¿Cuál es la indicación principal del bloqueo poplíteo?",
+    opts: ["Cirugía de cadera", "Cirugía de rodilla (reemplazo total)", "Cirugía de pie y tobillo", "Cirugía de muslo"],
+    ans: 2,
+    exp: "El bloqueo poplíteo es la técnica de elección para cirugía de pie y tobillo. Proporciona analgesia excelente del pie y tobillo al bloquear el componente ciático. Para cobertura completa frecuentemente se complementa con bloqueo safeno (nervio safeno, rama del femoral).",
+    tip: "El nervio safeno inerva la cara medial del tobillo y pie (maléolo medial). Si solo haces poplíteo sin safeno, el paciente puede referir dolor en el maléolo medial.",
+    ref: "Pearce CJ, Hamilton PD. Current Concepts Review: Regional Anesthesia for Foot and Ankle Surgery. Foot Ankle Int. 2010;31(8):732-739."
+  },
+  {
+    cat: "popliteo", catName: "Poplíteo",
+    q: "En el abordaje poplíteo posterior con USG, el nervio tibial se localiza:",
+    opts: ["Lateral a la arteria poplítea", "Superficial y lateral a la vena poplítea", "Superficial y posterior a la arteria poplítea", "Profundo a la arteria poplítea"],
+    ans: 2,
+    exp: "El nervio tibial se encuentra superficial (posterior) a los vasos poplíteos. Es la estructura nerviosa más grande y fácil de identificar en la fosa poplítea. El peroneo común está lateral y ligeramente más superficial.",
+    tip: "En USG, busca primero la arteria poplítea (pulsátil). Justo superficial a ella encontrarás el tibial (estructura hiperecoica redondeada). Luego busca el peroneo lateralmente.",
+    ref: "Gray AT. Ultrasound-Guided Regional Anesthesia. 2nd Ed. 2013; Cap. 16."
+  },
+  {
+    cat: "popliteo", catName: "Poplíteo",
+    q: "¿Por qué se recomienda inyectar proximal a la bifurcación del ciático en el bloqueo poplíteo?",
+    opts: ["Porque hay menos vasos sanguíneos", "Porque el epineuro común facilita la difusión del AL a ambos nervios", "Porque es más superficial", "Porque el nervio es más grande"],
+    ans: 1,
+    exp: "Proximal a la bifurcación, ambos componentes (tibial y peroneo) están contenidos dentro de una vaina epineural común (paraneuro). Al inyectar dentro o justo fuera de esta vaina, el AL se difunde a ambos nervios simultáneamente, mejorando la tasa de éxito.",
+    tip: "La inyección subparaneural (dentro de la vaina común, pero fuera del epineuro individual) es la técnica con mejores resultados. En USG se ve como la expansión del espacio entre el nervio y su vaina.",
+    ref: "Tran DQ et al. Determination of spread of injectate after ultrasound-guided popliteal sciatic nerve block. Reg Anesth Pain Med. 2009;34(5):450-455."
+  },
+  {
+    cat: "popliteo", catName: "Poplíteo",
+    q: "¿Cuál es el volumen recomendado para bloqueo poplíteo con guía ecográfica?",
+    opts: ["5-10 mL", "15-25 mL", "30-40 mL", "45-50 mL"],
+    ans: 1,
+    exp: "Con guía USG, 15-25 mL de anestésico local son suficientes. Si se inyecta proximal a la bifurcación (subparaneural), volúmenes de 15-20 mL suelen ser adecuados.",
+    tip: "Para analgesia postoperatoria prolongada: ropivacaína 0.5% 20 mL + dexametasona 4 mg perineural puede dar hasta 24h de analgesia en cirugía de hallux valgus o reconstrucción de tobillo.",
+    ref: "Cappelleri G et al. Minimum effective anesthetic concentration for sciatic nerve block. Reg Anesth Pain Med. 2007;32(1):57-62."
+  },
+  {
+    cat: "popliteo", catName: "Poplíteo",
+    q: "¿Cuál nervio NO se bloquea con el abordaje poplíteo?",
+    opts: ["Tibial", "Peroneo superficial", "Safeno", "Sural"],
+    ans: 2,
+    exp: "El nervio safeno es rama del nervio femoral (plexo lumbar), no del ciático. Por lo tanto, no se bloquea con un abordaje poplíteo. Inerva la cara medial de pierna y tobillo.",
+    tip: "Para cirugía que involucre maléolo medial, cara medial del pie, o incisiones mediales, SIEMPRE complementar el poplíteo con bloqueo de safeno.",
+    ref: "Benzon HT, Sharma S, Calimaran A. Comparison of the different approaches to saphenous nerve block. Anesthesiology. 2005;102(3):633-638."
+  },
+  // === CONCEPTOS GENERALES / FARMACOLOGÍA / COMPLICACIONES ===
+  {
+    cat: "general", catName: "Conceptos Generales",
+    q: "¿Cuál es el signo más temprano de toxicidad sistémica por anestésicos locales (LAST)?",
+    opts: ["Convulsiones tónico-clónicas", "Sabor metálico, acúfenos, adormecimiento perioral", "Bradicardia severa", "Paro cardíaco"],
+    ans: 1,
+    exp: "Los síntomas neurológicos prodrómicos (sabor metálico, acúfenos, adormecimiento circumoral, agitación, mareo) preceden a las convulsiones. La toxicidad sigue una progresión: SNC excitatorio → SNC depresivo → cardiovascular.",
+    tip: "Si tu paciente refiere <strong>sabor metálico o zumbido de oídos</strong> durante la inyección, DETENTE inmediatamente. Estos son tus señales de alerta temprana de inyección intravascular.",
+    ref: "Neal JM et al. ASRA Practice Advisory on Local Anesthetic Systemic Toxicity. Reg Anesth Pain Med. 2020;45(2):111-125."
+  },
+  {
+    cat: "general", catName: "Conceptos Generales",
+    q: "¿Cuál es el tratamiento de primera línea para LAST con compromiso cardiovascular?",
+    opts: ["Adrenalina IV en bolo", "Emulsión lipídica al 20% (Intralipid®)", "Amiodarona IV", "Cardioversión eléctrica"],
+    ans: 1,
+    exp: "La emulsión lipídica al 20% es el tratamiento específico para LAST: bolo de 1.5 mL/kg seguido de infusión a 0.25 mL/kg/min. Actúa como 'esponja lipídica' que secuestra el anestésico local del tejido cardíaco.",
+    tip: "Ten Intralipid® siempre disponible donde realices bloqueos. Protocolo: <strong>Bolo 1.5 mL/kg → infusión 0.25 mL/kg/min</strong>. Puede repetirse el bolo 1-2 veces. Dosis máxima total: 12 mL/kg.",
+    ref: "Neal JM et al. ASRA Practice Advisory on LAST. Reg Anesth Pain Med. 2020;45(2):111-125."
+  },
+  {
+    cat: "general", catName: "Conceptos Generales",
+    q: "¿Cuál es la dosis máxima recomendada de ropivacaína para bloqueo de nervio periférico?",
+    opts: ["2 mg/kg", "3 mg/kg", "4.5 mg/kg", "7 mg/kg"],
+    ans: 1,
+    exp: "La dosis máxima de ropivacaína es 3 mg/kg (sin epinefrina). A diferencia de la bupivacaína, la ropivacaína tiene menor cardiotoxicidad y mayor selectividad sensitiva sobre motora.",
+    tip: "Para un paciente de 70 kg: máximo 210 mg = 42 mL al 0.5% o 28 mL al 0.75%. Siempre calcula ANTES de preparar tu jeringa.",
+    ref: "Rosenberg PH, Veering BT, Urmey WF. Maximum recommended doses of local anesthetics. Reg Anesth Pain Med. 2004;29(6):564-575."
+  },
+  {
+    cat: "general", catName: "Conceptos Generales",
+    q: "¿Cuál es la imagen ecográfica típica de un nervio periférico en corte transversal?",
+    opts: ["Estructura anecoica redondeada", "Patrón en 'panal de abejas' (honeycomb) hiperecoico", "Estructura lineal hiperecoica continua", "Estructura hipoecoica homogénea"],
+    ans: 1,
+    exp: "En corte transversal, los nervios periféricos muestran un patrón fascicular en 'panal de abejas': múltiples áreas hipoecoicas (fascículos) rodeadas de tejido hiperecoico (epineuro/perineuro).",
+    tip: "Diferencia nervio vs tendón: el nervio tiene patrón fascicular y NO se mueve con la movilización del dedo/articulación. El tendón es más homogéneamente hiperecoico y se desliza con el movimiento.",
+    ref: "Gray AT. Ultrasound-Guided Regional Anesthesia. 2nd Ed. 2013; Cap. 2."
+  },
+  {
+    cat: "general", catName: "Conceptos Generales",
+    q: "¿Qué adyuvante perineural ha demostrado mayor prolongación de la analgesia en bloqueos periféricos?",
+    opts: ["Fentanilo", "Clonidina", "Dexametasona", "Ketamina"],
+    ans: 2,
+    exp: "La dexametasona perineural (4-8 mg) prolonga la duración del bloqueo sensitivo y motor en 8-12 horas adicionales comparada con el anestésico local solo. Su eficacia perineural vs IV sigue en debate, pero la evidencia favorece la administración perineural.",
+    tip: "Dexametasona 4 mg perineural es la dosis más estudiada. Precaución: es una solución con preservativo, algunos autores recomiendan usar la presentación sin preservativo para uso perineural.",
+    ref: "Albrecht E et al. Perineural dexamethasone for peripheral nerve blocks: a systematic review. Anaesthesia. 2015;70(1):71-83."
+  },
+  {
+    cat: "general", catName: "Conceptos Generales",
+    q: "¿Cuál es la técnica de aguja recomendada para bloqueos periféricos con ultrasonido?",
+    opts: ["Solo fuera de plano", "Solo en plano", "En plano para la mayoría de bloqueos", "No importa la orientación"],
+    ans: 2,
+    exp: "La técnica en plano (in-plane) es preferida porque permite visualizar toda la trayectoria de la aguja, incluyendo la punta, durante todo el procedimiento. Esto mejora la seguridad y precisión del depósito del AL.",
+    tip: "Regla de oro: <strong>si no ves la punta de tu aguja, no inyectes</strong>. La inyección ciega aumenta el riesgo de inyección intraneural o intravascular.",
+    ref: "Sites BD et al. Artifacts and Pitfall Errors Associated With Ultrasound-Guided Regional Anesthesia. Reg Anesth Pain Med. 2010;35(2 Suppl):S81-92."
+  },
+  {
+    cat: "general", catName: "Conceptos Generales",
+    q: "¿Cuál es la presión de inyección que sugiere inyección intraneural y obliga a detener la inyección?",
+    opts: ["> 5 psi", "> 10 psi", "> 15 psi (> 1 atm)", "> 25 psi"],
+    ans: 2,
+    exp: "Presiones de apertura > 15 psi (> 1 atmósfera) sugieren posición intraneural de la aguja. La inyección a alta presión dentro del nervio puede causar daño fascicular permanente.",
+    tip: "En la práctica clínica sin manómetro: si sientes <strong>resistencia inusual</strong> a la inyección o el paciente refiere <strong>dolor/parestesia aguda</strong>, DETENTE, retira unos milímetros y reintenta. Nunca fuerces la inyección.",
+    ref: "Gadsden JC et al. Opening Injection Pressure Consistently Detects Needle-Nerve Contact During Ultrasound-Guided Interscalene Brachial Plexus Block. Anesthesiology. 2014;120(5):1246-1253."
+  },
+  {
+    cat: "axilar", catName: "Axilar",
+    q: "¿Cuál es la posición del nervio radial respecto a la arteria axilar en el abordaje axilar?",
+    opts: ["Anterior y lateral", "Posterior y profundo (entre arteria y tríceps/húmero)", "Medial y superficial", "Superior y lateral"],
+    ans: 1,
+    exp: "El nervio radial se encuentra posterior (profundo) a la arteria axilar, entre la arteria y el músculo tríceps/húmero. Es el nervio más 'escondido' del abordaje axilar y frecuentemente requiere redirigir la aguja profundamente.",
+    tip: "Si la cirugía involucra territorio radial (dorso de mano, extensores) y usas bloqueo axilar, asegúrate de depositar AL específicamente detrás de la arteria. Un bloqueo perivascular simple puede fallar en este nervio.",
+    ref: "Christophe JL et al. Br J Anaesth. 2009;103(4):606-612."
+  },
+  {
+    cat: "popliteo", catName: "Poplíteo",
+    q: "¿Cuál abordaje del bloqueo poplíteo permite mantener al paciente en decúbito supino?",
+    opts: ["Abordaje posterior clásico", "Abordaje lateral", "Abordaje medial", "No existe tal abordaje"],
+    ans: 1,
+    exp: "El abordaje lateral del bloqueo poplíteo permite realizarlo con el paciente en decúbito supino, insertando la aguja desde el surco entre bíceps femoral y vasto lateral. Es útil en pacientes que no pueden ser posicionados en prono.",
+    tip: "Particularmente útil en trauma (paciente que no puede girar), obesos, o cuando necesitas acceso a la vía aérea simultáneamente.",
+    ref: "Hadzic A et al. A comparison of the posterior versus lateral approaches to the block of the sciatic nerve in the popliteal fossa. Anesthesiology. 1998;88(6):1480-1486."
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let answers = [];
+let catStats = { supra: {c:0,t:0}, axilar: {c:0,t:0}, popliteo: {c:0,t:0}, plexo: {c:0,t:0}, general: {c:0,t:0} };
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function init() {
+  shuffle(questions);
+  currentQ = 0;
+  score = 0;
+  answers = [];
+  catStats = { supra: {c:0,t:0}, axilar: {c:0,t:0}, popliteo: {c:0,t:0}, plexo: {c:0,t:0}, general: {c:0,t:0} };
+  document.getElementById('resultsArea').classList.remove('show');
+  document.getElementById('resultsArea').innerHTML = '';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const qa = questions[currentQ];
+  const total = questions.length;
+  const pct = ((currentQ) / total) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${currentQ + 1} / ${total}`;
+  document.getElementById('nextBtn').classList.remove('show');
+
+  const catClass = `cat-${qa.cat}`;
+  const letters = ['A','B','C','D'];
+  let html = `<div class="question-card">
+    <div class="q-category ${catClass}">${qa.catName}</div>
+    <div class="q-number">Pregunta ${currentQ + 1} de ${total}</div>
+    <div class="q-text">${qa.q}</div>
+    <div class="options">`;
+  qa.opts.forEach((opt, i) => {
+    html += `<button class="option-btn" onclick="selectAnswer(${i})" data-idx="${i}">
+      <span class="option-letter">${letters[i]}</span>
+      <span>${opt}</span>
+    </button>`;
+  });
+  html += `</div>
+    <div class="feedback" id="feedback"></div>
+  </div>`;
+  document.getElementById('quizArea').innerHTML = html;
+}
+
+function selectAnswer(idx) {
+  const qa = questions[currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+  const fb = document.getElementById('feedback');
+  const isCorrect = idx === qa.ans;
+
+  btns.forEach((btn, i) => {
+    btn.classList.add('disabled');
+    btn.onclick = null;
+    if (i === qa.ans) btn.classList.add('correct-answer');
+    if (i === idx && !isCorrect) btn.classList.add('wrong-answer');
+  });
+
+  catStats[qa.cat].t++;
+  if (isCorrect) {
+    score++;
+    catStats[qa.cat].c++;
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `<div class="feedback-title">✅ ¡Correcto!</div>
+      <div>${qa.exp}</div>
+      <div class="tip"><strong>💡 Tip clínico:</strong> ${qa.tip}</div>
+      <div class="ref">📖 ${qa.ref}</div>`;
+  } else {
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `<div class="feedback-title">❌ Incorrecto</div>
+      <div><strong>Respuesta correcta:</strong> ${qa.opts[qa.ans]}</div>
+      <div style="margin-top:8px;">${qa.exp}</div>
+      <div class="tip"><strong>💡 Tip clínico:</strong> ${qa.tip}</div>
+      <div class="ref">📖 ${qa.ref}</div>`;
+  }
+
+  answers.push({ q: qa.q, correct: isCorrect, userAns: qa.opts[idx], correctAns: qa.opts[qa.ans], cat: qa.catName });
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quizArea').innerHTML = '';
+  document.getElementById('nextBtn').classList.remove('show');
+  document.getElementById('progressBar').style.width = '100%';
+  document.getElementById('progressText').textContent = `${questions.length} / ${questions.length}`;
+
+  const pct = Math.round((score / questions.length) * 100);
+  let msg = '';
+  if (pct >= 90) msg = '🏆 ¡Excelente! Dominas los bloqueos regionales. ¡Tus residentes te deben ese café!';
+  else if (pct >= 70) msg = '👏 ¡Muy bien! Buen dominio, repasa los puntos débiles.';
+  else if (pct >= 50) msg = '📚 Aceptable, pero hay áreas de oportunidad importantes.';
+  else msg = '⚠️ Necesitas repasar. Revisa anatomía y técnica de cada bloqueo.';
+
+  // Category data
+  const cats = [
+    { name: 'Plexo Braquial', key: 'plexo', color: '#fbbf24' },
+    { name: 'Supraclavicular', key: 'supra', color: '#38bdf8' },
+    { name: 'Axilar', key: 'axilar', color: '#a78bfa' },
+    { name: 'Poplíteo', key: 'popliteo', color: '#f472b6' },
+    { name: 'Generales', key: 'general', color: '#34d399' }
+  ];
+
+  let html = `
+    <div class="results-header">
+      <div class="score-big">${pct}%</div>
+      <div class="score-label">${score} de ${questions.length} correctas</div>
+      <div class="score-msg">${msg}</div>
+    </div>
+
+    <!-- Bar chart by category -->
+    <div class="chart-section">
+      <div class="chart-title"><span>📊</span> Rendimiento por Categoría</div>
+      <div class="bar-chart">`;
+
+  cats.forEach(cat => {
+    const s = catStats[cat.key];
+    const p = s.t > 0 ? Math.round((s.c / s.t) * 100) : 0;
+    html += `<div class="bar-row">
+      <div class="bar-label">${cat.name}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${p}%;background:${cat.color};">${p}% (${s.c}/${s.t})</div>
+      </div>
+    </div>`;
+  });
+
+  html += `</div></div>
+
+    <!-- Donut chart -->
+    <div class="chart-section">
+      <div class="chart-title"><span>🎯</span> Resumen General</div>
+      <div class="donut-wrap">
+        <svg class="donut-svg" viewBox="0 0 42 42">
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="#1a2235" stroke-width="4"/>
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="#34d399" stroke-width="4"
+            stroke-dasharray="${pct} ${100 - pct}" stroke-dashoffset="25"
+            stroke-linecap="round" style="transition: stroke-dasharray 1s ease;"/>
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="#f87171" stroke-width="4"
+            stroke-dasharray="${100 - pct} ${pct}" stroke-dashoffset="${25 - pct}"
+            stroke-linecap="round" style="transition: stroke-dasharray 1s ease;"/>
+          <text x="21" y="22.5" text-anchor="middle" font-size="6" font-weight="700" fill="#e8ecf4" font-family="Plus Jakarta Sans">${pct}%</text>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#34d399;"></div>Correctas: ${score}</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f87171;"></div>Incorrectas: ${questions.length - score}</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#38bdf8;"></div>Total: ${questions.length} preguntas</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review -->
+    <div class="chart-section">
+      <div class="chart-title"><span>📋</span> Revisión de Respuestas</div>`;
+
+  answers.forEach((a, i) => {
+    const cls = a.correct ? 'review-correct' : 'review-wrong';
+    html += `<div class="review-card ${cls}">
+      <div class="review-q">${i + 1}. ${a.q} <span style="font-size:0.72rem;color:var(--text-dim);">[${a.cat}]</span></div>
+      <div class="review-answer">${a.correct
+        ? `<strong>✅ ${a.correctAns}</strong>`
+        : `<em>❌ Tu respuesta: ${a.userAns}</em><br><strong>✅ Correcta: ${a.correctAns}</strong>`
+      }</div>
+    </div>`;
+  });
+
+  html += `</div>
+    <button class="retry-btn" onclick="init()">🔄 Reintentar Examen</button>`;
+
+  const res = document.getElementById('resultsArea');
+  res.innerHTML = html;
+  res.classList.add('show');
+  res.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Start
+init();
+</script>
+</body>
+</html>

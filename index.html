@@ -26,6 +26,7 @@
     transition: all 0.25s ease; position: relative; overflow: hidden;
   }
   .card:hover { border-color: #3B82F6; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59,130,246,0.15); }
+  .card.r2-card:hover { border-color: #8B5CF6; box-shadow: 0 8px 30px rgba(139,92,246,0.15); }
   .card.disabled { opacity: 0.4; pointer-events: none; }
   
   .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -46,6 +47,7 @@
   
   .card-arrow { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #334155; transition: all 0.25s; }
   .card:hover .card-arrow { color: #3B82F6; right: 16px; }
+  .card.r2-card:hover .card-arrow { color: #8B5CF6; right: 16px; }
   
   .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1E293B; }
   .footer-text { font-size: 12px; color: #475569; line-height: 1.6; }
@@ -85,40 +87,56 @@
       <span class="card-grade r1">R1</span>
       <span class="card-status active">● Activo</span>
     </div>
-    <div class="card-title">Examen R1 — Marzo 2026</div>
-    <div class="card-desc">Escalas de vía aérea, Cormack-Lehane, clasificación ASA, Caprini y valoración pre-anestésica.</div>
+    <div class="card-title">Exámenes R1 — Marzo 2026</div>
+    <div class="card-desc">Vía aérea, evaluación preanestésica, clasificaciones ASA/Caprini y anestésicos locales.</div>
     <div class="card-meta">
-      <span>📝 25 preguntas</span>
-      <span>⏱ ~15 min</span>
+      <span>📝 2 exámenes</span>
       <span>📊 Con calificación</span>
+    </div>
+    <div class="card-arrow">→</div>
+  </a>
+
+  <a href="R2/" class="card r2-card">
+    <div class="card-header">
+      <span class="card-grade r2">R2</span>
+      <span class="card-status active">● Activo</span>
+    </div>
+    <div class="card-title">Exámenes R2 — Marzo 2026</div>
+    <div class="card-desc">Anestesia regional, tipos de bloqueo, anatomía y técnicas guiadas por ultrasonido.</div>
+    <div class="card-meta">
+      <span>📝 1 examen</span>
+      <span>🫀 Anestesia Regional</span>
     </div>
     <div class="card-arrow">→</div>
   </a>
 
   <div class="card disabled">
     <div class="card-header">
-      <span class="card-grade r2">R2</span>
-      <span class="card-status soon">Próximamente</span>
-    </div>
-    <div class="card-title">Examen R2 — Marzo 2026</div>
-    <div class="card-desc">Temas por definir.</div>
-    <div class="card-meta">
-      <span>📝 25 preguntas</span>
-    </div>
-  </div>
-
-  <div class="card disabled">
-    <div class="card-header">
       <span class="card-grade r3">R3</span>
       <span class="card-status soon">Próximamente</span>
     </div>
-    <div class="card-title">Examen R3 — Marzo 2026</div>
+    <div class="card-title">Exámenes R3 — Marzo 2026</div>
     <div class="card-desc">Temas por definir.</div>
     <div class="card-meta">
-      <span>📝 25 preguntas</span>
+      <span>📝 Próximamente</span>
     </div>
   </div>
+<div class="section-label" style="margin-top:20px;">Módulos interactivos</div>
 
+  <a href="EcoEstudio/" class="card">
+    <div class="card-header">
+      <span class="card-grade general">EcoEstudio</span>
+      <span class="card-status active">● Activo</span>
+    </div>
+    <div class="card-title">EcoEstudio — Ultrasonido en Anestesia Regional</div>
+    <div class="card-desc">Identifica estructuras anatómicas en la ventana ecográfica de bloqueos nerviosos periféricos.</div>
+    <div class="card-meta">
+      <span>🔊 2 bloqueos disponibles</span>
+      <span>🎯 Juego interactivo</span>
+    </div>
+    <div class="card-arrow">→</div>
+  </a>
+ 
   <div class="footer">
     <div class="footer-text">
       Coordinación de Anestesiología — Turno Vespertino<br>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoEstudio — AnesthTR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --bg-deep: #0B0F1A;
+      --bg-card: #111827;
+      --bg-card-hover: #1A2332;
+      --border: #1E2A3A;
+      --border-hover: #2D4A6F;
+      --text-primary: #F1F5F9;
+      --text-secondary: #8B9BB4;
+      --text-muted: #4A5568;
+      --accent-cyan: #22D3EE;
+      --accent-blue: #3B82F6;
+      --accent-emerald: #10B981;
+      --accent-amber: #F59E0B;
+      --accent-violet: #8B5CF6;
+      --glow-cyan: rgba(34, 211, 238, 0.15);
+      --glow-blue: rgba(59, 130, 246, 0.12);
+    }
+
+    body {
+      background: var(--bg-deep);
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        radial-gradient(ellipse 600px 400px at 20% 20%, rgba(34, 211, 238, 0.04), transparent),
+        radial-gradient(ellipse 500px 500px at 80% 80%, rgba(59, 130, 246, 0.03), transparent),
+        radial-gradient(ellipse 400px 300px at 50% 50%, rgba(139, 92, 246, 0.02), transparent);
+      animation: bgDrift 20s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes bgDrift {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(-30px, -20px) rotate(2deg); }
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 48px 20px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header { text-align: center; margin-bottom: 48px; }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34, 211, 238, 0.08);
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 24px;
+      animation: fadeDown 0.6s ease-out;
+    }
+
+    .header-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .header-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      animation: fadeDown 0.5s ease-out;
+      filter: drop-shadow(0 0 20px rgba(34, 211, 238, 0.3));
+    }
+
+    .header-title {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #F1F5F9 30%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+      animation: fadeDown 0.6s ease-out;
+    }
+
+    .header-section {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent-cyan);
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      animation: fadeDown 0.7s ease-out;
+    }
+
+    .header-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 440px;
+      margin: 0 auto;
+      animation: fadeDown 0.8s ease-out;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 16px;
+      padding-left: 2px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    .game-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 24px;
+      margin-bottom: 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      animation: cardIn 0.5s ease-out backwards;
+    }
+
+    .game-card:nth-child(2) { animation-delay: 0.1s; }
+    .game-card:nth-child(3) { animation-delay: 0.2s; }
+    .game-card:nth-child(4) { animation-delay: 0.3s; }
+    .game-card:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .game-card[data-color="cyan"]::before     { background: radial-gradient(ellipse at 20% 50%, var(--glow-cyan), transparent 70%); }
+    .game-card[data-color="blue"]::before     { background: radial-gradient(ellipse at 20% 50%, var(--glow-blue), transparent 70%); }
+    .game-card[data-color="emerald"]::before  { background: radial-gradient(ellipse at 20% 50%, rgba(16, 185, 129, 0.1), transparent 70%); }
+    .game-card[data-color="amber"]::before    { background: radial-gradient(ellipse at 20% 50%, rgba(245, 158, 11, 0.1), transparent 70%); }
+    .game-card[data-color="violet"]::before   { background: radial-gradient(ellipse at 20% 50%, rgba(139, 92, 246, 0.1), transparent 70%); }
+    .game-card[data-color="rose"]::before     { background: radial-gradient(ellipse at 20% 50%, rgba(244, 63, 94, 0.1), transparent 70%); }
+
+    .game-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .game-card:hover::before { opacity: 1; }
+    .game-card:active { transform: translateY(0); transition-duration: 0.1s; }
+
+    .card-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .game-card[data-color="cyan"]    .card-icon { background: rgba(34, 211, 238, 0.1);  border: 1px solid rgba(34, 211, 238, 0.2); }
+    .game-card[data-color="blue"]    .card-icon { background: rgba(59, 130, 246, 0.1);  border: 1px solid rgba(59, 130, 246, 0.2); }
+    .game-card[data-color="emerald"] .card-icon { background: rgba(16, 185, 129, 0.1);  border: 1px solid rgba(16, 185, 129, 0.2); }
+    .game-card[data-color="amber"]   .card-icon { background: rgba(245, 158, 11, 0.1);  border: 1px solid rgba(245, 158, 11, 0.2); }
+    .game-card[data-color="violet"]  .card-icon { background: rgba(139, 92, 246, 0.1);  border: 1px solid rgba(139, 92, 246, 0.2); }
+    .game-card[data-color="rose"]    .card-icon { background: rgba(244, 63, 94, 0.1);   border: 1px solid rgba(244, 63, 94, 0.2); }
+
+    .card-content {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .card-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    .tag-active { background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald); }
+    .tag-soon   { background: rgba(245, 158, 11, 0.12);  color: var(--accent-amber); }
+
+    .card-arrow {
+      font-size: 18px;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .game-card:hover .card-arrow { color: var(--text-secondary); transform: translateX(4px); }
+
+    .game-card.disabled { opacity: 0.5; pointer-events: none; }
+
+    .stats-bar {
+      display: flex;
+      gap: 1px;
+      background: var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 32px;
+      animation: cardIn 0.6s ease-out backwards;
+      animation-delay: 0.3s;
+    }
+
+    .stat-item {
+      flex: 1;
+      background: var(--bg-card);
+      padding: 16px 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-bottom: 32px;
+      transition: color 0.2s ease;
+      animation: fadeDown 0.4s ease-out;
+    }
+
+    .back-link:hover { color: var(--text-secondary); }
+
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .footer-text a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-text a:hover { color: var(--accent-cyan); }
+
+    @media (max-width: 480px) {
+      .container { padding: 32px 16px 48px; }
+      .header-title { font-size: 28px; }
+      .game-card { padding: 18px 16px; gap: 14px; }
+      .card-icon { width: 44px; height: 44px; font-size: 20px; }
+      .stats-bar { border-radius: 10px; }
+      .stat-value { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <a href="../index.html" class="back-link">← Volver a AnesthTR</a>
+
+    <div class="header">
+      <div class="header-badge">Módulo interactivo</div>
+      <div class="header-icon">🔊</div>
+      <div class="header-title">EcoEstudio</div>
+      <div class="header-section">// Ultrasonido en Anestesia Regional</div>
+      <div class="header-subtitle">Identifica las estructuras anatómicas en la ventana ecográfica de cada bloqueo nervioso periférico.</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Disponibles</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">4</div>
+        <div class="stat-label">Próximamente</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">7</div>
+        <div class="stat-label">Total planeado</div>
+      </div>
+    </div>
+
+    <!-- Disponibles -->
+    <div class="section-label">Bloqueos disponibles</div>
+
+    <a href="supraclavicular-final.html" class="game-card" data-color="cyan">
+      <div class="card-icon">🎯</div>
+      <div class="card-content">
+        <div class="card-title">Bloqueo Supraclavicular</div>
+        <div class="card-desc">Identifica arteria subclavia, primera costilla, pleura y plexo braquial en la ventana supraclavicular.</div>
+        <span class="card-tag tag-active">Disponible</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a href="axilar-final.html" class="game-card" data-color="blue">
+      <div class="card-icon">🎯</div>
+      <div class="card-content">
+        <div class="card-title">Bloqueo Axilar</div>
+        <div class="card-desc">Localiza nervios mediano, cubital, radial y musculocutáneo alrededor de la arteria axilar.</div>
+        <span class="card-tag tag-active">Disponible</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a href="plexo-braquial.html" class="game-card" data-color="rose">
+      <div class="card-icon">🧠</div>
+      <div class="card-content">
+        <div class="card-title">Plexo Braquial Interactivo</div>
+        <div class="card-desc">Mapa visual con conexiones, drag & drop por niveles y flash cards. Raíces → Troncos → Divisiones → Fascículos → Ramas.</div>
+        <span class="card-tag tag-active">Disponible</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <!-- Próximamente -->
+    <div class="section-label" style="margin-top:32px;">Próximamente</div>
+
+    <div class="game-card disabled" data-color="emerald">
+      <div class="card-icon">🔒</div>
+      <div class="card-content">
+        <div class="card-title">Bloqueo Interescalénico</div>
+        <div class="card-desc">Raíces C5-C6-C7 entre escalenos anterior y medio.</div>
+        <span class="card-tag tag-soon">En desarrollo</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="game-card disabled" data-color="amber">
+      <div class="card-icon">🔒</div>
+      <div class="card-content">
+        <div class="card-title">Bloqueo Infraclavicular</div>
+        <div class="card-desc">Cordones lateral, posterior y medial rodeando la arteria axilar.</div>
+        <span class="card-tag tag-soon">En desarrollo</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="game-card disabled" data-color="violet">
+      <div class="card-icon">🔒</div>
+      <div class="card-content">
+        <div class="card-title">Bloqueo Femoral</div>
+        <div class="card-desc">Nervio femoral lateral a la arteria femoral bajo la fascia ilíaca.</div>
+        <span class="card-tag tag-soon">En desarrollo</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="game-card disabled" data-color="cyan">
+      <div class="card-icon">🔒</div>
+      <div class="card-content">
+        <div class="card-title">Bloqueo Ciático Poplíteo</div>
+        <div class="card-desc">División del nervio ciático en tibial y peroneo común en la fosa poplítea.</div>
+        <span class="card-tag tag-soon">En desarrollo</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-text">
+        Coordinación de Anestesiología — Turno Vespertino<br>
+        DFC Medical Apps<br><br>
+        Desarrollado por <a href="https://ropicalc.com" target="_blank">DFC Medical Apps</a>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
