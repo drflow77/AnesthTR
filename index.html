@@ -12,8 +12,9 @@
   .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
   
   .logo { text-align: center; margin-bottom: 32px; }
-  .logo-icon { font-size: 56px; margin-bottom: 12px; }
-  .logo-title { font-size: 28px; font-weight: 800; color: #F1F5F9; letter-spacing: -0.03em; }
+  .logo-brand { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 8px; }
+  .logo-svg { width: 64px; height: 64px; flex-shrink: 0; }
+  .logo-title { font-size: 32px; font-weight: 800; color: #F1F5F9; letter-spacing: -0.03em; }
   .logo-subtitle { font-size: 14px; color: #64748B; margin-top: 4px; }
   .logo-badge { display: inline-block; background: linear-gradient(135deg, #3B82F6, #8B5CF6); color: #FFF; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-top: 12px; letter-spacing: 0.05em; }
   
@@ -58,8 +59,26 @@
 
 <div class="container">
   <div class="logo">
-    <div class="logo-icon">🩺</div>
-    <div class="logo-title">AnesthTR</div>
+    <div class="logo-brand">
+      <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60B8F5"/>
+            <stop offset="100%" stop-color="#1A52C8"/>
+          </linearGradient>
+        </defs>
+        <polygon points="93,50 71.5,87.3 28.5,87.3 7,50 28.5,12.7 71.5,12.7" fill="url(#hg)"/>
+        <g stroke="white" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 27,50 C 37,50 44,34 63,34"/>
+          <path d="M 27,50 L 63,50"/>
+          <path d="M 27,50 C 37,50 44,66 63,66"/>
+        </g>
+        <circle cx="67" cy="34" r="4.5" fill="white"/>
+        <circle cx="67" cy="50" r="4.5" fill="white"/>
+        <circle cx="67" cy="66" r="4.5" fill="white"/>
+      </svg>
+      <div class="logo-title">AnesthTR</div>
+    </div>
     <div class="logo-subtitle">Evaluaciones de Anestesiología · DFC Medical Apps</div>
     <div class="logo-badge">TURNO VESPERTINO</div>
   </div>
