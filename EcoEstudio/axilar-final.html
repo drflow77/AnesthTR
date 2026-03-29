@@ -184,10 +184,18 @@ window.addEventListener("load",()=>{buildOverlays();renderStudy();});
       var r=clone.getBoundingClientRect();
       clone.style.left=(t.clientX-r.width/2)+'px';
       clone.style.top=(t.clientY-r.height/2)+'px';
+      // highlight drop zone under finger
+      clone.style.display='none';
+      var under=document.elementFromPoint(t.clientX,t.clientY);
+      clone.style.display='';
+      var overDz=under?under.closest('.dz'):null;
+      document.querySelectorAll('.dz.over').forEach(function(z){if(z!==overDz)z.classList.remove('over');});
+      if(overDz&&!overDz.classList.contains('correct'))overDz.classList.add('over');
     }
   },{passive:false});
   document.addEventListener('touchend',function(e){
     if(!clone)return;
+    document.querySelectorAll('.dz.over').forEach(function(z){z.classList.remove('over');});
     var dragging=document.querySelector('.chip.dragging');
     if(dragging)dragging.classList.remove('dragging');
     clone.remove();clone=null;
