@@ -82,6 +82,14 @@ main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:24px 20p
 .wbtn{margin-top:6px;background:var(--accent);color:#000;border:none;border-radius:10px;padding:11px 28px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
 .wbtn:hover{transform:scale(1.04);box-shadow:0 0 20px rgba(0,212,255,.4);}
 .wbtn2{background:var(--panel);color:var(--accent);border:1px solid var(--accent);}
+
+@media (max-width: 650px) {
+  .game-layout { grid-template-columns: 1fr; }
+  .right-panel { order: 2; }
+  .usg-panel { order: 1; }
+  main { padding: 16px 12px; }
+  .block-title h1 { font-size: 15px; }
+}
 </style>
 </head>
 <body>
