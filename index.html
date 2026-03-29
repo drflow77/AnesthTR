@@ -12,9 +12,10 @@
   .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
   
   .logo { text-align: center; margin-bottom: 32px; }
-  .logo-banner { max-width: 320px; width: 100%; height: auto; margin-bottom: 8px; }
-  .logo-subtitle { font-size: 14px; color: #64748B; margin-top: 4px; }
-  .logo-badge { display: inline-block; background: linear-gradient(135deg, #3B82F6, #8B5CF6); color: #FFF; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-top: 12px; letter-spacing: 0.05em; }
+  .logo-brand { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 6px; }
+  .logo-icon { width: 72px; height: 72px; flex-shrink: 0; }
+  .logo-title { font-size: 36px; font-weight: 800; color: #F1F5F9; letter-spacing: -0.03em; }
+  .logo-subtitle { font-size: 14px; color: #64748B; }
   
   .section-label { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; padding-left: 4px; }
   
@@ -57,9 +58,30 @@
 
 <div class="container">
   <div class="logo">
-    <img src="logo.png" class="logo-banner" alt="AnesthTR"/>
+    <div class="logo-brand">
+      <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#70CAFF"/>
+            <stop offset="100%" stop-color="#1845C8"/>
+          </linearGradient>
+        </defs>
+        <polygon points="93,50 71.5,87.3 28.5,87.3 7,50 28.5,12.7 71.5,12.7" fill="url(#hg)"/>
+        <g stroke="white" stroke-width="4.5" fill="none" stroke-linecap="round">
+          <!-- S-curve backbone: bottom-left to upper-right (upper branch) -->
+          <path d="M 27,64 C 36,64 38,51 45,50 C 52,49 54,36 63,36"/>
+          <!-- Middle branch: from S midpoint rightward -->
+          <path d="M 45,50 L 68,50"/>
+          <!-- Lower branch: from S start rightward -->
+          <path d="M 27,64 L 68,64"/>
+        </g>
+        <circle cx="67" cy="36" r="4.5" fill="white"/>
+        <circle cx="72" cy="50" r="4.5" fill="white"/>
+        <circle cx="72" cy="64" r="4.5" fill="white"/>
+      </svg>
+      <div class="logo-title">AnesthTR</div>
+    </div>
     <div class="logo-subtitle">Evaluaciones de Anestesiología · DFC Medical Apps</div>
-    <div class="logo-badge">TURNO VESPERTINO</div>
   </div>
 
   <div class="section-label">Trivia general</div>
