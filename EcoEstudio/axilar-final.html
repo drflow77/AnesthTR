@@ -147,5 +147,52 @@ function showWin(){const acc=Math.round((exam.correct/exam.tries)*100)||100;docu
 function restartExam(){document.getElementById("win").classList.remove("show");setMode("exam");}
 window.addEventListener("load",()=>{buildOverlays();renderStudy();});
 </script>
+
+<div style="text-align:center; padding: 16px 24px 8px;"><p style="margin-top:12px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:11px; color:#94a3b8; line-height:1.6;">⚠️ Este sitio tiene fines exclusivamente educativos. La información aquí presentada no sustituye el juicio clínico ni las recomendaciones de sociedades médicas vigentes. Siempre consulta fuentes primarias antes de tomar decisiones clínicas.</p></div>
+
+<script>
+// Touch support — iPad/iOS drag & drop
+(function(){
+  var clone=null,touchId=null;
+  document.addEventListener('touchstart',function(e){
+    var chip=e.target.closest('.chip');
+    if(!chip||chip.classList.contains('used'))return;
+    e.preventDefault();
+    var touch=e.changedTouches[0];
+    touchId=touch.identifier;
+    exam.dragging=chip.dataset.id;
+    chip.classList.add('dragging');
+    clone=chip.cloneNode(true);
+    var r=chip.getBoundingClientRect();
+    Object.assign(clone.style,{position:'fixed',opacity:'0.9',pointerEvents:'none',zIndex:'9999',margin:'0',width:r.width+'px',left:(touch.clientX-r.width/2)+'px',top:(touch.clientY-r.height/2)+'px'});
+    document.body.appendChild(clone);
+  },{passive:false});
+  document.addEventListener('touchmove',function(e){
+    if(!clone)return;
+    e.preventDefault();
+    for(var i=0;i<e.changedTouches.length;i++){
+      var t=e.changedTouches[i];
+      if(t.identifier!==touchId)continue;
+      var r=clone.getBoundingClientRect();
+      clone.style.left=(t.clientX-r.width/2)+'px';
+      clone.style.top=(t.clientY-r.height/2)+'px';
+    }
+  },{passive:false});
+  document.addEventListener('touchend',function(e){
+    if(!clone)return;
+    var dragging=document.querySelector('.chip.dragging');
+    if(dragging)dragging.classList.remove('dragging');
+    clone.remove();clone=null;
+    for(var i=0;i<e.changedTouches.length;i++){
+      var t=e.changedTouches[i];
+      if(t.identifier!==touchId)continue;
+      var el=document.elementFromPoint(t.clientX,t.clientY);
+      if(el){var dz=el.closest('.dz');if(dz){var zoneId=dz.dataset.id;var struct=S.find(function(s){return s.id===zoneId;});if(struct)onDrop(zoneId,struct);}}
+      break;
+    }
+    exam.dragging=null;touchId=null;
+  },{passive:false});
+})();
+</script>
 </body>
 </html>
