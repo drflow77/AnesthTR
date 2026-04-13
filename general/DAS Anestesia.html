@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAS 2025 - Guía y Simulador de Vía Aérea</title>
+
+    <!-- Fonts & Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Tailwind via CDN for standalone -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        glassBg: 'rgba(15, 23, 42, 0.7)',
+                        glassBorder: 'rgba(255, 255, 255, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #070b14;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            transition: background 0.8s ease;
+        }
+
+        .bg-normal {
+            background: radial-gradient(ellipse at top, #0d1b2a, #070b14, #000000);
+        }
+
+        .bg-danger {
+            background: radial-gradient(ellipse at top, rgba(100, 10, 10, 0.4), #070b14, #000000);
+        }
+
+        .glass-panel {
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Simulator Styles */
+        .chat-scroll {
+            scroll-behavior: smooth;
+        }
+
+        .message-row {
+            display: flex;
+            width: 100%;
+            animation: fadeIn 0.4s ease forwards;
+            margin-bottom: 20px;
+        }
+
+        .bubble {
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 85%;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #94a3b8;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* Pulse for CICO */
+        .danger-pulse {
+            animation: redpulse 2s infinite;
+        }
+
+        @keyframes redpulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        /* Hide Views */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+
+<body id="app-body" class="bg-normal min-h-screen">
+
+    <!-- Navbar -->
+    <header class="sticky top-0 z-50 w-full border-b border-white/10 glass-panel">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div id="logo-icon"
+                    class="p-2.5 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-500 shadow-lg text-white">
+                    <i class="fa-solid fa-lungs w-5 text-center"></i>
+                </div>
+                <h1 class="font-heading font-black text-xl tracking-tight text-white hidden sm:block">
+                    DAS 2025 <span class="text-cyan-400 font-bold" id="logo-text">Pro</span>
+                </h1>
+            </div>
+            <nav class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                <button onclick="navigate('algoritmo')" id="nav-algoritmo"
+                    class="nav-btn px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-white hover:bg-white/5 flex items-center">
+                    <i class="fa-solid fa-code-branch mr-2"></i> <span class="hidden sm:inline">Algoritmo</span>
+                </button>
+                <button onclick="navigate('simulador')" id="nav-simulador"
+                    class="nav-btn px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-white hover:bg-white/5 flex items-center">
+                    <i class="fa-solid fa-brain mr-2"></i> <span class="hidden sm:inline">Simulador</span>
+                </button>
+                <button onclick="navigate('quiz')" id="nav-quiz"
+                    class="nav-btn px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-white hover:bg-white/5 flex items-center">
+                    <i class="fa-solid fa-clipboard-question mr-2"></i> <span class="hidden sm:inline">Quiz</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container mx-auto px-4 py-8 max-w-4xl relative">
+
+        <!-- =============================== -->
+        <!-- VIEW: ALGORITMO                 -->
+        <!-- =============================== -->
+        <div id="view-algoritmo" class="view">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-3xl font-heading font-bold text-white">Vía Aérea Difícil</h2>
+                    <p class="text-slate-400">Paso a paso de la Guía Médica.</p>
+                </div>
+                <button onclick="renderAlgoritmo('plan-a')"
+                    class="px-4 py-2 border border-slate-700 rounded-lg text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> Reiniciar
+                </button>
+            </div>
+
+            <!-- Progress bubbles -->
+            <div class="flex justify-between items-center px-4 py-4 glass-panel rounded-2xl mb-6" id="alg-progress">
+                <!-- JS Rendered -->
+            </div>
+
+            <!-- Main Card -->
+            <div id="alg-card" class="glass-panel rounded-2xl overflow-hidden border-2 border-white/5">
+                <!-- JS Rendered -->
+            </div>
+        </div>
+
+        <!-- =============================== -->
+        <!-- VIEW: SIMULADOR                 -->
+        <!-- =============================== -->
+        <div id="view-simulador" class="view h-[calc(100vh-140px)]">
+            <div class="flex items-center justify-between mb-4 shrink-0">
+                <div>
+                    <h2 class="text-3xl font-heading font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-heart-pulse text-cyan-400"></i> Caso Clínico
+                    </h2>
+                    <p class="text-slate-400">Actúa bajo presión. Fallar enseña.</p>
+                </div>
+                <button onclick="initSimulador()"
+                    class="px-4 py-2 border border-slate-700 rounded-lg text-slate-300 hover:bg-slate-800">
+                    Reiniciar
+                </button>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="flex-1 flex flex-col glass-panel rounded-2xl overflow-hidden border border-white/10"
+                style="min-height: 0;">
+                <div id="sim-chat" class="flex-1 overflow-y-auto p-6 chat-scroll">
+                    <!-- JS Rendered Messages -->
+                </div>
+
+                <!-- Choices -->
+                <div id="sim-choices" class="p-4 bg-slate-900/90 border-t border-white/10 backdrop-blur-xl">
+                    <!-- JS Rendered Buttons -->
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================== -->
+        <!-- VIEW: QUIZ                      -->
+        <!-- =============================== -->
+        <div id="view-quiz" class="view max-w-3xl mx-auto w-full">
+            <div class="text-center mb-8">
+                <h2 class="text-4xl font-heading font-bold text-white mb-2">Quiz DAS 2025</h2>
+                <p class="text-slate-400 text-lg">Ponte a prueba.</p>
+            </div>
+
+            <div id="quiz-container">
+                <!-- JS Rendered -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- LOGIC & DATA SCRIPT -->
+    <script>
+        // ============================================
+        // 1. DATA (CONSTANTS)
+        // ============================================
+        const DAS_ALGORITHM = {
+            'plan-a': {
+                id: 'plan-a', plan: 'A',
+                title: 'Plan A: Intubación Traqueal',
+                description: 'Preoxigenar. Minimizar intentos. Videolaringoscopía inicial.',
+                actions: ['Máximo 3 intentos (más 1 por un experto).', 'Usar Videolaringoscopía (VL) como primera línea.', 'Mantener anestesia y relajante muscular.'],
+                warnings: ['Cuidado con desaturación de oxígeno rápida.'],
+                next: [{ label: 'Intubación Exitosa', id: 'success' }, { label: 'Intubación Fallida', id: 'plan-b' }]
+            },
+            'plan-b': {
+                id: 'plan-b', plan: 'B',
+                title: 'Plan B: Inserción de DSG',
+                description: 'Inserción de Dispositivo Supraglótico de rescate.',
+                actions: ['Insertar DSG (preferiblemente de 2ª generación).', 'Máximo 2 intentos.', 'Confirmar ventilación y oxigenación.'],
+                warnings: ['Si el paciente no puede oxigenarse con DSG, no pierda tiempo.'],
+                next: [{ label: 'DSG Exitoso', id: 'success' }, { label: 'DSG Fallido', id: 'plan-c' }]
+            },
+            'plan-c': {
+                id: 'plan-c', plan: 'C',
+                title: 'Plan C: Ventilación Mascarilla',
+                description: 'Último recurso de oxigenación transitoria.',
+                actions: ['Optimizar técnica a 2 manos y Guedel.', 'Considerar despertar al paciente si las condiciones lo permiten.'],
+                warnings: ['¡Si NO ventila, prepárese de inmediato para la vía quirúrgica!'],
+                next: [{ label: 'Ventilación Exitosa', id: 'success' }, { label: 'Ventilación Fallida (CICO)', id: 'plan-d' }]
+            },
+            'plan-d': {
+                id: 'plan-d', plan: 'D',
+                title: 'Plan D: FONA de Emergencia',
+                description: 'Acceso Frontal del Cuello. ESCENARIO C.I.C.O.',
+                actions: ['DECLARAR EN VOZ ALTA: "No se puede intubar, No se puede oxigenar".', 'Técnica Bisturí-Bujía-Tubo (Scalpel-Bougie-Tube).'],
+                warnings: ['Emergencia a vida o muerte. Actuar sin dudas.'],
+                isEmergency: true,
+                next: [{ label: 'Vía Asegurada Exitosamente', id: 'success' }]
+            },
+            'success': {
+                id: 'success', plan: 'SUCCESS',
+                title: '¡Vía Aérea Controlada!',
+                description: 'La crisis está temporalmente contenida.',
+                actions: ['Confirmar EtCO2.', 'Preparar plan post-intubación / post-despertar.', 'Hacer *Debriefing* con el equipo sobre el escenario.'],
+                next: null
+            }
+        };
+
+        const DAS_QUIZ = [
+            {
+                q: '¿Cuál es el número límite de intentos de intubación en el Plan A?',
+                opts: ['2 intentos', '3 intentos (+1 experto)', 'Ilimitados hasta que sature mal', 'SOLO 1 intento'], ans: 1,
+                exp: 'La DAS recomienda encarecidamente limitar los repetidos intentos. Máximo 3, con posibilidad de que alguien más hábil intente 1 vez más.'
+            },
+            {
+                q: 'La técnica gold standard de rescate por anestesiólogo en el Plan D es...',
+                opts: ['Cricotiroidotomía con punzon (aguja)', 'Técnica Quirúrgica (Bisturí-Bougie-Tubo)', 'Traqueostomía Percutánea', 'Combitubo'], ans: 1,
+                exp: 'La técnica Quirúrgica de Scalpel-Bougie-Tube es la más enseñada en simuladores por la DAS por su alta tasa de éxito.'
+            },
+            {
+                q: 'Si el paciente no puede intubarse ni oxigenarse, gritas...',
+                opts: ['¡Llamen a terapia intensiva!', '¡Prepárense para despertar!', '¡Declaración CICO!', '¡Código Azul!'], ans: 2,
+                exp: 'Declarar CICO (Cannot Intubate, Cannot Oxygenate) cambia el modelo mental del equipo de quirófano al protocolo de rescate agudo.'
+            }
+        ];
+
+        const DAS_STORY = {
+            start: {
+                text: "<strong>CASO (PLAN A):</strong><br><br>Hombre 45 años, IMC de 42, barba y obvio Mallampati IV. Cero visibilidad en inducción de secuencia rápida con hoja Macintosh.<br>¿Qué haces?",
+                choices: [
+                    { label: "A", text: "Probar otras 4 hojas diferentes e insistir hasta entrar.", target: "mistake1" },
+                    { label: "B", text: "Asumir vía difícil, limitar intentos y pedir Videolaringoscopía de urgencia.", target: "fase2" }
+                ], error: false
+            },
+            mistake1: {
+                text: "<strong>¡Sangrado! Error.</strong><br>Forzar intubación destruye la anatomía (sangrado, edema), condenando al paciente a que los planes subsiguientes también fallen.",
+                choices: [{ label: "↺", text: "Regresar e intentar de nuevo.", target: "start" }], error: true
+            },
+            fase2: {
+                text: "<strong>Correcto (PLAN B):</strong><br>El 2do intento con videolaringoscopía falla por anatomía distorsionada. SpO2 en 85%.<br>¿Siguiente paso de inmediato?",
+                choices: [
+                    { label: "A", text: "Despertar. Administrar sugammadex masivo.", target: "mistake2" },
+                    { label: "B", text: "Insertar Dispositivo Supraglótico (DSG) de 2da generación para recuperar reserva.", target: "fase3" }
+                ], error: false
+            },
+            mistake2: {
+                text: "<strong>Demorado. Error.</strong><br>Un obeso con abdomen agudo y SpO2 85% no oxigenará de forma espontánea a tiempo. Debes rescatar el nivel de O2 instertando instrumento.",
+                choices: [{ label: "↺", text: "Regresar.", target: "fase2" }], error: true
+            },
+            fase3: {
+                text: "<strong>Correcto (PLAN C):</strong><br>DSG falla masivamente. No funciona ventilación. Entras a Plan C: Mascarilla facial. <br>Pides sellado a 2 manos... ¡Tampoco expande! ¡Oximetría en 60%!",
+                choices: [
+                    { label: "A", text: "🚨 DECLARAR CICO a la sala y pedir cuchillo / Bisturí 🚨", target: "success" },
+                    { label: "B", text: "Tratar de meter de nuevo un tubo a ciegas rápidamente.", target: "mistake3" }
+                ], error: false
+            },
+            mistake3: {
+                text: "<strong>¡Muerte Inminente! Error.</strong><br>Regresar al Plan A con SpO2 de 60% es una sentencia. Tienes segundos antes del paro cardíaco.",
+                choices: [{ label: "↺", text: "Volver atrás rápido.", target: "fase3" }], error: true
+            },
+            success: {
+                text: "<strong>¡VIDA SALVADA! 🏆</strong><br>Realizaste FONA (Acceso Frontal del Cuello). Hiciste la incisión cricotiroidea, metiste la guía elástica (bujía) y pasaste un Tubo 6.0mm. El paciente ventila.",
+                choices: [{ label: "↺", text: "Finalizar.", target: "start" }], error: false, critical: true
+            }
+        };
+
+        // ============================================
+        // 2. STATE & CORE LOGIC
+        // ============================================
+        let activeTab = 'algoritmo';
+
+        // Audio 
+        function playWarningAlert(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let msg = new SpeechSynthesisUtterance(text);
+                msg.lang = 'es-MX';
+                msg.pitch = 0.9;
+                window.speechSynthesis.speak(msg);
+            }
+        }
+
+        // Navigation
+        function navigate(tabName) {
+            activeTab = tabName;
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${tabName}`).classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`nav-${tabName}`).classList.add('active');
+
+            // Background reset
+            document.body.className = 'bg-normal min-h-screen';
+            const icon = document.getElementById('logo-icon');
+            icon.className = 'p-2.5 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-500 shadow-lg text-white';
+            document.getElementById('logo-text').className = 'text-cyan-400 font-bold';
+
+            if (tabName === 'algoritmo') renderAlgoritmo('plan-a');
+            if (tabName === 'simulador') initSimulador();
+            if (tabName === 'quiz') renderQuiz();
+        }
+
+        // ============================================
+        // 3. ALGORITMO LOGIC
+        // ============================================
+        function renderAlgoritmo(stepId) {
+            const step = DAS_ALGORITHM[stepId];
+
+            // Handle CICO Emergency UI
+            if (step.isEmergency) {
+                document.body.className = 'bg-danger min-h-screen';
+                const icon = document.getElementById('logo-icon');
+                icon.className = 'p-2.5 rounded-xl bg-red-600 shadow-[0_0_20px_rgba(239,68,68,0.7)] text-white danger-pulse';
+                document.getElementById('logo-text').className = 'text-red-500 font-bold';
+                playWarningAlert("Atención. Escenario CICO declarado. Vía aérea quirúrgica requerida inmediatamente.");
+            } else {
+                document.body.className = 'bg-normal min-h-screen';
+            }
+
+            // Progress Header
+            const plans = ['A', 'B', 'C', 'D'];
+            let progHtml = '';
+            plans.forEach(p => {
+                const isActive = step.plan === p;
+                let cClass = "bg-slate-800 text-slate-500 border-slate-700";
+                if (isActive) {
+                    if (p === 'A') cClass = "bg-green-600 text-white border-green-400 shadow-[0_0_15px_rgba(34,197,94,0.5)]";
+                    if (p === 'B') cClass = "bg-yellow-500 text-slate-900 border-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.5)]";
+                    if (p === 'C') cClass = "bg-orange-500 text-white border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.5)]";
+                    if (p === 'D') cClass = "bg-red-600 text-white border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.7)] danger-pulse";
+                }
+                progHtml += `
+                  <div class="flex flex-col items-center gap-1">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 font-black ${cClass}">${p}</div>
+                  </div>`;
+            });
+            document.getElementById('alg-progress').innerHTML = progHtml;
+
+            // Main Card
+            let actionList = step.actions.map(a => `
+                <li class="flex items-start gap-4 p-4 rounded-xl ${step.isEmergency ? 'bg-red-950/40 border border-red-500/30' : 'bg-slate-800/60 border border-white/5'}">
+                    <i class="${step.isEmergency ? 'fa-solid fa-syringe text-red-500' : 'fa-solid fa-check text-cyan-400'} mt-1 scale-125"></i>
+                    <span class="text-white text-lg">${a}</span>
+                </li>
+            `).join('');
+
+            let warnHtml = '';
+            if (step.warnings) {
+                warnHtml = `
+                <div class="mt-6 p-4 rounded-xl ${step.isEmergency ? 'bg-red-950 border border-red-500 text-red-100' : 'bg-amber-950/40 border border-amber-600 text-amber-100'}">
+                    <h4 class="font-bold flex items-center gap-2 mb-2"><i class="fa-solid fa-triangle-exclamation"></i> Preste Atención</h4>
+                    <ul class="list-disc pl-5 opacity-90">${step.warnings.map(w => `<li>${w}</li>`).join('')}</ul>
+                </div>`;
+            }
+
+            let btnDiv = '';
+            if (step.next) {
+                btnDiv = `<div class="mt-6 flex flex-col sm:flex-row gap-4">` +
+                    step.next.map(n => `
+                    <button onclick="renderAlgoritmo('${n.id}')" class="flex-1 py-4 px-6 rounded-xl font-bold text-white transition-all 
+                        ${n.id === 'success' ? 'bg-green-600 hover:bg-green-500 shadow-lg' :
+                            n.id === 'plan-d' ? 'bg-red-600 hover:bg-red-500 danger-pulse' :
+                                'bg-slate-700 hover:bg-slate-600 shadow-md'}">
+                        ${n.label} <i class="fa-solid fa-forward ml-2 opacity-80"></i>
+                    </button>
+                `).join('') + `</div>`;
+            } else {
+                btnDiv = `<div class="mt-6"><button onclick="renderAlgoritmo('plan-a')" class="w-full py-4 bg-cyan-700 hover:bg-cyan-600 text-white rounded-xl font-bold">Volver al Inicio</button></div>`;
+            }
+
+            let hdrColor = "bg-gradient-to-r from-blue-600 to-cyan-500";
+            if (step.isEmergency) hdrColor = "bg-red-600 danger-pulse";
+
+            document.getElementById('alg-card').innerHTML = `
+                <div class="h-2 w-full ${hdrColor}"></div>
+                <div class="p-6">
+                    <div class="inline-block px-3 py-1 bg-white/10 rounded border border-white/20 text-xs font-bold tracking-widest uppercase mb-4 text-cyan-200">
+                        ${step.plan === 'SUCCESS' ? 'CASO ESTABLE' : 'PLAN ' + step.plan}
+                    </div>
+                    <h3 class="text-3xl font-heading font-bold text-white mb-2">${step.title}</h3>
+                    <p class="text-slate-400 text-lg">${step.description}</p>
+                    <div class="mt-6 space-y-3">
+                        ${actionList}
+                    </div>
+                    ${warnHtml}
+                    ${btnDiv}
+                </div>
+            `;
+        }
+
+        // ============================================
+        // 4. SIMULATOR LOGIC
+        // ============================================
+        let simHistory = [];
+        let currNodeId = 'start';
+
+        function initSimulador() {
+            simHistory = [];
+            currNodeId = 'start';
+            renderSimulatorChat();
+        }
+
+        function scrollToBottom(containerId) {
+            setTimeout(() => {
+                let node = document.getElementById(containerId);
+                node.scrollTop = node.scrollHeight;
+            }, 50);
+        }
+
+        function answerSim(targetId, choiceText) {
+            simHistory.push({ type: 'bot', ...DAS_STORY[currNodeId] });
+            simHistory.push({ type: 'user', text: choiceText });
+
+            document.getElementById('sim-choices').innerHTML = ''; // hide current choices
+            renderSimulatorChat(true); // render with typing
+
+            setTimeout(() => {
+                currNodeId = targetId;
+                if (DAS_STORY[currNodeId].critical) playWarningAlert("FONA de rescate requerido de inmediato.");
+                renderSimulatorChat();
+            }, 800);
+        }
+
+        function renderSimulatorChat(isTyping = false) {
+            const chat = document.getElementById('sim-chat');
+            let htmlHTML = '';
+
+            // Draw history
+            simHistory.forEach(msg => {
+                if (msg.type === 'bot') {
+                    let style = msg.critical ? 'bg-red-900 border border-red-500 danger-pulse text-white' :
+                        msg.error ? 'bg-orange-950 border border-orange-500 text-orange-100' : 'bg-slate-800 border border-slate-700 text-white';
+                    htmlHTML += `
+                      <div class="message-row flex justify-start">
+                          <div class="w-10 h-10 shrink-0 rounded-full bg-slate-700 flex items-center justify-center mr-3 text-white"> <i class="fa-solid fa-stethoscope"></i> </div>
+                          <div class="bubble ${style}">${msg.text}</div>
+                      </div>`;
+                } else {
+                    htmlHTML += `
+                      <div class="message-row flex justify-end">
+                          <div class="bubble bg-cyan-700 border border-cyan-500 text-white font-medium">${msg.text}</div>
+                      </div>`;
+                }
+            });
+
+            // Draw current
+            if (!isTyping) {
+                let cd = DAS_STORY[currNodeId];
+                let style = cd.critical ? 'bg-red-900 border border-red-500 danger-pulse text-white' :
+                    cd.error ? 'bg-orange-950 border border-orange-500 text-orange-100' : 'bg-slate-800 border border-slate-700 text-white';
+                htmlHTML += `
+                  <div class="message-row flex justify-start">
+                      <div class="w-10 h-10 shrink-0 rounded-full bg-cyan-600 flex items-center justify-center mr-3 text-white shadow-lg"> <i class="fa-solid fa-stethoscope"></i> </div>
+                      <div class="bubble ${style} shadow-xl">${cd.text}</div>
+                  </div>`;
+
+                // Draw Choices Box
+                let choiceHtml = `<div class="flex flex-col gap-3">`;
+                cd.choices.forEach(ch => {
+                    choiceHtml += `
+                        <button onclick="answerSim('${ch.target}', '${ch.text}')" class="text-left w-full p-4 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 hover:border-cyan-500 text-slate-200 transition-all font-medium flex gap-4 items-center group">
+                            <span class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center font-bold text-slate-400 group-hover:bg-cyan-600 group-hover:text-white shrink-0">${ch.label}</span>
+                            <span class="text-lg">${ch.text}</span>
+                        </button>`;
+                });
+                choiceHtml += `</div>`;
+                document.getElementById('sim-choices').innerHTML = choiceHtml;
+
+            } else {
+                htmlHTML += `
+                  <div class="message-row flex justify-start">
+                      <div class="w-10 h-10 shrink-0 rounded-full bg-slate-700 flex items-center justify-center mr-3"> <i class="fa-solid fa-ellipsis"></i> </div>
+                      <div class="bubble bg-slate-800 border border-slate-700">
+                           <div class="typing-indicator"><span></span><span></span><span></span></div>
+                      </div>
+                  </div>`;
+            }
+
+            chat.innerHTML = htmlHTML;
+            scrollToBottom('sim-chat');
+        }
+
+        // ============================================
+        // 5. QUIZ LOGIC
+        // ============================================
+        let quizIdx = 0;
+        let score = 0;
+        let isQuizAnswered = false;
+
+        function answerQuiz(optionIdx) {
+            if (isQuizAnswered) return;
+            isQuizAnswered = true;
+
+            const cq = DAS_QUIZ[quizIdx];
+            if (optionIdx === cq.ans) score++;
+
+            renderQuiz(optionIdx);
+        }
+
+        function nextQuiz() {
+            quizIdx++;
+            isQuizAnswered = false;
+            renderQuiz();
+        }
+
+        function resetQuiz() {
+            quizIdx = 0; score = 0; isQuizAnswered = false;
+            renderQuiz();
+        }
+
+        function renderQuiz(userChoice = null) {
+            const container = document.getElementById('quiz-container');
+
+            if (quizIdx >= DAS_QUIZ.length) {
+                // Finale
+                container.innerHTML = `
+                    <div class="glass-panel text-center py-16 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-600/10 z-0"></div>
+                        <div class="relative z-10 space-y-6">
+                            <div class="inline-flex justify-center items-center w-24 h-24 rounded-full bg-slate-800 border-4 border-cyan-500 text-cyan-400 mb-2">
+                                <i class="fa-solid fa-check text-4xl"></i>
+                            </div>
+                            <h3 class="text-4xl font-bold text-white">Quiz Completado</h3>
+                            <div class="py-4">
+                                <div class="text-6xl font-black text-cyan-400 mb-2">${score} / ${DAS_QUIZ.length}</div>
+                                <p class="text-slate-400 uppercase tracking-widest font-bold text-sm">Aciertos</p>
+                            </div>
+                            <button onclick="resetQuiz()" class="px-8 py-4 bg-cyan-700 hover:bg-cyan-600 text-white rounded-xl text-lg font-bold shadow-lg">Intentar de nuevo</button>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            const cq = DAS_QUIZ[quizIdx];
+            const pct = ((quizIdx + 1) / DAS_QUIZ.length) * 100;
+
+            let optsHtml = cq.opts.map((opt, i) => {
+                let baseStyle = "w-full text-left p-5 rounded-2xl border-2 text-lg font-medium transition-all mb-3 ";
+                let iconChar = String.fromCharCode(65 + i);
+
+                if (isQuizAnswered) {
+                    if (i === cq.ans) baseStyle += "bg-green-900/40 border-green-500 text-green-100 shadow-[0_0_15px_rgba(34,197,94,0.3)]";
+                    else if (i === userChoice) baseStyle += "bg-red-900/40 border-red-500 text-red-200";
+                    else baseStyle += "opacity-40 border-slate-700 bg-slate-800";
+                } else {
+                    baseStyle += "bg-slate-800 border-slate-700 hover:border-cyan-500 hover:bg-slate-800/80 cursor-pointer text-slate-200";
+                }
+
+                return `
+                <button onclick="answerQuiz(${i})" class="${baseStyle}" ${isQuizAnswered ? 'disabled' : ''}>
+                    <span class="mr-4 inline-flex items-center justify-center w-8 h-8 rounded-full border-2 ${isQuizAnswered && i === cq.ans ? 'border-green-400' : isQuizAnswered && i === userChoice ? 'border-red-400' : 'border-slate-500'} text-sm font-bold">${iconChar}</span>
+                    ${opt}
+                </button>`;
+            }).join('');
+
+            let explainHtml = '';
+            if (isQuizAnswered) {
+                explainHtml = `
+                <div class="mt-8 p-6 rounded-2xl bg-cyan-900/40 border border-cyan-500/50 animation-fadeIn">
+                    <h4 class="font-bold text-xl text-cyan-300 mb-3"><i class="fa-solid fa-book-open"></i> Explicación de la Guía</h4>
+                    <p class="text-cyan-50 text-lg leading-relaxed">${cq.exp}</p>
+                    <button onclick="nextQuiz()" class="mt-6 w-full py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-lg shadow-lg">Continuar</button>
+                </div>`;
+            }
+
+            container.innerHTML = `
+                <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl">
+                    <div class="bg-slate-900/80 p-6 border-b border-white/5">
+                         <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-bold tracking-widest text-cyan-500 uppercase">Pregunta ${quizIdx + 1}</span>
+                            <div class="w-32 h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-cyan-500" style="width: ${pct}%"></div>
+                            </div>
+                         </div>
+                         <h3 class="text-2xl font-bold text-white leading-relaxed">${cq.q}</h3>
+                    </div>
+                    <div class="p-6 bg-black/20">
+                        ${optsHtml}
+                        ${explainHtml}
+                    </div>
+                </div>`;
+        }
+
+        // Init
+        document.addEventListener("DOMContentLoaded", () => {
+            navigate('algoritmo');
+        });
+
+    </script>
+</body>
+
+</html>
