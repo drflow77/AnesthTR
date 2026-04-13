@@ -333,37 +333,52 @@
                 text: "<strong>CASO (PLAN A):</strong><br><br>Hombre 45 años, IMC de 42, barba y obvio Mallampati IV. Cero visibilidad en inducción de secuencia rápida con hoja Macintosh.<br>¿Qué haces?",
                 choices: [
                     { label: "A", text: "Probar otras 4 hojas diferentes e insistir hasta entrar.", target: "mistake1" },
-                    { label: "B", text: "Asumir vía difícil, limitar intentos y pedir Videolaringoscopía de urgencia.", target: "fase2" }
+                    { label: "B", text: "Asumir vía difícil, limitar intentos y pedir Videolaringoscopía de urgencia.", target: "fase2" },
+                    { label: "C", text: "Despertar al paciente ahora y cancelar la cirugía.", target: "mistake1c" }
                 ], error: false
             },
             mistake1: {
-                text: "<strong>¡Sangrado! Error.</strong><br>Forzar intubación destruye la anatomía (sangrado, edema), condenando al paciente a que los planes subsiguientes también fallen.",
+                text: "<strong>¡Sangrado! Error.</strong><br>Forzar intubación destruye la anatomía (sangrado, edema), condenando al paciente a que los planes subsiguientes también fallen. La DAS limita a 3 intentos máximo.",
                 choices: [{ label: "↺", text: "Regresar e intentar de nuevo.", target: "start" }], error: true
             },
+            mistake1c: {
+                text: "<strong>Error de criterio.</strong><br>El paciente ya está bajo anestesia general con relajante muscular. Despertar en este punto requiere primero oxigenar y asegurar la vía. No es posible cancelar sin manejar la situación actual.",
+                choices: [{ label: "↺", text: "Regresar.", target: "start" }], error: true
+            },
             fase2: {
-                text: "<strong>Correcto (PLAN B):</strong><br>El 2do intento con videolaringoscopía falla por anatomía distorsionada. SpO2 en 85%.<br>¿Siguiente paso de inmediato?",
+                text: "<strong>Correcto (PLAN B):</strong><br>El 2do intento con videolaringoscopía falla por anatomía distorsionada. SpO₂ en 85%.<br>¿Siguiente paso de inmediato?",
                 choices: [
                     { label: "A", text: "Despertar. Administrar sugammadex masivo.", target: "mistake2" },
-                    { label: "B", text: "Insertar Dispositivo Supraglótico (DSG) de 2da generación para recuperar reserva.", target: "fase3" }
+                    { label: "B", text: "Insertar Dispositivo Supraglótico (DSG) de 2ª generación para recuperar reserva.", target: "fase3" },
+                    { label: "C", text: "Un tercer intento de videolaringoscopía con un laringoscopio diferente.", target: "mistake2c" }
                 ], error: false
             },
             mistake2: {
-                text: "<strong>Demorado. Error.</strong><br>Un obeso con abdomen agudo y SpO2 85% no oxigenará de forma espontánea a tiempo. Debes rescatar el nivel de O2 instertando instrumento.",
+                text: "<strong>Demorado. Error.</strong><br>Un obeso con SpO₂ 85% no oxigenará espontáneamente a tiempo. Debes rescatar el nivel de O₂ antes de intentar despertar.",
+                choices: [{ label: "↺", text: "Regresar.", target: "fase2" }], error: true
+            },
+            mistake2c: {
+                text: "<strong>Error — agotaste los intentos del Plan A.</strong><br>Ya se realizaron 2 intentos. La DAS establece máximo 3 intentos en Plan A. Con SpO₂ en 85% y deterioro activo, seguir en Plan A es peligroso. Debes escalar al Plan B: DSG.",
                 choices: [{ label: "↺", text: "Regresar.", target: "fase2" }], error: true
             },
             fase3: {
-                text: "<strong>Correcto (PLAN C):</strong><br>DSG falla masivamente. No funciona ventilación. Entras a Plan C: Mascarilla facial. <br>Pides sellado a 2 manos... ¡Tampoco expande! ¡Oximetría en 60%!",
+                text: "<strong>Correcto (PLAN C):</strong><br>DSG falla masivamente. No funciona ventilación. Plan C: Mascarilla facial a 2 manos... ¡Tampoco expande! SpO₂ en 60%.",
                 choices: [
-                    { label: "A", text: "🚨 DECLARAR CICO a la sala y pedir cuchillo / Bisturí 🚨", target: "success" },
-                    { label: "B", text: "Tratar de meter de nuevo un tubo a ciegas rápidamente.", target: "mistake3" }
+                    { label: "A", text: "🚨 DECLARAR CICO a la sala y pedir Bisturí de inmediato.", target: "success" },
+                    { label: "B", text: "Tratar de meter de nuevo un tubo a ciegas rápidamente.", target: "mistake3" },
+                    { label: "C", text: "Llamar a ORL para traqueostomía de emergencia.", target: "mistake3c" }
                 ], error: false
             },
             mistake3: {
-                text: "<strong>¡Muerte Inminente! Error.</strong><br>Regresar al Plan A con SpO2 de 60% es una sentencia. Tienes segundos antes del paro cardíaco.",
+                text: "<strong>¡Muerte Inminente! Error.</strong><br>Regresar al Plan A con SpO₂ de 60% es una sentencia. Tienes segundos antes del paro cardíaco.",
                 choices: [{ label: "↺", text: "Volver atrás rápido.", target: "fase3" }], error: true
             },
+            mistake3c: {
+                text: "<strong>Demora fatal. Error.</strong><br>Esperar a ORL toma minutos que el paciente no tiene. En escenario CICO el anestesiólogo debe realizar la FONA de inmediato con la técnica Bisturí-Bougie-Tubo. No hay tiempo para delegar.",
+                choices: [{ label: "↺", text: "Volver atrás.", target: "fase3" }], error: true
+            },
             success: {
-                text: "<strong>¡VIDA SALVADA! 🏆</strong><br>Realizaste FONA (Acceso Frontal del Cuello). Hiciste la incisión cricotiroidea, metiste la guía elástica (bujía) y pasaste un Tubo 6.0mm. El paciente ventila.",
+                text: "<strong>¡VIDA SALVADA! 🏆</strong><br>Realizaste FONA (Acceso Frontal del Cuello). Hiciste la incisión cricotiroidea, metiste la guía elástica (Bougie) y pasaste un Tubo 6.0mm. El paciente ventila.",
                 choices: [{ label: "↺", text: "Finalizar.", target: "start" }], error: false, critical: true
             }
         };
