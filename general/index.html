@@ -307,15 +307,15 @@ const ALL_QUESTIONS = [
   {
     id:1, cat:"halogenados", diff:"easy",
     q:"¿Cuál es el CAM del Sevoflurano en adultos?",
-    opts:["1.0%","2.0 - 2.05%","3.5%","0.75%"],
-    ans:1,
+    opts:["2.0 - 2.05%","1.0%","3.5%","0.75%"],
+    ans:0,
     exp:"El CAM del Sevoflurano en adultos es aproximadamente 2.0%. Disminuye con la edad, opioides y otros adyuvantes."
   },
   {
     id:2, cat:"halogenados", diff:"easy",
     q:"¿A qué temperatura hierve el Desflurano?",
-    opts:["37°C","56°C","23.5°C","100°C"],
-    ans:2,
+    opts:["23.5°C","56°C","37°C","100°C"],
+    ans:0,
     exp:"Su bajo punto de ebullición (casi temperatura ambiente) hace que el Desflurano requiera un vaporizador especial calentado a presión. No puede usarse en vaporizadores convencionales."
   },
   {
@@ -328,15 +328,15 @@ const ALL_QUESTIONS = [
   {
     id:4, cat:"halogenados", diff:"easy",
     q:"El Sevoflurano produce el Compuesto A principalmente cuando...",
-    opts:["Se usa con mascarilla facial","Entra en contacto con cal sodada seca a altos flujos","Se mezcla con óxido nitroso","Se usa en pediatría"],
-    ans:1,
+    opts:["Se usa con mascarilla facial","Se mezcla con óxido nitroso","Entra en contacto con cal sodada seca a altos flujos","Se usa en pediatría"],
+    ans:2,
     exp:"El Compuesto A se forma por degradación del Sevo con absorbentes de CO₂ secos. Es nefrotóxico en animales. Se recomienda flujo fresco >2 L/min con Sevo para minimizar su acumulación."
   },
   {
     id:5, cat:"halogenados", diff:"medium",
     q:"¿Cuál es el CAM del Desflurano en adultos?",
-    opts:["2.0 - 2.5%","3.5 - 4.0%","6.0 - 6.6%","8.0 - 9.0%"],
-    ans:2,
+    opts:["2.0 - 2.5%","6.0 - 6.6%","3.5 - 4.0%","8.0 - 9.0%"],
+    ans:1,
     exp:"El CAM del Desflurano es 6.0-6.6%, significativamente mayor que el Sevoflurano. Requiere concentraciones más altas para lograr anestesia quirúrgica."
   },
   {
@@ -349,8 +349,8 @@ const ALL_QUESTIONS = [
   {
     id:7, cat:"halogenados", diff:"medium",
     q:"¿Qué efecto cardiovascular produce el Desflurano cuando se aumenta rápidamente su concentración?",
-    opts:["Bradicardia e hipotensión","Taquicardia y aumento de TA por activación simpática","Bloqueo AV de primer grado","Vasodilatación periférica sin cambios en FC"],
-    ans:1,
+    opts:["Bradicardia e hipotensión","Vasodilatación periférica sin cambios en FC","Bloqueo AV de primer grado","Taquicardia y aumento de TA por activación simpática"],
+    ans:3,
     exp:"Este efecto se debe a activación simpática refleja. Es importante en pacientes cardíacos. Se recomienda incrementar la concentración gradualmente."
   },
   {
@@ -365,11 +365,11 @@ const ALL_QUESTIONS = [
     q:"¿Qué es el Compuesto A y cuál es su mecanismo de nefrotoxicidad en animales?",
     opts:[
       "Un metabolito del Desflurano que daña el hígado por peroxidación lipídica",
-      "Fluorometil-vinil éter formado por degradación del Sevo con absorbentes; nefrotóxico por biotransformación renal a metabolitos que alquilan proteínas tubulares",
+      "Un compuesto del Isoflurano que genera fluoruro inorgánico en exceso",
       "Un producto de la reacción del Sevo con O₂ que produce metahemoglobina",
-      "Un compuesto del Isoflurano que genera fluoruro inorgánico en exceso"
+      "Fluorometil-vinil éter formado por degradación del Sevo con absorbentes; nefrotóxico por biotransformación renal a metabolitos que alquilan proteínas tubulares"
     ],
-    ans:1,
+    ans:3,
     exp:"El Compuesto A (fluorometil-2,2-difluoro-1-(trifluorometil)vinil éter) se forma por degradación del Sevo con absorbentes de CO₂ secos. Su nefrotoxicidad en ratas ocurre por biotransformación renal a metabolitos reactivos que alquilan proteínas tubulares. En humanos no se ha demostrado daño clínico con flujos >1 L/min."
   },
   {
@@ -378,10 +378,10 @@ const ALL_QUESTIONS = [
     opts:[
       "Administrando atropina IV antes de la inducción",
       "Usando solo ventilación espontánea",
-      "Con opioides, dexmedetomidina, clonidina o betabloqueadores previos e incremento gradual de concentración",
-      "Aumentando la FiO₂ al 100%"
+      "Aumentando la FiO₂ al 100%",
+      "Con opioides, dexmedetomidina, clonidina o betabloqueadores previos e incremento gradual de concentración"
     ],
-    ans:2,
+    ans:3,
     exp:"La activación simpática del Des se atenúa con: pretreatment con opioides (fentanilo, remifentanilo), dexmedetomidina, clonidina, betabloqueadores o incrementando la concentración <1 CAM/minuto."
   },
 
@@ -389,8 +389,8 @@ const ALL_QUESTIONS = [
   {
     id:11, cat:"etomidato", diff:"easy",
     q:"¿Cuál es la dosis de inducción del Etomidato?",
-    opts:["0.05 - 0.1 mg/kg","0.2 - 0.3 mg/kg","0.5 - 1.0 mg/kg","1.5 - 2.5 mg/kg"],
-    ans:1,
+    opts:["0.05 - 0.1 mg/kg","0.5 - 1.0 mg/kg","0.2 - 0.3 mg/kg","1.5 - 2.5 mg/kg"],
+    ans:2,
     exp:"Dosis estándar de inducción: 0.2-0.3 mg/kg IV. Tiene gran margen de seguridad cardiovascular."
   },
   {
@@ -398,35 +398,35 @@ const ALL_QUESTIONS = [
     q:"¿Cuál es la principal ventaja del Etomidato en pacientes hemodinámicamente inestables?",
     opts:[
       "Produce broncodilatación potente",
-      "Mínima depresión cardiovascular — mantiene TA y FC estables",
+      "No produce apnea post-inducción",
       "Tiene efecto analgésico importante",
-      "No produce apnea post-inducción"
+      "Mínima depresión cardiovascular — mantiene TA y FC estables"
     ],
-    ans:1,
+    ans:3,
     exp:"Es el inductor de elección en pacientes en choque, cardíacos descompensados o con reserva cardiovascular limitada. No afecta significativamente la presión arterial ni el gasto cardíaco."
   },
   {
     id:13, cat:"etomidato", diff:"easy",
     q:"¿Qué efecto endocrino produce el Etomidato?",
     opts:[
-      "Hipoglucemia por estimulación de insulina",
-      "Hipertiroidismo transitorio",
       "Supresión adrenal — inhibe la 11-β-hidroxilasa bloqueando síntesis de cortisol",
+      "Hipertiroidismo transitorio",
+      "Hipoglucemia por estimulación de insulina",
       "Aumento de hormona de crecimiento"
     ],
-    ans:2,
+    ans:0,
     exp:"Por eso se evita en infusiones prolongadas. Una sola dosis de inducción produce supresión adrenal de 4-8 horas."
   },
   {
     id:14, cat:"etomidato", diff:"easy",
     q:"¿En qué solvente está preparado el Etomidato comercial y qué problema causa?",
     opts:[
-      "Agua destilada — no causa problemas",
       "Propilenglicol — causa dolor a la inyección y tromboflebitis",
+      "Agua destilada — no causa problemas",
       "Emulsión lipídica — causa hiperlipidemia",
       "Dimetilsulfóxido — causa sabor metálico"
     ],
-    ans:1,
+    ans:0,
     exp:"La formulación en propilenglicol causa dolor a la inyección y tromboflebitis. La formulación en emulsión lipídica reduce estos efectos adversos pero no está disponible en todos los centros."
   },
   {
@@ -434,23 +434,23 @@ const ALL_QUESTIONS = [
     q:"¿Por qué el Etomidato puede producir mioclonías y cómo se previenen?",
     opts:[
       "Por efecto directo sobre motoneurona alfa; se previene con relajantes musculares",
-      "Por desinhibición de centros subcorticales; se previene con BZD u opioides previos",
+      "Por hiperkalemia transitoria; se previene con gluconato de calcio",
       "Por irritación de la vía aérea; se previene con lidocaína nebulizada",
-      "Por hiperkalemia transitoria; se previene con gluconato de calcio"
+      "Por desinhibición de centros subcorticales; se previene con BZD u opioides previos"
     ],
-    ans:1,
+    ans:3,
     exp:"Las mioclonías del Etomidato ocurren por desinhibición de centros subcorticales. Se previenen eficazmente con premedicación de benzodiacepinas o fentanilo previo a la inducción."
   },
   {
     id:16, cat:"etomidato", diff:"medium",
     q:"¿Cuál es el mecanismo de acción del Etomidato a nivel molecular?",
     opts:[
-      "Bloquea receptores NMDA como la Ketamina",
       "Potencia el receptor GABA-A aumentando la frecuencia de apertura del canal de cloro; se une al sitio β2/β3",
+      "Bloquea receptores NMDA como la Ketamina",
       "Inhibe canales de sodio voltaje-dependientes como los anestésicos locales",
       "Activa receptores opioides μ en el SNC"
     ],
-    ans:1,
+    ans:0,
     exp:"El Etomidato potencia el receptor GABA-A aumentando la FRECUENCIA de apertura del canal de cloro, hiperpolarizando la membrana neuronal. Se une específicamente al sitio β2/β3 del receptor."
   },
   {
@@ -458,11 +458,11 @@ const ALL_QUESTIONS = [
     q:"¿Por qué el Etomidato está contraindicado en pacientes con insuficiencia adrenal?",
     opts:[
       "Porque acelera el metabolismo de los corticosteroides exógenos",
-      "Porque la supresión adrenal adicional puede precipitar una crisis adrenal aguda potencialmente fatal",
       "Porque aumenta la presión intracraneana en estos pacientes",
+      "Porque la supresión adrenal adicional puede precipitar una crisis adrenal aguda potencialmente fatal",
       "Porque produce hiperkalemia severa en insuficiencia adrenal"
     ],
-    ans:1,
+    ans:2,
     exp:"En pacientes con reserva adrenal limitada (Addison, uso crónico de esteroides, sepsis grave), la inhibición adicional de la 11-β-hidroxilasa puede precipitar una crisis adrenal aguda."
   },
   {
@@ -470,11 +470,11 @@ const ALL_QUESTIONS = [
     q:"¿Cuál es la vida media de redistribución del Etomidato y qué explica clínicamente?",
     opts:[
       "15-20 minutos — explica su duración de acción intermedia",
-      "2-4 minutos — explica su corta duración de acción (efecto clínico 5-10 min)",
+      "30 segundos — explica la inducción ultra rápida",
       "45-60 minutos — explica la sedación prolongada",
-      "30 segundos — explica la inducción ultra rápida"
+      "2-4 minutos — explica su corta duración de acción (efecto clínico 5-10 min)"
     ],
-    ans:1,
+    ans:3,
     exp:"La vida media de redistribución de 2-4 minutos explica su corta duración. El Etomidato se redistribuye rápidamente del SNC a tejidos periféricos, terminando su efecto clínico en 5-10 min."
   },
   {
@@ -482,23 +482,23 @@ const ALL_QUESTIONS = [
     q:"Paciente séptico requiere inducción de secuencia rápida. ¿Cuál es la evidencia en contra del Etomidato en este contexto?",
     opts:[
       "Produce broncoespasmo severo en pacientes sépticos",
-      "El estudio CORTICUS y meta-análisis muestran que la supresión adrenal por dosis única se asocia a mayor mortalidad y necesidad de vasopresores en sepsis",
+      "Produce coagulopatía dilucional en pacientes sépticos",
       "Está contraindicado por interacción con antibióticos betalactámicos",
-      "Produce coagulopatía dilucional en pacientes sépticos"
+      "El estudio CORTICUS y meta-análisis muestran que la supresión adrenal por dosis única se asocia a mayor mortalidad y necesidad de vasopresores en sepsis"
     ],
-    ans:1,
+    ans:3,
     exp:"El debate sobre Etomidato en sepsis es clínicamente relevante. La alternativa actual es Ketamina 1-2 mg/kg, que ofrece estabilidad cardiovascular sin supresión adrenal. Muchos centros han reemplazado Etomidato por Ketamina en ISR para pacientes sépticos."
   },
   {
     id:20, cat:"etomidato", diff:"hard",
     q:"¿Cuál es la vía metabólica principal del Etomidato y qué polimorfismo genético modifica su efecto clínico?",
     opts:[
-      "CYP3A4 hepático; polimorfismos del CYP producen acumulación tóxica",
       "Hidrólisis por esterasas plasmáticas/hepáticas; polimorfismos en NR5A1 modifican la sensibilidad de la 11-β-hidroxilasa explicando variabilidad en supresión adrenal",
+      "CYP3A4 hepático; polimorfismos del CYP producen acumulación tóxica",
       "Glucuronidación renal; polimorfismos UGT alteran la duración de acción",
       "Acetilación hepática; acetiladores lentos tienen mayor efecto hipnótico"
     ],
-    ans:1,
+    ans:0,
     exp:"El Etomidato se metaboliza principalmente por esterasas (hidrólisis del enlace éster) a ácido carboxílico inactivo, con mínima participación del CYP. Polimorfismos en NR5A1 explican la variabilidad interindividual en la supresión adrenal."
   },
 
@@ -515,11 +515,11 @@ const ALL_QUESTIONS = [
     q:"¿Por qué el Propofol tiene propiedades antieméticas?",
     opts:[
       "Aumenta la motilidad gástrica",
-      "Inhibe la zona gatillo quimiorreceptora y reduce liberación de dopamina",
+      "Estimula el nervio vago",
       "Bloquea receptores 5-HT3 como el Ondansetrón",
-      "Estimula el nervio vago"
+      "Inhibe la zona gatillo quimiorreceptora y reduce liberación de dopamina"
     ],
-    ans:1,
+    ans:3,
     exp:"El Propofol inhibe la zona gatillo quimiorreceptora (área postrema) y reduce la liberación de dopamina. Por eso se asocia a menor incidencia de NVPO comparado con otros agentes anestésicos."
   },
   {
@@ -538,12 +538,12 @@ const ALL_QUESTIONS = [
     id:24, cat:"propofol", diff:"easy",
     q:"¿Cómo se reduce el dolor a la inyección del Propofol?",
     opts:[
-      "Calentando la solución a 40°C",
-      "Inyectando en venas pequeñas del dorso de la mano",
       "Lidocaína 20-40mg IV previa, inyección en vena grande, o mezcla con lidocaína",
+      "Inyectando en venas pequeñas del dorso de la mano",
+      "Calentando la solución a 40°C",
       "Administrando dexametasona antes"
     ],
-    ans:2,
+    ans:0,
     exp:"El dolor se debe a activación de canales TRPA1 por el solvente lipídico. La lidocaína IV previa (con torniquete 30-60 seg) es la técnica más efectiva. También ayuda la vena antecubital en vez de la dorsal."
   },
   {
@@ -551,35 +551,35 @@ const ALL_QUESTIONS = [
     q:"¿Qué es el Síndrome de Infusión de Propofol (PRIS) y cuáles son sus factores de riesgo?",
     opts:[
       "Broncoespasmo severo con infusiones >1 mg/kg/h; riesgo en asmáticos",
-      "Acidosis metabólica, rabdomiólisis, arritmias y falla cardíaca; riesgo con >4 mg/kg/h por >48h, niños graves y TCE con corticosteroides",
       "Hipertrigliceridemia severa con infusiones prolongadas; riesgo en diabéticos",
+      "Acidosis metabólica, rabdomiólisis, arritmias y falla cardíaca; riesgo con >4 mg/kg/h por >48h, niños graves y TCE con corticosteroides",
       "Nefrotoxicidad progresiva similar al Compuesto A; riesgo en nefropatía previa"
     ],
-    ans:1,
+    ans:2,
     exp:"El PRIS es raro pero potencialmente fatal. Incluye: acidosis metabólica, rabdomiólisis, insuficiencia renal, bloqueo de rama derecha y falla cardíaca. Factores de riesgo: infusiones >4 mg/kg/h por >48h, niños en estado crítico, TCE con corticosteroides y catecolaminas concomitantes."
   },
   {
     id:26, cat:"propofol", diff:"medium",
     q:"¿Cuál es el mecanismo anticonvulsivante del Propofol?",
     opts:[
-      "Solo bloquea canales de calcio tipo L en neuronas corticales",
       "Potencia GABA-A, inhibe receptores NMDA y canales de sodio; reduce metabolismo cerebral hasta 60%",
+      "Solo bloquea canales de calcio tipo L en neuronas corticales",
       "Activa receptores de adenosina A1 que inhiben la actividad neuronal",
       "Bloquea la recaptación de GABA en la hendidura sináptica"
     ],
-    ans:1,
+    ans:0,
     exp:"Por sus múltiples mecanismos es útil en status epilepticus refractario. Además reduce la PIC al disminuir el metabolismo cerebral y la presión de perfusión cerebral."
   },
   {
     id:27, cat:"propofol", diff:"medium",
     q:"¿Por qué el Propofol NO se recomienda como inductor en pacientes hipovolémicos?",
     opts:[
-      "Porque aumenta la resistencia vascular pulmonar",
       "Porque produce vasodilatación sistémica y depresión miocárdica directa que puede precipitar colapso cardiovascular",
+      "Porque aumenta la resistencia vascular pulmonar",
       "Porque inhibe la vasopresina endógena",
       "Porque aumenta el consumo de oxígeno miocárdico"
     ],
-    ans:1,
+    ans:0,
     exp:"El Propofol reduce las resistencias vasculares sistémicas y tiene depresión miocárdica directa. En hipovolemia esto puede precipitar hipotensión severa o colapso. En estos casos se prefiere Etomidato o Ketamina."
   },
   {
@@ -608,11 +608,11 @@ const ALL_QUESTIONS = [
     q:"¿Por qué el BIS puede FALLAR en detectar awareness durante anestesia con Propofol?",
     opts:[
       "Porque el BIS solo funciona con halogenados y no fue validado para TIVA",
-      "El BIS mide solo actividad frontal, artefactos musculares lo elevan falsamente, hay variabilidad farmacocinética individual y fue validado principalmente con halogenados",
       "Porque el Propofol produce artefactos eléctricos que dañan el sensor del BIS",
+      "El BIS mide solo actividad frontal, artefactos musculares lo elevan falsamente, hay variabilidad farmacocinética individual y fue validado principalmente con halogenados",
       "El BIS no puede detectar concentraciones de Propofol <3 mcg/mL"
     ],
-    ans:1,
+    ans:2,
     exp:"La awareness ocurre cuando Ce <1.5 mcg/mL. El BIS falla porque: (1) mide solo actividad frontal no subcortical, (2) artefactos musculares elevan falsamente el valor, (3) variabilidad farmacocinética individual, (4) validado principalmente con halogenados. La combinación BIS + monitorización autonómica + dosis adecuadas reduce pero no elimina el riesgo."
   },
 
@@ -620,8 +620,8 @@ const ALL_QUESTIONS = [
   {
     id:31, cat:"benzodiacepinas", diff:"easy",
     q:"¿Cuál es la dosis de premedicación del Midazolam IV en adulto?",
-    opts:["0.001 - 0.005 mg/kg","0.02 - 0.05 mg/kg (1-2.5 mg)","0.2 - 0.5 mg/kg","1.0 - 2.0 mg/kg"],
-    ans:1,
+    opts:["0.001 - 0.005 mg/kg","1.0 - 2.0 mg/kg","0.2 - 0.5 mg/kg","0.02 - 0.05 mg/kg (1-2.5 mg)"],
+    ans:3,
     exp:"Para ansiólisis preoperatoria: 0.02-0.05 mg/kg IV (1-2.5 mg en adulto). Para sedación/inducción: 0.1-0.2 mg/kg. Siempre titular lentamente para evitar depresión respiratoria."
   },
   {
@@ -641,11 +641,11 @@ const ALL_QUESTIONS = [
     q:"¿Por qué el Midazolam produce amnesia anterógrada?",
     opts:[
       "Bloquea los receptores NMDA en el hipocampo impidiendo la potenciación a largo plazo",
-      "Bloquea la consolidación de memorias en el hipocampo al potenciar GABA-A — amnesia anterógrada, no retrógrada",
       "Inhibe la síntesis de acetilcolina en el núcleo basal de Meynert",
+      "Bloquea la consolidación de memorias en el hipocampo al potenciar GABA-A — amnesia anterógrada, no retrógrada",
       "Produce vasoconstricción hipocámpica transitoria"
     ],
-    ans:1,
+    ans:2,
     exp:"La amnesia es ANTERÓGRADA — el paciente no recuerda lo que ocurre después de la dosis, pero sí lo que pasó antes. Esto es clínicamente útil en procedimientos ansiógenos."
   },
   {
@@ -653,11 +653,11 @@ const ALL_QUESTIONS = [
     q:"¿Cuál benzodiacepina tiene mayor vida media: Diazepam o Midazolam?",
     opts:[
       "Midazolam (20-100 horas)",
-      "Son iguales (6-8 horas)",
       "Diazepam (20-100 horas vs 1.5-2.5 horas del Midazolam)",
+      "Son iguales (6-8 horas)",
       "Depende del peso del paciente"
     ],
-    ans:2,
+    ans:1,
     exp:"El Diazepam tiene metabolitos activos (desmetildiazepam) con vida media aún mayor. Por eso el Midazolam es preferido en anestesia y procedimientos cortos, ya que permite recuperación más predecible."
   },
   {
@@ -665,11 +665,11 @@ const ALL_QUESTIONS = [
     q:"¿Cómo afecta el pH al Midazolam y por qué es relevante clínicamente?",
     opts:[
       "A pH ácido es lipofílico y a pH fisiológico es hidrosoluble — por eso es doloroso",
-      "A pH fisiológico (7.4) su anillo imidazólico se cierra haciéndolo lipofílico; a pH ácido en la jeringa (3.5) es hidrosoluble — por eso no precipita al mezclarse con otros fármacos",
       "El pH no afecta la farmacocinética del Midazolam",
+      "A pH fisiológico (7.4) su anillo imidazólico se cierra haciéndolo lipofílico; a pH ácido en la jeringa (3.5) es hidrosoluble — por eso no precipita al mezclarse con otros fármacos",
       "A pH alcalino precipita formando cristales, por eso debe administrarse en solución ácida"
     ],
-    ans:1,
+    ans:2,
     exp:"Esta propiedad única del Midazolam (cambio de solubilidad según pH) explica por qué no precipita en mezclas, a diferencia del Diazepam. Permite mezclarlo con otros agentes en la misma jeringa."
   },
   {
@@ -677,11 +677,11 @@ const ALL_QUESTIONS = [
     q:"¿Cuál es el mecanismo molecular de acción de las benzodiacepinas en el receptor GABA-A?",
     opts:[
       "Se unen al sitio del GABA y activan directamente el canal de cloro",
-      "Bloquean el canal de cloro impidiendo la entrada de iones",
       "Se unen al sitio alostérico entre subunidades α y γ; aumentan la FRECUENCIA de apertura del canal de cloro",
+      "Bloquean el canal de cloro impidiendo la entrada de iones",
       "Inhiben la recaptación de GABA en la hendidura sináptica"
     ],
-    ans:2,
+    ans:1,
     exp:"A diferencia de los barbitúricos que aumentan la DURACIÓN de apertura, las BZD aumentan la FRECUENCIA. Esto explica su efecto techo: requieren GABA endógeno para actuar y no pueden abrir el canal directamente."
   },
   {
@@ -713,11 +713,11 @@ const ALL_QUESTIONS = [
     q:"¿Cuál es la implicación anestésica de la tolerancia cruzada entre benzodiacepinas y alcohol crónico?",
     opts:[
       "Los alcohólicos crónicos son hipersensibles a las BZD y requieren dosis menores",
-      "No hay tolerancia cruzada real, solo farmacocinética alterada por hepatopatía",
       "Por downregulation de GABA-A requieren MAYORES dosis; riesgo de abstinencia perioperatoria — manejar con BZD acción larga + tiamina IV",
+      "No hay tolerancia cruzada real, solo farmacocinética alterada por hepatopatía",
       "Solo se manifiesta tolerancia cruzada con benzodiazepinas de acción larga como el Diazepam"
     ],
-    ans:2,
+    ans:1,
     exp:"El consumo crónico de alcohol produce downregulation de GABA-A y upregulation de NMDA. En alcohólicos: (1) requieren mayores dosis de BZD e inductores, (2) riesgo de delirium tremens si se suspende alcohol abruptamente, (3) manejo: Diazepam para abstinencia + tiamina IV + monitorización CIWA."
   },
   {
@@ -725,11 +725,11 @@ const ALL_QUESTIONS = [
     q:"Para sedación prolongada en UCI, ¿cuál es la ventaja del Lorazepam sobre el Midazolam en falla multiorgánica?",
     opts:[
       "El Lorazepam tiene mayor efecto amnésico y sedante",
-      "El Lorazepam se metaboliza por glucuronidación (no CYP3A4/3A5) — no se acumula en falla hepática/renal como el Midazolam",
+      "El Lorazepam tiene vida media más corta que el Midazolam en UCI",
       "El Lorazepam no produce tolerancia, el Midazolam sí",
-      "El Lorazepam tiene vida media más corta que el Midazolam en UCI"
+      "El Lorazepam se metaboliza por glucuronidación (no CYP3A4/3A5) — no se acumula en falla hepática/renal como el Midazolam"
     ],
-    ans:1,
+    ans:3,
     exp:"En falla multiorgánica: el Lorazepam se metaboliza por glucuronidación (vía no afectada por falla hepática), mientras el Midazolam depende de CYP3A4. Para el destete de BZD en UCI: reducción 10-20% cada 6-12h. La Dexmedetomidina como adyuvante reduce requerimientos de BZD 30-50% y facilita el destete sin depresión respiratoria."
   }
 ];
