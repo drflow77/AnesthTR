@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plexo Braquial PRO — AnesthTR</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-base: #050510;
+            --bg-glass: rgba(18, 20, 31, 0.6);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(255, 255, 255, 0.25);
+            --accent: #00d2ff;
+            --c-raiz: #a855f7;
+            --c-tronco: #06b6d4;
+            --c-division: #14b8a6;
+            --c-fasciculo: #f59e0b;
+            --c-rama: #ef4444;
+            --green: #10b981;
+            --red: #f43f5e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-main: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%; left: -10%; width: 50vw; height: 50vh;
+            background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 60%);
+            z-index: 0; pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -20%; right: -10%; width: 60vw; height: 60vh;
+            background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 60%);
+            z-index: 0; pointer-events: none;
+        }
+
+        .grid-overlay {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .container {
+            position: relative; z-index: 10;
+            max-width: 1200px; margin: 0 auto;
+            padding: 40px 20px;
+            display: flex; flex-direction: column; gap: 2rem;
+            min-height: 100vh;
+        }
+
+        header { text-align: center; }
+        .logo-tag {
+            font-family: var(--font-mono); font-size: 0.75rem;
+            color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase;
+            margin-bottom: 0.5rem; display: inline-block;
+            background: rgba(0,210,255,0.1); padding: 4px 12px;
+            border-radius: 20px; border: 1px solid rgba(0,210,255,0.2);
+        }
+        h1 {
+            font-size: clamp(2rem, 5vw, 4rem); font-weight: 800;
+            letter-spacing: -0.03em; line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle { color: var(--text-muted); font-size: 1.1rem; font-weight: 300; }
+
+        .glass-panel {
+            background: var(--bg-glass); border: 1px solid var(--border-glass);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+        }
+
+        .tabs {
+            display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;
+        }
+        .tab-btn {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);
+            padding: 12px 24px; border-radius: 30px; color: var(--text-muted);
+            font-family: var(--font-main); font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            backdrop-filter: blur(8px);
+        }
+        .tab-btn:hover { background: rgba(255,255,255,0.08); color: white; }
+        .tab-btn.active {
+            background: var(--text-main); color: var(--bg-base);
+            border-color: var(--text-main); box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        }
+
+        .view-section { display: none; animation: fade-in 0.4s ease-out forwards; }
+        .view-section.active { display: block; }
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== MAPA ===== */
+        .map-container { padding: 15px 30px; overflow-x: auto; position: relative; }
+        .flow-levels {
+            display: flex; min-width: 900px;
+            justify-content: space-between; position: relative;
+        }
+        .level-col {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 8px;
+            position: relative; z-index: 2; width: 140px;
+        }
+        .level-title {
+            font-family: var(--font-mono); font-size: 0.65rem;
+            text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted);
+            margin-bottom: 10px; padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-glass); width: 100%; text-align: center;
+        }
+        .node {
+            background: rgba(15,23,42,0.8); border: 1px solid var(--border-glass);
+            border-radius: 10px; padding: 8px 10px; width: 100%;
+            text-align: center; font-weight: 600; font-size: 0.8rem;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            position: relative; backdrop-filter: blur(4px);
+        }
+        .node::after {
+            content: ''; position: absolute; inset: -4px; border-radius: 16px;
+            border: 2px solid transparent; opacity: 0; transition: all 0.4s; pointer-events: none;
+        }
+        .node.dimmed { opacity: 0.15; filter: grayscale(80%); }
+        .node.highlighted { transform: scale(1.08); z-index: 10; background: rgba(30,41,59,0.95); }
+        .node[data-level="raiz"]     { --node-color: var(--c-raiz); }
+        .node[data-level="tronco"]   { --node-color: var(--c-tronco); }
+        .node[data-level="division"] { --node-color: var(--c-division); }
+        .node[data-level="fasciculo"]{ --node-color: var(--c-fasciculo); }
+        .node[data-level="rama"]     { --node-color: var(--c-rama); }
+        .node { border-left-color: var(--node-color); border-left-width: 3px; }
+        .node.highlighted {
+            border-color: var(--node-color);
+            box-shadow: 0 0 25px rgba(0,0,0,0.5), inset 0 0 15px rgba(255,255,255,0.05); color: white;
+        }
+        .node.highlighted::after { border-color: var(--node-color); opacity: 0.4; transform: scale(1.05); }
+        .spacer { height: 10px; flex-grow: 1; }
+
+        .svg-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; overflow: visible;
+        }
+        .conn-line {
+            fill: none; stroke-width: 1.5; opacity: 0.15;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            stroke-dasharray: 1000; stroke-dashoffset: 0;
+        }
+        .conn-line.active {
+            stroke-width: 4; opacity: 0.9 !important;
+            filter: drop-shadow(0 0 10px currentColor);
+            animation: dash 1s ease-out forwards;
+        }
+        .conn-line.dimmed { opacity: 0.05 !important; }
+        @keyframes dash { from { stroke-dashoffset: 500; } to { stroke-dashoffset: 0; } }
+
+        .clinical-panel {
+            margin-top: 15px; padding: 20px;
+            display: flex; gap: 20px; align-items: flex-start; min-height: 100px;
+        }
+        .clinical-indicator {
+            width: 60px; height: 60px; border-radius: 16px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; flex-shrink: 0; transition: all 0.3s;
+        }
+        .clinical-content { flex-grow: 1; }
+        .clinical-tag {
+            font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em;
+            color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;
+        }
+        .clinical-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: white; }
+        .clinical-desc { font-size: 0.95rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 12px; }
+        .clinical-blocks { display: flex; gap: 8px; flex-wrap: wrap; }
+        .block-badge {
+            background: rgba(16,185,129,0.1); color: var(--green);
+            border: 1px solid rgba(16,185,129,0.3);
+            font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: 600;
+        }
+
+        /* ===== JUEGO ===== */
+        .game-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-glass); flex-wrap: wrap; gap: 15px;
+        }
+        .hud-item { display: flex; flex-direction: column; gap: 4px; }
+        .hud-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
+        .hud-value { font-size: 1.8rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .hud-value.time   { color: var(--accent); }
+        .hud-value.errors { color: var(--red); }
+        .hud-value.record { color: #fbbf24; }
+
+        .bank-area {
+            background: rgba(0,0,0,0.2); border-radius: 16px; padding: 20px;
+            border: 1px dashed var(--border-highlight); margin-bottom: 24px; min-height: 120px;
+        }
+        .bank-items { display: flex; flex-wrap: wrap; gap: 10px; }
+
+        .drop-zones-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 15px; }
+        @media (max-width: 900px) { .drop-zones-grid { grid-template-columns: repeat(3,1fr); } }
+        @media (max-width: 600px) { .drop-zones-grid { grid-template-columns: 1fr; } }
+
+        .drop-zone {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass);
+            border-radius: 16px; padding: 15px; min-height: 250px;
+            display: flex; flex-direction: column; transition: all 0.2s;
+        }
+        .drop-zone.dragover {
+            background: rgba(0,210,255,0.05); border-color: var(--accent); transform: scale(1.02);
+        }
+        .zone-title {
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted); margin-bottom: 15px; text-align: center;
+        }
+        .zone-container { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
+
+        .drag-item {
+            padding: 10px 14px; background: rgba(30,41,59,0.8);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+            font-size: 0.85rem; font-weight: 600; cursor: grab; transition: all 0.2s;
+            touch-action: none; border-left-width: 3px;
+        }
+        .drag-item:active { cursor: grabbing; transform: scale(0.95); }
+        .drag-item.dragging { opacity: 0.3; }
+        .drag-item[data-level="raiz"]     { border-left-color: var(--c-raiz); }
+        .drag-item[data-level="tronco"]   { border-left-color: var(--c-tronco); }
+        .drag-item[data-level="division"] { border-left-color: var(--c-division); }
+        .drag-item[data-level="fasciculo"]{ border-left-color: var(--c-fasciculo); }
+        .drag-item[data-level="rama"]     { border-left-color: var(--c-rama); }
+
+        .drag-ghost {
+            position: fixed; pointer-events: none; z-index: 9999;
+            opacity: 0.9; border-radius: 10px;
+            background: rgba(15,23,42,0.95); border: 1px solid var(--accent);
+            padding: 10px 14px; font-size: 0.85rem; font-weight: 600;
+            color: white; box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            transform: rotate(2deg) scale(1.05);
+            font-family: var(--font-main);
+        }
+
+        .btn-game {
+            background: var(--text-main); color: var(--bg-base); border: none;
+            padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s; align-self: flex-start;
+        }
+        .btn-game:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            z-index: 100; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content {
+            background: #0f172a; border: 1px solid var(--border-glass);
+            border-radius: 24px; padding: 40px; text-align: center; max-width: 420px; width: 90%;
+        }
+        .modal-grade {
+            font-size: 4.5rem; font-weight: 800; line-height: 1; margin: 20px 0 8px;
+        }
+
+        /* ===== FLASHCARDS ===== */
+        .flash-stage { perspective: 1000px; max-width: 600px; margin: 0 auto; }
+        .fc-progress-bar {
+            height: 3px; background: rgba(255,255,255,0.1);
+            border-radius: 3px; margin-bottom: 20px; overflow: hidden;
+        }
+        .fc-progress-fill {
+            height: 100%; background: var(--accent);
+            border-radius: 3px; transition: width 0.4s ease;
+        }
+        .flash-card-inner {
+            position: relative; width: 100%; height: 320px;
+            transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+            transform-style: preserve-3d; cursor: pointer;
+        }
+        .flash-card.flipped .flash-card-inner { transform: rotateY(180deg); }
+        .fc-face {
+            position: absolute; inset: 0; backface-visibility: hidden;
+            border-radius: 24px; padding: 40px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        }
+        .fc-front { background: rgba(30,41,59,0.5); border: 1px solid var(--border-glass); }
+        .fc-back {
+            background: rgba(15,23,42,0.9); border: 1px solid var(--accent);
+            transform: rotateY(180deg); box-shadow: inset 0 0 40px rgba(0,212,255,0.1);
+        }
+        .fc-tag { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); margin-bottom: 20px; letter-spacing: 0.1em; }
+        .fc-q { font-size: 1.4rem; font-weight: 700; color: white; line-height: 1.4; }
+        .fc-hint { margin-top: auto; font-size: 0.8rem; color: var(--text-muted); opacity: 0.7; }
+        .fc-a-title { font-size: 1.6rem; font-weight: 800; color: var(--accent); margin-bottom: 15px; }
+        .fc-a-desc { font-size: 1rem; line-height: 1.6; color: #cbd5e1; }
+        .fc-controls { display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 30px; }
+        .fc-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass);
+            border-radius: 50%; width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: white; transition: all 0.2s;
+        }
+        .fc-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); border-color: white; }
+        .fc-counter { font-family: var(--font-mono); color: var(--text-muted); font-size: 0.9rem; }
+        .fc-shuffle-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass);
+            border-radius: 12px; padding: 8px 16px; color: var(--text-muted);
+            cursor: pointer; font-size: 0.85rem; font-family: var(--font-main);
+            transition: all 0.2s; margin: 15px auto 0; display: block;
+        }
+        .fc-shuffle-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        /* ===== SÍNDROMES ===== */
+        .syndromes-header {
+            padding: 30px 30px 0;
+            display: flex; align-items: flex-start; justify-content: space-between;
+            flex-wrap: wrap; gap: 15px;
+        }
+        .syndromes-title { font-size: 1.5rem; font-weight: 700; }
+        .syndromes-subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
+        .syn-filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .syn-filter-btn {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);
+            border-radius: 20px; padding: 6px 14px; color: var(--text-muted);
+            font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+            font-family: var(--font-main);
+        }
+        .syn-filter-btn:hover, .syn-filter-btn.active {
+            background: rgba(255,255,255,0.08); color: white; border-color: rgba(255,255,255,0.2);
+        }
+        .syndromes-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
+            gap: 20px; padding: 30px;
+        }
+        .syndrome-card {
+            background: rgba(15,23,42,0.6); border: 1px solid var(--border-glass);
+            border-radius: 20px; padding: 24px; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            position: relative; overflow: hidden;
+        }
+        .syndrome-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: var(--syn-color, var(--accent)); border-radius: 4px 0 0 4px;
+        }
+        .syndrome-card:hover {
+            transform: translateY(-4px); border-color: var(--syn-color, var(--accent));
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+        }
+        .syndrome-card.expanded { border-color: var(--syn-color, var(--accent)); }
+        .syn-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
+        .syn-icon {
+            width: 50px; height: 50px; flex-shrink: 0; border-radius: 14px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+        }
+        .syn-name { font-size: 1.05rem; font-weight: 700; color: white; margin-bottom: 4px; }
+        .syn-roots { font-family: var(--font-mono); font-size: 0.7rem; color: var(--syn-color, var(--accent)); }
+        .syn-mechanism { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; }
+        .syn-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .syn-tag {
+            font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 20px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted);
+        }
+        .syn-tag.hl { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.3); color: #c084fc; }
+        .syn-details {
+            display: none; margin-top: 14px; padding-top: 14px;
+            border-top: 1px solid var(--border-glass);
+            animation: fade-in 0.3s ease-out;
+        }
+        .syndrome-card.expanded .syn-details { display: block; }
+        .syn-section { margin-bottom: 12px; }
+        .syn-label {
+            font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 5px;
+        }
+        .syn-text { font-size: 0.88rem; line-height: 1.6; color: #cbd5e1; }
+        .syn-text strong { color: white; }
+        .syn-block-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+        .syn-block-badge {
+            background: rgba(16,185,129,0.1); color: var(--green);
+            border: 1px solid rgba(16,185,129,0.3);
+            font-size: 0.72rem; padding: 3px 9px; border-radius: 12px; font-weight: 600;
+        }
+        .syn-expand-hint { font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 10px; opacity: 0.5; }
+        .syndrome-card.expanded .syn-expand-hint { display: none; }
+
+        /* ===== UTILS ===== */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        @media (max-width: 600px) {
+            .tabs { gap: 8px; }
+            .tab-btn { padding: 10px 16px; font-size: 0.85rem; }
+            .syndromes-grid { grid-template-columns: 1fr; padding: 20px; }
+            .syndromes-header { padding: 20px 20px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="grid-overlay"></div>
+
+<div class="container">
+    <header>
+        <div class="logo-tag">AnesthTR · ADVANCED SIMULATION</div>
+        <h1>Plexo Braquial</h1>
+        <p class="subtitle">Anatomía · Integración Regional · Evaluación</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-target="map">💪 Mapa Dinámico</button>
+        <button class="tab-btn" data-target="game">⏱ Modo Evaluación</button>
+        <button class="tab-btn" data-target="flashcards">🎴 Flashcards</button>
+        <button class="tab-btn" data-target="sindromes">🩺 Síndromes</button>
+    </div>
+
+    <!-- VISTA 1: MAPA -->
+    <div id="view-map" class="view-section active">
+        <div class="glass-panel" style="padding:0;">
+            <div class="map-container">
+                <div class="flow-levels" id="map-nodes">
+                    <svg class="svg-canvas" id="svg-canvas"></svg>
+                    <div class="level-col" id="col-raiz"><div class="level-title">Raíces</div></div>
+                    <div class="level-col" id="col-tronco"><div class="level-title">Troncos</div></div>
+                    <div class="level-col" id="col-division"><div class="level-title">Divisiones</div></div>
+                    <div class="level-col" id="col-fasciculo"><div class="level-title">Fascículos</div></div>
+                    <div class="level-col" id="col-rama"><div class="level-title">Ramas Term.</div></div>
+                </div>
+            </div>
+            <div class="clinical-panel">
+                <div class="clinical-indicator" id="clin-icon">🧠</div>
+                <div class="clinical-content">
+                    <div class="clinical-tag" id="clin-tag">EXPLORADOR INICIADO</div>
+                    <div class="clinical-title" id="clin-title">Toca cualquier nervio</div>
+                    <div class="clinical-desc" id="clin-desc">El algoritmo trazará la vía anatómica completa hacia las raíces cervicales correspondientes y listará los bloqueos de abordaje clínico.</div>
+                    <div class="clinical-blocks" id="clin-blocks"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA 2: EVALUACIÓN -->
+    <div id="view-game" class="view-section">
+        <div class="glass-panel" style="padding:30px;">
+            <div class="game-header">
+                <div>
+                    <h2>Reconstrucción Anatómica</h2>
+                    <p style="color:var(--text-muted);font-size:0.9rem;margin-top:5px;">Arrastra los nervios a su ubicación correcta.</p>
+                </div>
+                <div style="display:flex;gap:30px;">
+                    <div class="hud-item">
+                        <span class="hud-label">Errores</span>
+                        <span class="hud-value errors" id="game-errors">0</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Tiempo</span>
+                        <span class="hud-value time" id="game-time">00:00</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Récord</span>
+                        <span class="hud-value record" id="game-record">--:--</span>
+                    </div>
+                </div>
+                <div style="display:flex;gap:10px;">
+                    <button class="btn-game" id="btn-check-game">✓ Verificar</button>
+                    <button class="btn-game" id="btn-reset-game" style="background:rgba(255,255,255,0.08);color:var(--text-muted);border:1px solid var(--border-glass);">↺ Reiniciar</button>
+                </div>
+            </div>
+
+            <div class="bank-area">
+                <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);margin-bottom:15px;text-transform:uppercase;">Banco de Estructuras (<span id="bank-count">0</span>)</div>
+                <div class="bank-items" id="game-bank"></div>
+            </div>
+
+            <div class="drop-zones-grid">
+                <div class="drop-zone" data-level="raiz">
+                    <div class="zone-title">Raíces (C5-T1)</div>
+                    <div class="zone-container"></div>
+                </div>
+                <div class="drop-zone" data-level="tronco">
+                    <div class="zone-title">Troncos</div>
+                    <div class="zone-container"></div>
+                </div>
+                <div class="drop-zone" data-level="division">
+                    <div class="zone-title">Divisiones</div>
+                    <div class="zone-container"></div>
+                </div>
+                <div class="drop-zone" data-level="fasciculo">
+                    <div class="zone-title">Fascículos</div>
+                    <div class="zone-container"></div>
+                </div>
+                <div class="drop-zone" data-level="rama">
+                    <div class="zone-title">Ramas Terminales</div>
+                    <div class="zone-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA 3: FLASHCARDS -->
+    <div id="view-flashcards" class="view-section">
+        <div class="flash-stage">
+            <div class="fc-progress-bar"><div class="fc-progress-fill" id="fc-progress"></div></div>
+            <div class="flash-card" id="fc-container">
+                <div class="flash-card-inner">
+                    <div class="fc-face fc-front">
+                        <div class="fc-tag" id="fc-tag">CATEGORIA</div>
+                        <div class="fc-q" id="fc-q">¿Pregunta?</div>
+                        <div class="fc-hint">Clic para voltear · ← → o teclas para navegar</div>
+                    </div>
+                    <div class="fc-face fc-back">
+                        <div class="fc-a-title" id="fc-a-title">Respuesta</div>
+                        <div class="fc-a-desc" id="fc-a-desc">Detalles</div>
+                    </div>
+                </div>
+            </div>
+            <div class="fc-controls">
+                <button class="fc-btn" id="fc-prev">←</button>
+                <div class="fc-counter"><span id="fc-curr">1</span> / <span id="fc-total">?</span></div>
+                <button class="fc-btn" id="fc-next">→</button>
+            </div>
+            <button class="fc-shuffle-btn" id="fc-shuffle">🔀 Mezclar tarjetas</button>
+        </div>
+    </div>
+
+    <!-- VISTA 4: SÍNDROMES -->
+    <div id="view-sindromes" class="view-section">
+        <div class="glass-panel" style="padding:0;">
+            <div class="syndromes-header">
+                <div>
+                    <div class="syndromes-title">Síndromes Clínicos</div>
+                    <div class="syndromes-subtitle">Lesiones del plexo braquial y correlatos anestesiológicos</div>
+                </div>
+                <div class="syn-filter-row" id="syn-filters">
+                    <button class="syn-filter-btn active" data-filter="all">Todos</button>
+                    <button class="syn-filter-btn" data-filter="traumatico">Traumático</button>
+                    <button class="syn-filter-btn" data-filter="compresivo">Compresivo</button>
+                    <button class="syn-filter-btn" data-filter="iatrogenico">Iatrogénico</button>
+                </div>
+            </div>
+            <div class="syndromes-grid" id="syndromes-grid"></div>
+        </div>
+    </div>
+
+    <footer style="margin-top:auto;text-align:center;color:var(--text-muted);font-size:0.85rem;padding:20px;background:rgba(0,0,0,0.2);border-radius:16px;border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;gap:15px;">
+        <span style="font-size:1.5rem;">⚠️</span>
+        <p style="margin:0;text-align:left;line-height:1.5;">Este sitio tiene fines exclusivamente educativos. La información aquí presentada no sustituye el juicio clínico ni las recomendaciones de sociedades médicas vigentes. Siempre consulta fuentes primarias antes de tomar decisiones clínicas.</p>
+    </footer>
+</div>
+
+<div class="modal-overlay" id="game-modal">
+    <div class="modal-content glass-panel">
+        <h2 style="font-size:1.8rem;margin-bottom:10px;">¡Simulación Completada!</h2>
+        <p style="color:var(--text-muted);">Calificación de desempeño</p>
+        <div class="modal-grade" id="modal-grade">100%</div>
+        <div id="modal-label" style="font-size:1rem;font-weight:600;color:var(--text-muted);margin-top:-14px;margin-bottom:20px;letter-spacing:0.05em;">Excelente</div>
+        <div style="display:flex;justify-content:space-around;margin-bottom:30px;font-family:var(--font-mono);color:#cbd5e1;">
+            <div>Tiempo:<br><strong style="color:white;font-size:1.2rem;" id="modal-time">00:00</strong></div>
+            <div>Errores:<br><strong style="color:var(--red);font-size:1.2rem;" id="modal-errors">0</strong></div>
+        </div>
+        <button class="btn-game" id="btn-restart-game" style="width:100%;">Reintentar</button>
+    </div>
+</div>
+
+<script>
+const plexoData = {
+    nodes: [
+        { id:'C5',    level:'raiz',      label:'C5',             desc:'Raíz superior. Origen del N. frénico (con C3-C4), N. dorsal de la escápula y N. supraescapular. Motor: deltoides, bíceps, supraespinoso, infraespinoso.',         blocks:['Interescalénico'] },
+        { id:'C6',    level:'raiz',      label:'C6',             desc:'Con C5 forma el tronco superior. Sensibilidad: pulgar e índice. Reflejo bicipital. Motor: bíceps, braquiorradial, pronador redondo.',                                blocks:['Interescalénico','Supraclavicular'] },
+        { id:'C7',    level:'raiz',      label:'C7',             desc:'Raíz más gruesa. Forma sola el tronco medio. Sensibilidad: dedo medio. Motor: tríceps, pronadores, flexores de muñeca. Reflejo tricipital.',                         blocks:['Supraclavicular'] },
+        { id:'C8',    level:'raiz',      label:'C8',             desc:'Con T1 forma el tronco inferior. Zona cubital. Flexor profundo de 4º-5º dedos. Sensibilidad: dedo anular y meñique.',                                               blocks:['Supraclavicular','Infraclavicular'] },
+        { id:'T1',    level:'raiz',      label:'T1',             desc:'Raíz inferior. Intrínsecos de la mano. Adyacente a la cadena simpática: su lesión produce Síndrome de Horner (ptosis, miosis, anhidrosis ipsilateral).',             blocks:['Infraclavicular'] },
+        { id:'T_SUP', level:'tronco',    label:'T. Superior',    gameLabel:'Superior',   desc:'C5+C6. Origen del N. supraescapular y nervio del subclavio. Más vulnerable en traumatismos del hombro y tracción obstétrica.',                                       blocks:['Interescalénico','Supraclavicular'] },
+        { id:'T_MED', level:'tronco',    label:'T. Medio',       gameLabel:'Medio',      desc:'Continuación directa de C7. Contribuye principalmente al N. radial. Lesión: pérdida de extensión de muñeca y dedos.',                                              blocks:['Supraclavicular'] },
+        { id:'T_INF', level:'tronco',    label:'T. Inferior',    gameLabel:'Inferior',   desc:'C8+T1. Profundo, posterior a la arteria subclavia. El interescalénico no cubre este tronco → falla cubital.',                                                       blocks:['Supraclavicular'] },
+        { id:'D_AS',  level:'division',  label:'Ant. Sup.',      gameLabel:'Ant. Superior',  desc:'División anterior del tronco superior → compartimento flexor. Contribuye al fascículo lateral.',                                                                    blocks:[] },
+        { id:'D_PS',  level:'division',  label:'Post. Sup.',     gameLabel:'Post. Superior', desc:'División posterior del tronco superior → compartimento extensor. Contribuye al fascículo posterior.',                                                               blocks:[] },
+        { id:'D_AM',  level:'division',  label:'Ant. Med.',      gameLabel:'Ant. Medio',     desc:'División anterior del tronco medio → compartimento flexor. Contribuye al fascículo lateral.',                                                                       blocks:[] },
+        { id:'D_PM',  level:'division',  label:'Post. Med.',     gameLabel:'Post. Medio',    desc:'División posterior del tronco medio → compartimento extensor. Contribuye al fascículo posterior.',                                                                  blocks:[] },
+        { id:'D_AI',  level:'division',  label:'Ant. Inf.',      gameLabel:'Ant. Inferior',  desc:'División anterior del tronco inferior → zona cubital. Contribuye al fascículo medial.',                                                                            blocks:[] },
+        { id:'D_PI',  level:'division',  label:'Post. Inf.',     gameLabel:'Post. Inferior', desc:'División posterior del tronco inferior → compartimento extensor. Contribuye al fascículo posterior.',                                                              blocks:[] },
+        { id:'F_LAT', level:'fasciculo', label:'F. Lateral',     gameLabel:'Lateral',    desc:'Divisiones ant. sup. + ant. med. Lateral a la arteria axilar. Origen: N. musculocutáneo + raíz lateral del N. mediano.',                                           blocks:['Infraclavicular','Axilar'] },
+        { id:'F_POS', level:'fasciculo', label:'F. Posterior',   gameLabel:'Posterior',  desc:'Todas las divisiones posteriores. Posterior a la arteria axilar. Origen: N. Radial y N. Axilar (todos los extensores del miembro superior).',                      blocks:['Infraclavicular','Axilar'] },
+        { id:'F_MED', level:'fasciculo', label:'F. Medial',      gameLabel:'Medial',     desc:'División ant. inf. Medial a la arteria axilar. Origen: raíz medial del N. mediano + N. cubital + N. cutáneos mediales del brazo y antebrazo.',                     blocks:['Infraclavicular','Axilar'] },
+        { id:'R_MUSC',level:'rama',      label:'Musculocutáneo', desc:'Del fascículo lateral. Perfora el coracobraquial (dato ecográfico clave). Motor: bíceps, braquial. Sensitiva: antebrazo lateral (N. cutáneo lat. antebrazo).',      blocks:['Axilar (bloqueo específico)'] },
+        { id:'R_MED', level:'rama',      label:'Mediano',        desc:'Raíz lat. + raíz med. Pronadores, FLCS, flexores 2º-3º. Sensitiva: 3.5 dedos radiales. Lesión: "mano del predicador" + signo de la botella.',                      blocks:['Axilar','Muñeca'] },
+        { id:'R_RAD', level:'rama',      label:'Radial',         desc:'Del fascículo posterior. Surco espiral del húmero. Extensores de codo, muñeca y dedos. Sensitiva: dorso radial de la mano. Lesión: "mano caída".',                  blocks:['Axilar','Codo'] },
+        { id:'R_AX',  level:'rama',      label:'Axilar',         desc:'Del fascículo posterior. Espacio cuadrilateral. Motor: deltoides + redondo menor. Sensitiva: "parche del sargento" (cara lateral del hombro).',                    blocks:['Infraclavicular'] },
+        { id:'R_CUB', level:'rama',      label:'Cubital',        desc:'Del fascículo medial. Canal cubital en el codo (2º atrapamiento más frecuente). Intrínsecos, hipotenar, interóseos. Lesión: "mano en garra" + signo de Froment.',  blocks:['Axilar','Codo','Muñeca'] },
+    ],
+    edges: [
+        ['C5','T_SUP'],['C6','T_SUP'],['C7','T_MED'],['C8','T_INF'],['T1','T_INF'],
+        ['T_SUP','D_AS'],['T_SUP','D_PS'],['T_MED','D_AM'],['T_MED','D_PM'],['T_INF','D_AI'],['T_INF','D_PI'],
+        ['D_AS','F_LAT'],['D_AM','F_LAT'],['D_PS','F_POS'],['D_PM','F_POS'],['D_PI','F_POS'],['D_AI','F_MED'],
+        ['F_LAT','R_MUSC'],['F_LAT','R_MED'],['F_MED','R_MED'],['F_MED','R_CUB'],['F_POS','R_RAD'],['F_POS','R_AX']
+    ]
+};
+
+const flashData = [
+    { tag:'RAÍCES',    q:'Ramo de C5 responsable de complicación respiratoria en bloqueo interescalénico',          at:'Nervio Frénico (C3-C4-C5)',        ad:'Parálisis hemidiafragmática ipsilateral en ~100% de los bloqueos interescalénicos. Contraindicado con FEV1 < 50% del predicho o patología pulmonar contralateral.' },
+    { tag:'RAÍCES',    q:'¿Qué raíz aporta los intrínsecos de la mano y qué síndrome simpático puede acompañar su lesión?', at:'T1 — Síndrome de Horner', ad:'T1 es adyacente a la cadena simpática cervical. Lesión o bloqueo alto produce ptosis, miosis y anhidrosis ipsilateral. Buscar siempre en lesiones del tronco inferior.' },
+    { tag:'RAÍCES',    q:'¿Qué raíz forma sola el tronco medio y qué reflejo evalúa?',                               at:'C7 — Reflejo Tricipital',          ad:'C7 es la raíz más gruesa del plexo. Su continuación directa es el tronco medio. El reflejo del tríceps (C7) es el marcador clínico de integridad de C7.' },
+    { tag:'RAÍCES',    q:'Mnemotecnia para el nervio frénico',                                                        at:'"C3-C4-C5 keeps the diaphragm alive"', ad:'Raíz principal C4 con contribuciones de C3 y C5. Vital recordarlo antes de cualquier bloqueo cervical alto o interescalénico en pacientes con reserva pulmonar comprometida.' },
+    { tag:'RAÍCES',    q:'Dos ramos directos de C5 que no pasan por los troncos del plexo',                           at:'N. Dorsal de la Escápula + contribución al Frénico', ad:'El N. Dorsal de la Escápula inerva los romboides y el elevador de la escápula. Su lesión produce escápula alada medial, a diferencia del N. Torácico Largo (lateral).' },
+    { tag:'TRONCOS',   q:'¿Por qué el bloqueo interescalénico falla en cubrir el territorio cubital?',               at:'El tronco inferior (C8-T1) queda fuera del alcance', ad:'El tronco inferior se ubica profundo e inferior a la arteria subclavia. El anestésico depositado en el surco interescalénico no alcanza C8-T1 en volúmenes estándar.' },
+    { tag:'TRONCOS',   q:'Nervio que nace del tronco superior y cuyo bloqueo trata el dolor de hombro',              at:'N. Supraescapular (C5-C6)',        ad:'Inerva el supraespinoso, infraespinoso y la articulación glenohumeral (70% de su inervación). Bloqueo eco-guiado en la escotadura supraescapular: técnica de ahorro de opioides en artroscopia de hombro.' },
+    { tag:'DIVISIONES', q:'¿Cuántas divisiones tiene el plexo y cuál es la regla de reorganización?',               at:'6 divisiones — ant. extensor/post. flexor',        ad:'Todas las divisiones anteriores → compartimento flexor. Todas las posteriores → compartimento extensor (fascículo posterior). Principio de reorganización funcional del plexo.' },
+    { tag:'FASCÍCULOS', q:'Relación anatómica de los tres fascículos respecto a la arteria axilar',                  at:'Lateral, Posterior y Medial a la arteria axilar',  ad:'Sus nombres describen exactamente su posición. Esto es la base del signo del "triángulo" en el abordaje infraclavicular eco-guiado (Raj\'s approach).' },
+    { tag:'FASCÍCULOS', q:'¿Qué fascículo da origen a todos los extensores del miembro superior?',                   at:'Fascículo Posterior',              ad:'Recibe las 3 divisiones posteriores (de los 3 troncos). Genera N. Radial (extensores de muñeca y dedos) y N. Axilar (deltoides). Su lesión: parálisis extensora completa.' },
+    { tag:'RAMAS',     q:'Nervio que perfora el coracobraquial — signo ecográfico clave en abordaje axilar',         at:'N. Musculocutáneo',                ad:'Se identifica como estructura hiperecoica ovalada dentro del músculo coracobraquial. En el bloqueo axilar suele quedar fuera del haz principal → requiere inyección separada para asegurar cobertura.' },
+    { tag:'RAMAS',     q:'Postura de "mano caída" — nervio lesionado y sitio más frecuente',                         at:'N. Radial — Surco Espiral del Húmero', ad:'Lesión clásica en fractura de la diáfisis humeral o "parálisis del sábado noche" (compresión prolongada). Incapacidad para extender muñeca, dedos y pulgar. Supinación también afectada.' },
+    { tag:'RAMAS',     q:'Prueba clínica para detectar lesión del nervio mediano al cerrar el puño',                 at:'Signo de Juramento / "Mano del Predicador"', ad:'Al intentar cerrar el puño, el 2º y 3er dedos no flexionan (parálisis del FLP y FLCS de 2º-3º). El dedo índice queda extendido como señalando. Signo de la botella positivo.' },
+    { tag:'RAMAS',     q:'Signo de Froment — ¿qué nervio evalúa?',                                                   at:'Nervio Cubital',                   ad:'Al sostener un papel entre el pulgar y el índice, el paciente hiperflexiona la falange distal del pulgar (FLP del mediano) por parálisis del aductor del pulgar (cubital). Signo patognomónico de parálisis cubital.' },
+    { tag:'RAMAS',     q:'Nervio del "parche del sargento" y cuál músculo evalúa',                                   at:'N. Axilar — Deltoides',            ad:'La sensibilidad del parche lateral del hombro (territorio del N. Axilar) es el mejor test clínico para evaluar su integridad. Motor: deltoides (abducción del hombro 15-90°) y redondo menor.' },
+    { tag:'BLOQUEOS',  q:'Signo ecográfico del abordaje infraclavicular eco-guiado',                                  at:'Signo del "Triángulo"',            ad:'Los tres fascículos (Lateral a las 9h, Posterior a las 6h, Medial a las 3h) rodean la arteria axilar. El depósito debe ser posterior a la arteria para crear un anillo de anestésico en los tres fascículos.' },
+    { tag:'BLOQUEOS',  q:'Abordaje de elección para cirugía de mano y muñeca — ¿cuál y por qué?',                   at:'Abordaje Axilar',                  ad:'Sin riesgo de neumotórax ni bloqueo frénico. Bloquea los 4 nervios terminales principales. Limitación: N. musculocutáneo sale del paquete proximalmente → requiere inyección separada en el coracobraquial.' },
+    { tag:'BLOQUEOS',  q:'"El espinal del brazo" — ¿qué abordaje es y cuál es su riesgo principal sin ECO?',         at:'Abordaje Supraclavicular — Neumotórax', ad:'Alta tasa de éxito con volumen único pues el plexo está compacto justo posterior a la A. subclavia. Riesgo de neumotórax ~1% sin guía ecográfica; con ECO, prácticamente eliminado. Riesgo de bloqueo frénico presente.' },
+    { tag:'BLOQUEOS',  q:'¿Qué abordaje cubre C5-C7 pero habitualmente falla C8-T1?',                                at:'Interescalénico',                  ad:'El interescalénico es excelente para hombro y brazo proximal, pero el tronco inferior (C8-T1) queda posterior e inferior. Añadir bloqueo cubital distal o usar infraclavicular para cubrir la mano completa.' },
+    { tag:'CLÍNICA',   q:'Postura y mecanismo de la parálisis de Erb-Duchenne en recién nacidos',                     at:'"Propina del camarero" — tracción lateral cefálica (C5-C6)', ad:'Distocia de hombros: tracción lateral de la cabeza lesiona C5-C6 (tronco superior). Resultado: aducción y rotación interna del hombro, codo extendido, antebrazo pronado, muñeca en flexión — "Waiter\'s tip".' },
+    { tag:'CLÍNICA',   q:'Diferencia entre escápula alada medial vs. lateral',                                        at:'Medial: N. Dorsal Escápula (romboides) / Lateral: N. Torácico Largo (serrato)', ad:'Escápula alada medial: lesión del N. dorsal de la escápula (C5), pierde romboides y elevador. Escápula alada lateral (clásica): N. torácico largo (C5-C7), pierde serrato anterior.' },
+];
+
+const syndromesData = [
+    {
+        id:'erb', icon:'👶', name:'Parálisis de Erb-Duchenne', roots:'C5 — C6', color:'#a855f7', type:'traumatico',
+        mechanism:'Tracción lateral de la cabeza durante el parto (distocia de hombros) o en adultos por accidente de motocicleta (tracción forzada cabeza-hombro).',
+        presentation:'<strong>"Propina del camarero" (Waiter\'s tip)</strong>: hombro aducido y en rotación interna, codo extendido, antebrazo pronado, muñeca en flexión. El brazo "cuelga" sin poder abducirlo ni flexionar el codo.',
+        affected:['C5','C6','T_SUP'],
+        motor:'Deltoides, bíceps, braquiorradial, supraespinoso (abducción y flexión de codo abolidas)',
+        sensory:'Cara lateral del brazo y antebrazo (dermatomas C5-C6)',
+        blocks:['Interescalénico','Supraclavicular'],
+        pearl:'El reflejo bicipital está abolido. El reflejo tricipital está intacto. El pronóstico es mejor que en Klumpke.',
+    },
+    {
+        id:'klumpke', icon:'✋', name:'Parálisis de Klumpke', roots:'C8 — T1', color:'#ef4444', type:'traumatico',
+        mechanism:'Tracción hacia arriba del miembro superior abducido (parto de nalgas, colgarse de un saliente). Menos frecuente que Erb.',
+        presentation:'<strong>"Mano en garra"</strong> con parálisis de intrínsecos de la mano. Si hay compromiso de T1 preganglionar → <strong>Síndrome de Horner</strong> ipsilateral (ptosis, miosis, anhidrosis, enoftalmos).',
+        affected:['C8','T1','T_INF'],
+        motor:'Intrínsecos de la mano (interóseos, lumbricales, hipotenar). Flexor profundo de 4º y 5º dedos.',
+        sensory:'Borde medial de la mano, 4º y 5º dedos (C8-T1)',
+        blocks:['Infraclavicular','Axilar'],
+        pearl:'Buscar siempre ptosis y miosis ipsilateral. Síndrome de Horner confirma lesión preganglionar de T1 — peor pronóstico de recuperación.',
+    },
+    {
+        id:'radial', icon:'💪', name:'Lesión del N. Radial', roots:'Fascículo Posterior → N. Radial', color:'#f59e0b', type:'compresivo',
+        mechanism:'"Parálisis del sábado noche": compresión del nervio en el surco espiral del húmero por brazo apoyado en posición anómala. También: fractura de la diáfisis humeral, muletas axilares.',
+        presentation:'<strong>"Mano caída" (wrist drop)</strong>: incapacidad para extender muñeca y dedos. Si la lesión es proximal (axila), también cae el tríceps y se pierde el reflejo tricipital.',
+        affected:['F_POS','R_RAD'],
+        motor:'Extensores de muñeca (ECRL, ECRB, ECU), extensores de dedos, supinador, tríceps (proximal)',
+        sensory:'Dorso radial de la mano, tabaquera anatómica, 3.5 dedos dorsales radiales',
+        blocks:['Bloqueo de N. Radial en codo','Abordaje axilar'],
+        pearl:'El surco espiral del húmero es el sitio más frecuente de lesión. La fractura del tercio medio del húmero puede atraparlo directamente en la línea de fractura.',
+    },
+    {
+        id:'mediano', icon:'🤏', name:'Lesión del N. Mediano', roots:'F. Lateral + F. Medial → N. Mediano', color:'#06b6d4', type:'compresivo',
+        mechanism:'Síndrome del Túnel Carpiano (atrapamiento bajo el retináculo flexor en la muñeca). Es el síndrome de atrapamiento más frecuente del MMSS. También: traumatismo en "muñeca suicida".',
+        presentation:'<strong>"Mano del predicador"</strong> al cerrar el puño (2º y 3er dedos no flexionan). Signo de la botella positivo. Atrofia del eminencia tenar en estadios avanzados. Parestesias nocturnas en los 3.5 dedos radiales.',
+        affected:['F_LAT','F_MED','R_MED'],
+        motor:'Pronadores, FLCS, FLP, músculos tenares (oponente del pulgar, abductor corto)',
+        sensory:'3.5 dedos radiales y palma radial (clásico del mediano)',
+        blocks:['Bloqueo N. Mediano en muñeca','Bloqueo en codo'],
+        pearl:'El Síndrome del Túnel Carpiano es el síndrome de atrapamiento más frecuente de la extremidad superior. La electromiografía confirma el nivel de lesión.',
+    },
+    {
+        id:'cubital', icon:'🖐️', name:'Lesión del N. Cubital', roots:'F. Medial → N. Cubital', color:'#10b981', type:'compresivo',
+        mechanism:'Síndrome del Canal Cubital: atrapamiento a nivel del epicóndilo medial. Es el 2º más frecuente. También: Canal de Guyon en la muñeca ("parálisis del ciclista").',
+        presentation:'<strong>"Mano en garra"</strong> (principalmente 4º y 5º dedos) por parálisis de interóseos y lumbricales cubitales. <strong>Signo de Froment</strong> (+): hiperflexión FD del pulgar al sujetar papel.',
+        affected:['F_MED','R_CUB'],
+        motor:'Interóseos (todos), lumbricales 4º-5º, hipotenar, aductor del pulgar, FCU',
+        sensory:'1.5 dedos cubitales, borde cubital de la mano y antebrazo distal',
+        blocks:['Bloqueo N. Cubital en codo','Canal de Guyon (muñeca)'],
+        pearl:'La garra cubital es más pronunciada que en la lesión del mediano porque los lumbricales de 4º-5º son los únicos afectados. Signo de Froment es patognomónico.',
+    },
+    {
+        id:'axilar', icon:'🏋️', name:'Lesión del N. Axilar', roots:'F. Posterior → N. Axilar', color:'#f59e0b', type:'traumatico',
+        mechanism:'Fractura del cuello quirúrgico del húmero, luxación anterior del hombro (compresión en el espacio cuadrilateral), inyección IM incorrecta en el cuadrante superomedial del deltoides.',
+        presentation:'Pérdida del contorno redondeado del hombro (atrofia del deltoides). Incapacidad para abducir el brazo 15-90°. Anestesia en el <strong>"parche del sargento"</strong> (cara lateral del hombro).',
+        affected:['F_POS','R_AX'],
+        motor:'Deltoides (3 porciones) y redondo menor',
+        sensory:'Cara lateral del hombro — "Sergeant\'s Patch" (territorio N. Cutáneo Lat. Superior del brazo)',
+        blocks:['Infraclavicular','Bloqueo específico en espacio cuadrilateral'],
+        pearl:'La inyección IM SIEMPRE en el cuadrante superolateral del deltoides. El cuadrante superomedial es exactamente donde cruza el N. Axilar antes de dividirse.',
+    },
+    {
+        id:'toracico_largo', icon:'🫁', name:'Lesión del N. Torácico Largo', roots:'C5 — C6 — C7 (ramos directos)', color:'#14b8a6', type:'iatrogenico',
+        mechanism:'Compresión o tracción durante vaciamiento axilar, cirugía cardíaca, mastectomía. También como complicación infrecuente de bloqueo interescalénico. Es un ramo directo, no pasa por troncos.',
+        presentation:'<strong>Escápula Alada Lateral</strong>: al empujar la pared con brazos extendidos, el borde medial de la escápula se despega lateralmente del tórax. Incapacidad para elevar el brazo por encima de 90°.',
+        affected:['C5','C6','C7'],
+        motor:'Serrato anterior (único músculo que protrae y rota la escápula hacia arriba)',
+        sensory:'Sin déficit sensitivo significativo',
+        blocks:['No es objetivo de bloqueos — es una complicación a prevenir'],
+        pearl:'El nervio torácico largo desciende sobre la superficie del serrato anterior, expuesto en disecciones axilares. Su lesión es la causa más frecuente de escápula alada.',
+    },
+    {
+        id:'sindrome_salida', icon:'🔧', name:'Síndrome de Salida Torácica', roots:'C8 — T1 (principalmente)', color:'#94a3b8', type:'compresivo',
+        mechanism:'Compresión del plexo y/o vasos subclavios entre costilla cervical (o 1ª costilla) y la clavícula, o por el músculo escaleno anterior. Más frecuente en mujeres de mediana edad con cuello largo.',
+        presentation:'Dolor y parestesias en distribución cubital (C8-T1), debilidad de intrínsecos de la mano, Fenómeno de Raynaud ipsilateral. Empeora al elevar el brazo por encima de la cabeza.',
+        affected:['C8','T1','T_INF'],
+        motor:'Intrínsecos de la mano (estadios avanzados)',
+        sensory:'Borde cubital del brazo, antebrazo y mano (C8-T1)',
+        blocks:['Bloqueo del escaleno anterior (diagnóstico/terapéutico)','Infraclavicular'],
+        pearl:'Test de Adson (+): disminución del pulso radial con extensión cervical, rotación ipsilateral e inspiración profunda. El diagnóstico es clínico; el EMG suele ser normal en fases iniciales.',
+    },
+];
+
+// ===== GRAFO =====
+let adjList = {}, revList = {};
+plexoData.nodes.forEach(n => { adjList[n.id] = []; revList[n.id] = []; });
+plexoData.edges.forEach(([u,v]) => { adjList[u].push(v); revList[v].push(u); });
+
+function getPathNodes(id) {
+    const res = new Set([id]);
+    function dd(u){ adjList[u].forEach(v=>{ if(!res.has(v)){ res.add(v); dd(v); }}); }
+    function da(u){ revList[u].forEach(v=>{ if(!res.has(v)){ res.add(v); da(v); }}); }
+    dd(id); da(id);
+    return [...res];
+}
+
+// ===== MAPA =====
+function renderMap() {
+    const cols = { raiz:[], tronco:[], division:[], fasciculo:[], rama:[] };
+    plexoData.nodes.forEach(n => cols[n.level].push(n));
+    for(const level in cols) {
+        const col = document.getElementById('col-' + level);
+        cols[level].forEach((n, i) => {
+            const el = document.createElement('div');
+            el.className = 'node'; el.dataset.id = n.id; el.dataset.level = n.level;
+            el.textContent = n.label;
+            el.addEventListener('mouseenter', () => tracePath(n.id));
+            el.addEventListener('mouseleave', clearPath);
+            el.addEventListener('click', () => tracePath(n.id));
+            col.appendChild(el);
+            if(i < cols[level].length - 1) {
+                const s = document.createElement('div'); s.className = 'spacer'; col.appendChild(s);
+            }
+        });
+    }
+}
+
+function drawLines() {
+    const svg = document.getElementById('svg-canvas');
+    const cont = document.getElementById('map-nodes');
+    svg.innerHTML = '';
+    if(!cont.offsetWidth) return;
+    const rc = cont.getBoundingClientRect();
+    plexoData.edges.forEach(([u,v]) => {
+        const d1 = document.querySelector(`.node[data-id="${u}"]`);
+        const d2 = document.querySelector(`.node[data-id="${v}"]`);
+        if(!d1||!d2) return;
+        const r1 = d1.getBoundingClientRect(), r2 = d2.getBoundingClientRect();
+        const x1 = r1.right-rc.left, y1 = r1.top+r1.height/2-rc.top;
+        const x2 = r2.left-rc.left,  y2 = r2.top+r2.height/2-rc.top;
+        const cx = (x1+x2)/2;
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d',`M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`);
+        path.setAttribute('class','conn-line');
+        path.dataset.from = u; path.dataset.to = v;
+        const src = plexoData.nodes.find(n=>n.id===u);
+        path.setAttribute('stroke',`var(--c-${src.level})`);
+        svg.appendChild(path);
+    });
+}
+
+function tracePath(hid) {
+    const pids = getPathNodes(hid);
+    const nd = plexoData.nodes.find(n=>n.id===hid);
+    document.querySelectorAll('.node').forEach(el => el.classList.add('dimmed'));
+    document.querySelectorAll('.conn-line').forEach(el => el.classList.add('dimmed'));
+    pids.forEach(id => {
+        const el = document.querySelector(`.node[data-id="${id}"]`);
+        if(el){ el.classList.remove('dimmed'); if(id===hid) el.classList.add('highlighted'); }
+    });
+    document.querySelectorAll('.conn-line').forEach(l => {
+        if(pids.includes(l.dataset.from)&&pids.includes(l.dataset.to)){
+            l.classList.remove('dimmed'); l.classList.add('active');
+        }
+    });
+    const icons = { raiz:'⚡', tronco:'🎋', division:'🔀', fasciculo:'🛡️', rama:'🔌' };
+    document.getElementById('clin-icon').textContent  = icons[nd.level];
+    document.getElementById('clin-tag').textContent   = `NIVEL: ${nd.level.toUpperCase()}`;
+    document.getElementById('clin-tag').style.color   = `var(--c-${nd.level})`;
+    document.getElementById('clin-title').textContent = nd.label;
+    document.getElementById('clin-desc').textContent  = nd.desc;
+    const cb = document.getElementById('clin-blocks');
+    cb.innerHTML = '';
+    nd.blocks.forEach(b => {
+        const s = document.createElement('span'); s.className = 'block-badge'; s.textContent = b; cb.appendChild(s);
+    });
+}
+
+function clearPath() {
+    document.querySelectorAll('.node').forEach(el => el.classList.remove('dimmed','highlighted'));
+    document.querySelectorAll('.conn-line').forEach(el => el.classList.remove('dimmed','active'));
+    document.getElementById('clin-icon').textContent  = '🧠';
+    document.getElementById('clin-tag').textContent   = 'EXPLORADOR INICIADO';
+    document.getElementById('clin-tag').style.color   = 'var(--text-muted)';
+    document.getElementById('clin-title').textContent = 'Toca cualquier nervio';
+    document.getElementById('clin-desc').textContent  = 'El algoritmo trazará la vía anatómica completa hacia las raíces cervicales correspondientes y listará los bloqueos de abordaje clínico.';
+    document.getElementById('clin-blocks').innerHTML  = '';
+}
+
+// ===== JUEGO =====
+let timerInt=null, seconds=0, errors=0, gameStarted=false;
+const fmt = s => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+const t2s = t => { const p=t.split(':'); return +p[0]*60 + +p[1]; };
+
+function loadRecord(){ const r=localStorage.getItem('plexo_rec'); document.getElementById('game-record').textContent=r||'--:--'; }
+function saveRecord(t){ const p=localStorage.getItem('plexo_rec'); if(!p||t2s(t)<t2s(p)){ localStorage.setItem('plexo_rec',t); document.getElementById('game-record').textContent=t; } }
+
+function startTimer(){
+    if(!gameStarted){ gameStarted=true; timerInt=setInterval(()=>{ seconds++; document.getElementById('game-time').textContent=fmt(seconds); },1000); }
+}
+
+function initGame(){
+    clearInterval(timerInt); seconds=0; errors=0; gameStarted=false;
+    document.getElementById('game-time').textContent='00:00';
+    document.getElementById('game-errors').textContent='0';
+    document.getElementById('game-bank').innerHTML='';
+    document.querySelectorAll('.zone-container').forEach(c=>c.innerHTML='');
+    loadRecord();
+    [...plexoData.nodes].sort(()=>Math.random()-0.5).forEach(n=>{
+        const el=document.createElement('div');
+        el.className='drag-item'; el.textContent=n.gameLabel||n.label;
+        el.dataset.level=n.level; el.dataset.id=n.id; el.draggable=true;
+        el.addEventListener('dragstart',e=>{ el.classList.add('dragging'); e.dataTransfer.setData('text/plain',n.id); startTimer(); });
+        el.addEventListener('dragend',()=>el.classList.remove('dragging'));
+        document.getElementById('game-bank').appendChild(el);
+    });
+    updateBankCount();
+}
+
+function updateBankCount(){ document.getElementById('bank-count').textContent=document.querySelectorAll('#game-bank .drag-item').length; }
+
+document.querySelectorAll('.drop-zone').forEach(zone=>{
+    zone.addEventListener('dragover',e=>{ e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+    zone.addEventListener('drop',e=>{
+        e.preventDefault(); zone.classList.remove('dragover');
+        const el=document.querySelector(`.drag-item[data-id="${e.dataTransfer.getData('text/plain')}"]`);
+        if(!el) return;
+        if(el.dataset.level!==zone.dataset.level){
+            errors++; document.getElementById('game-errors').textContent=errors;
+            el.style.backgroundColor='rgba(244,63,94,0.3)';
+            setTimeout(()=>{ el.style.backgroundColor=''; document.getElementById('game-bank').appendChild(el); updateBankCount(); },500);
+        } else {
+            el.style.borderColor='var(--green)';
+            zone.querySelector('.zone-container').appendChild(el); updateBankCount();
+            if(!document.querySelectorAll('#game-bank .drag-item').length) gameOver();
+        }
+    });
+});
+
+function gameOver(){
+    clearInterval(timerInt);
+    const total = plexoData.nodes.length;
+    const score = Math.max(0, 100 - errors * 5);
+    const ts = fmt(seconds);
+    if(score >= 70) saveRecord(ts);
+
+    let color, label;
+    if(score >= 90)      { color='#10b981'; label='Excelente'; }
+    else if(score >= 70) { color='#fbbf24'; label='Bien';      }
+    else if(score >= 50) { color='#f97316'; label='Regular';   }
+    else                 { color='#f43f5e'; label='A repasar'; }
+
+    const el = document.getElementById('modal-grade');
+    el.style.cssText = `color:${color};`;
+    el.textContent = `${score}%`;
+    document.getElementById('modal-label').style.color = color;
+    document.getElementById('modal-label').textContent = label;
+    document.getElementById('modal-time').textContent = ts;
+    document.getElementById('modal-errors').textContent = errors;
+    document.getElementById('game-modal').classList.add('active');
+}
+
+document.getElementById('btn-check-game').addEventListener('click',()=>{
+    if(document.querySelectorAll('#game-bank .drag-item').length) alert('Aún quedan elementos en el banco.');
+    else gameOver();
+});
+document.getElementById('btn-reset-game').addEventListener('click',()=>{ initGame(); });
+document.getElementById('btn-restart-game').addEventListener('click',()=>{
+    document.getElementById('game-modal').classList.remove('active'); initGame();
+});
+
+// Touch drag mejorado con ghost visual
+let dragEl=null, ghostEl=null;
+
+document.addEventListener('touchstart',e=>{
+    const t=e.target.closest('.drag-item');
+    if(!t) return;
+    e.preventDefault();
+    dragEl=t; t.classList.add('dragging');
+    ghostEl=document.createElement('div');
+    ghostEl.className='drag-ghost'; ghostEl.textContent=t.textContent;
+    ghostEl.style.width=t.offsetWidth+'px';
+    document.body.appendChild(ghostEl);
+    const tc=e.touches[0];
+    ghostEl.style.left=(tc.clientX-t.offsetWidth/2)+'px';
+    ghostEl.style.top=(tc.clientY-30)+'px';
+    startTimer();
+},{passive:false});
+
+document.addEventListener('touchmove',e=>{
+    if(!dragEl||!ghostEl) return;
+    e.preventDefault();
+    const tc=e.touches[0];
+    ghostEl.style.left=(tc.clientX-parseInt(ghostEl.style.width)/2)+'px';
+    ghostEl.style.top=(tc.clientY-30)+'px';
+},{passive:false});
+
+document.addEventListener('touchend',e=>{
+    if(!dragEl) return;
+    dragEl.classList.remove('dragging');
+    if(ghostEl){ ghostEl.remove(); ghostEl=null; }
+    const tc=e.changedTouches[0];
+    const zone=document.elementFromPoint(tc.clientX,tc.clientY)?.closest('.drop-zone');
+    if(zone){
+        if(dragEl.dataset.level!==zone.dataset.level){
+            errors++; document.getElementById('game-errors').textContent=errors;
+            dragEl.style.borderColor='var(--red)';
+            document.getElementById('game-bank').appendChild(dragEl);
+            setTimeout(()=>{ dragEl.style.borderColor=''; },600);
+        } else {
+            zone.querySelector('.zone-container').appendChild(dragEl);
+            dragEl.style.borderColor='var(--green)';
+            if(!document.querySelectorAll('#game-bank .drag-item').length) gameOver();
+        }
+        updateBankCount();
+    }
+    dragEl=null;
+});
+
+// ===== FLASHCARDS =====
+let fcIdx=0, fcOrder=[];
+
+function renderCard(){
+    const c=flashData[fcOrder[fcIdx]];
+    document.getElementById('fc-tag').textContent=c.tag;
+    document.getElementById('fc-q').textContent=c.q;
+    document.getElementById('fc-a-title').textContent=c.at;
+    document.getElementById('fc-a-desc').textContent=c.ad;
+    document.getElementById('fc-curr').textContent=fcIdx+1;
+    document.getElementById('fc-total').textContent=flashData.length;
+    document.getElementById('fc-container').classList.remove('flipped');
+    document.getElementById('fc-progress').style.width=((fcIdx+1)/flashData.length*100)+'%';
+}
+
+document.getElementById('fc-container').addEventListener('click',function(){ this.classList.toggle('flipped'); });
+document.getElementById('fc-next').addEventListener('click',()=>{ if(fcIdx<flashData.length-1){ fcIdx++; renderCard(); } });
+document.getElementById('fc-prev').addEventListener('click',()=>{ if(fcIdx>0){ fcIdx--; renderCard(); } });
+document.getElementById('fc-shuffle').addEventListener('click',()=>{
+    fcOrder.sort(()=>Math.random()-0.5); fcIdx=0; renderCard();
+});
+
+document.addEventListener('keydown',e=>{
+    if(!document.getElementById('view-flashcards').classList.contains('active')) return;
+    if(e.key==='ArrowRight'&&fcIdx<flashData.length-1){ fcIdx++; renderCard(); }
+    if(e.key==='ArrowLeft'&&fcIdx>0){ fcIdx--; renderCard(); }
+    if(e.key===' '||e.key==='Enter'){ e.preventDefault(); document.getElementById('fc-container').classList.toggle('flipped'); }
+});
+
+// ===== SÍNDROMES =====
+function renderSyndromes(filter='all'){
+    const grid=document.getElementById('syndromes-grid');
+    grid.innerHTML='';
+    (filter==='all'?syndromesData:syndromesData.filter(s=>s.type===filter)).forEach(syn=>{
+        const card=document.createElement('div');
+        card.className='syndrome-card';
+        card.style.setProperty('--syn-color',syn.color);
+        const affTags=syn.affected.map(id=>{
+            const nd=plexoData.nodes.find(n=>n.id===id);
+            return nd?`<span class="syn-tag hl">${nd.label}</span>`:'';
+        }).join('');
+        const blks=syn.blocks.map(b=>`<span class="syn-block-badge">${b}</span>`).join('');
+        card.innerHTML=`
+            <div class="syn-header">
+                <div class="syn-icon">${syn.icon}</div>
+                <div><div class="syn-name">${syn.name}</div><div class="syn-roots">${syn.roots}</div></div>
+            </div>
+            <div class="syn-mechanism">${syn.mechanism}</div>
+            <div class="syn-tags">${affTags}</div>
+            <div class="syn-details">
+                <div class="syn-section"><div class="syn-label">Presentación Clínica</div><div class="syn-text">${syn.presentation}</div></div>
+                <div class="syn-section"><div class="syn-label">Déficit Motor</div><div class="syn-text">${syn.motor}</div></div>
+                <div class="syn-section"><div class="syn-label">Déficit Sensitivo</div><div class="syn-text">${syn.sensory}</div></div>
+                <div class="syn-section"><div class="syn-label">🩺 Perla Clínica</div><div class="syn-text"><strong>${syn.pearl}</strong></div></div>
+                <div class="syn-section"><div class="syn-label">Abordajes Relacionados</div><div class="syn-block-row">${blks}</div></div>
+            </div>
+            <div class="syn-expand-hint">▼ Toca para expandir</div>`;
+        card.addEventListener('click',()=>card.classList.toggle('expanded'));
+        grid.appendChild(card);
+    });
+}
+
+document.getElementById('syn-filters').addEventListener('click',e=>{
+    const btn=e.target.closest('.syn-filter-btn'); if(!btn) return;
+    document.querySelectorAll('.syn-filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderSyndromes(btn.dataset.filter);
+});
+
+// ===== TABS =====
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.view-section').forEach(v=>v.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('view-'+btn.dataset.target).classList.add('active');
+        if(btn.dataset.target==='map') setTimeout(drawLines,100);
+    });
+});
+
+// ===== INIT =====
+window.addEventListener('load',()=>{
+    renderMap();
+    setTimeout(drawLines,200);
+    window.addEventListener('resize',drawLines);
+    initGame();
+    fcOrder=[...Array(flashData.length).keys()];
+    renderCard();
+    renderSyndromes();
+    loadRecord();
+});
+</script>
+</body>
+</html>
