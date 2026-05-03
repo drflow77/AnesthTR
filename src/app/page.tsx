@@ -9,7 +9,6 @@ export default function Home() {
         <div className="logo-brand">
           <img src="/logo.PNG" alt="AnesthTR" className="logo-img" />
         </div>
-        <h1 className="hero-title">AnesthTR</h1>
         <p className="hero-sub">Plataforma de educación en anestesiología</p>
         <div className="hero-stats">
           <div className="stat-pill">
