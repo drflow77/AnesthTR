@@ -7,7 +7,7 @@ export default function Home() {
         <div className="logo-brand">
           <img src="/logo.PNG" alt="AnesthTR" className="logo-img" />
         </div>
-        <h1 className="logo-subtitle">Evaluaciones de Anestesiología · DFC Medical Apps</h1>
+        <h1 className="logo-subtitle">Evaluaciones de Anestesiología · Medicode Solutions</h1>
       </div>
 
       <div className="section-label">Trivia general</div>
@@ -132,8 +132,8 @@ export default function Home() {
       <footer className="footer">
         <div className="footer-text">
           Coordinación de Anestesiología — Turno Vespertino<br />
-          DFC Medical Apps<br /><br />
-          Desarrollado por <a href="https://ropicalc.com" target="_blank" rel="noopener noreferrer">DFC Medical Apps</a>
+          Medicode Solutions<br /><br />
+          Desarrollado por Medicode Solutions
           <p className="disclaimer">
             ⚠️ Este sitio tiene fines exclusivamente educativos. La información aquí presentada no sustituye el juicio clínico ni las recomendaciones de sociedades médicas vigentes. Siempre consulta fuentes primarias antes de tomar decisiones clínicas.
           </p>

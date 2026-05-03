@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AnesthTR · Agente de Protocolos</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d47;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --accent3: #10b981;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --label: #94a3b8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,14,26,0.9);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 300;
+    margin-left: 2px;
+  }
+
+  .header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid;
+    font-weight: 500;
+  }
+  .badge-blue { color: var(--accent); border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.08); }
+  .badge-green { color: var(--accent3); border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.08); }
+
+  .main-layout {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 65px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    background: rgba(17,24,39,0.6);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+  }
+
+  .sidebar-section {
+    padding: 0 16px;
+    margin-bottom: 24px;
+  }
+
+  .sidebar-label {
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 8px;
+    padding: 0 4px;
+  }
+
+  .mode-btn {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--label);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+  }
+
+  .mode-btn:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .mode-btn.active {
+    background: rgba(59,130,246,0.12);
+    border-color: rgba(59,130,246,0.3);
+    color: var(--accent);
+  }
+
+  .mode-icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .sections-list {
+    padding: 0 16px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .section-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--label);
+    cursor: pointer;
+    transition: all 0.12s;
+    margin-bottom: 1px;
+  }
+
+  .section-chip:hover { background: var(--surface2); color: var(--text); }
+
+  .section-chip .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-ok { background: var(--accent3); }
+  .dot-warn { background: var(--warn); }
+  .dot-empty { background: var(--muted); }
+
+  /* MAIN PANEL */
+  .main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* CHAT AREA */
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .welcome-card {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-align: center;
+  }
+
+  .welcome-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--text), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .welcome-sub {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    text-align: left;
+  }
+
+  .qa-btn {
+    padding: 14px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+
+  .qa-btn:hover {
+    border-color: var(--accent);
+    background: rgba(59,130,246,0.08);
+  }
+
+  .qa-icon { font-size: 18px; display: block; margin-bottom: 6px; }
+  .qa-title { font-weight: 600; font-size: 12px; }
+  .qa-desc { color: var(--muted); font-size: 11px; }
+
+  /* MESSAGES */
+  .msg {
+    max-width: 780px;
+    width: 100%;
+    margin: 0 auto;
+    animation: fadeUp 0.25s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg-user {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .msg-user .bubble {
+    background: linear-gradient(135deg, #1d4ed8, #0891b2);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 14px 14px 4px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 520px;
+  }
+
+  .msg-agent {
+    display: flex;
+    gap: 12px;
+  }
+
+  .agent-avatar {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .agent-content {
+    flex: 1;
+  }
+
+  .agent-name {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 6px;
+  }
+
+  .agent-bubble {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px 14px 14px 14px;
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text);
+  }
+
+  .agent-bubble h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    margin-bottom: 10px;
+    color: var(--accent2);
+  }
+
+  .agent-bubble p { margin-bottom: 10px; }
+  .agent-bubble p:last-child { margin-bottom: 0; }
+
+  .agent-bubble ul {
+    padding-left: 18px;
+    margin-bottom: 10px;
+  }
+
+  .agent-bubble li {
+    margin-bottom: 5px;
+    font-size: 13.5px;
+  }
+
+  .finding-block {
+    margin: 12px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .finding-header {
+    padding: 8px 14px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .finding-ok { background: rgba(16,185,129,0.1); color: var(--accent3); }
+  .finding-warn { background: rgba(245,158,11,0.1); color: var(--warn); }
+  .finding-error { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+  .finding-body {
+    padding: 10px 14px;
+    font-size: 13px;
+    background: var(--surface2);
+    color: var(--label);
+  }
+
+  /* THINKING */
+  .thinking {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    padding: 8px 0;
+  }
+
+  .dots span {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: bounce 1.2s infinite;
+    margin: 0 1px;
+  }
+  .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+
+  /* INPUT AREA */
+  .input-area {
+    padding: 16px 32px 20px;
+    border-top: 1px solid var(--border);
+    background: rgba(10,14,26,0.8);
+    backdrop-filter: blur(8px);
+  }
+
+  .input-row {
+    max-width: 780px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .input-box {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.15s;
+    min-height: 48px;
+    max-height: 140px;
+    line-height: 1.5;
+  }
+
+  .input-box:focus { border-color: var(--accent); }
+  .input-box::placeholder { color: var(--muted); }
+
+  .send-btn {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: opacity 0.15s, transform 0.1s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:hover { opacity: 0.85; transform: scale(1.03); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .upload-btn {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    color: var(--label);
+  }
+  .upload-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .file-drop-zone {
+    max-width: 780px;
+    margin: 0 auto 10px;
+    padding: 14px;
+    border: 2px dashed var(--accent);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--accent);
+    background: rgba(59,130,246,0.05);
+    transition: all 0.15s;
+  }
+
+  .file-chip {
+    display: none;
+    max-width: 780px;
+    margin: 0 auto 10px;
+    padding: 8px 14px;
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--accent);
+    align-items: center;
+    gap: 10px;
+  }
+  .file-chip.visible { display: flex; }
+
+
+
+  /* RIGHT PANEL */
+  .right-panel {
+    width: 300px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--border);
+    background: rgba(17,24,39,0.6);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rp-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .rp-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .score-ring-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0 20px;
+  }
+
+  .score-ring {
+    position: relative;
+    width: 90px; height: 90px;
+  }
+
+  .score-ring svg {
+    transform: rotate(-90deg);
+  }
+
+  .score-ring circle {
+    fill: none;
+    stroke-width: 7;
+  }
+
+  .score-bg { stroke: var(--border); }
+  .score-fill {
+    stroke: var(--accent3);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s ease;
+    stroke-dasharray: 226;
+    stroke-dashoffset: 226;
+  }
+
+  .score-val {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .score-label {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .score-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cl-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    background: var(--surface2);
+    line-height: 1.4;
+  }
+
+  .cl-icon { flex-shrink: 0; font-size: 13px; margin-top: 1px; }
+  .cl-text { color: var(--label); }
+  .cl-text strong { color: var(--text); font-weight: 500; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  .rp-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 12px;
+  }
+
+  .rp-stat-label { color: var(--muted); }
+  .rp-stat-val { font-family: 'DM Mono', monospace; color: var(--text); font-size: 11px; }
+
+  .mode-indicator {
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mode-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent3);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">A</div>
+  <div>
+    <div class="logo-text">AnesthTR <span style="font-family:Sora;font-size:14px;font-style:normal;-webkit-text-fill-color:#64748b;font-weight:300;">· Agente de Protocolos</span></div>
+  </div>
+  <div class="header-right">
+    <select id="provider-select" style="background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; font-family: 'Sora', sans-serif; font-size: 11px; margin-right: 8px; outline: none; cursor: pointer;">
+      <option value="gemini">🧠 Cerebro: Gemini Pro (Gratis)</option>
+      <option value="anthropic">🧠 Cerebro: Claude 3.5</option>
+    </select>
+    <span class="badge badge-blue">HGR 200 Tecámac</span>
+    <span class="badge badge-green">● IA Activa</span>
+  </div>
+</header>
+
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Modo de trabajo</div>
+      <button class="mode-btn active" onclick="setMode('revisar')" id="btn-revisar">
+        <span class="mode-icon">🔍</span> Revisar protocolo
+      </button>
+      <button class="mode-btn" onclick="setMode('crear')" id="btn-crear">
+        <span class="mode-icon">✍️</span> Crear protocolo
+      </button>
+      <button class="mode-btn" onclick="setMode('mejorar')" id="btn-mejorar">
+        <span class="mode-icon">⚡</span> Mejorar sección
+      </button>
+      <button class="mode-btn" onclick="setMode('estadistica')" id="btn-estadistica">
+        <span class="mode-icon">📊</span> Diseño estadístico
+      </button>
+    </div>
+
+    <div class="sections-list">
+      <div class="sidebar-label">Secciones del protocolo</div>
+      <div id="sections-list">
+        <div class="section-chip"><span class="dot dot-empty"></span> Título y resumen</div>
+        <div class="section-chip"><span class="dot dot-empty"></span> Planteamiento del problema</div>
+        <div class="section-chip"><span class="dot dot-empty"></span> Objetivos</div>
+        <div class="section-chip"><span class="dot dot-empty"></span> Marco teórico</div>
+        <div class="section-chip"><span class="dot dot-empty"></span> Material y métodos</div>
+        <div class="section-chip"><span class="dot dot-empty"></span> Diseño del estudio</div>
+        <div class="section-chip"><span class="dot dot-empty"></span> Variables</div>
+        <div class="section-chip"><span class="dot dot-empty"></span> Análisis estadístico</div>
+        <div class="section-chip"><span class="dot dot-empty"></span> Cronograma</div>
+        <div class="section-chip"><span class="dot dot-empty"></span> Consideraciones éticas</div>
+        <div class="section-chip"><span class="dot dot-empty"></span> Referencias</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div class="main-panel">
+    <div class="mode-indicator">
+      <span class="mode-dot"></span>
+      <span id="mode-label">Modo: Revisión de protocolo</span>
+    </div>
+
+    <div class="chat-area" id="chat">
+      <div class="msg">
+        <div class="welcome-card">
+          <div class="welcome-title">Agente de Protocolos de Investigación</div>
+          <div class="welcome-sub">Especializado en anestesiología y comité de ética IMSS. Puedo revisar tu protocolo, detectar errores metodológicos, sugerir mejoras o crear uno desde cero.</div>
+          <div class="quick-actions">
+            <button class="qa-btn" onclick="quickAction('Quiero revisar mi protocolo completo. ¿Qué secciones necesito proporcionarte?')">
+              <span class="qa-icon">🔍</span>
+              <div class="qa-title">Revisar protocolo</div>
+              <div class="qa-desc">Análisis completo con checklist COFEPRIS/IMSS</div>
+            </button>
+            <button class="qa-btn" onclick="quickAction('Quiero crear un protocolo de investigación en anestesiología. ¿Por dónde empezamos?')">
+              <span class="qa-icon">✍️</span>
+              <div class="qa-title">Crear desde cero</div>
+              <div class="qa-desc">Guía paso a paso con estructura IMSS</div>
+            </button>
+            <button class="qa-btn" onclick="quickAction('Necesito ayuda con el diseño estadístico de mi protocolo. ¿Qué necesitas saber?')">
+              <span class="qa-icon">📊</span>
+              <div class="qa-title">Diseño estadístico</div>
+              <div class="qa-desc">Tamaño de muestra, pruebas, variables</div>
+            </button>
+            <button class="qa-btn" onclick="quickAction('Tengo un protocolo observacional prospectivo sobre sedación con propofol para colonoscopias. ¿Puedes revisarlo?')">
+              <span class="qa-icon">💉</span>
+              <div class="qa-title">Protocolo TIVA/TCI</div>
+              <div class="qa-desc">Retomar el protocolo de propofol/colonoscopias</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="file-drop-zone" id="drop-zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        📄 Suelta el archivo aquí (PDF o Word)
+      </div>
+      <div class="file-chip" id="file-chip">
+        <span>📄</span>
+        <span id="file-name" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button onclick="clearFile()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;">✕</button>
+      </div>
+      <div class="input-row">
+        <button class="upload-btn" onclick="document.getElementById('file-input').click()" title="Subir PDF o Word">📎</button>
+        <input type="file" id="file-input" accept=".pdf,.doc,.docx" style="display:none" onchange="handleFileSelect(event)">
+        <textarea
+          class="input-box"
+          id="user-input"
+          placeholder="Escribe tu pregunta, pega texto, o adjunta PDF/Word con 📎..."
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Enviar">➤</button>
+      </div>
+      <div style="max-width:780px;margin:5px auto 0;font-size:10px;color:var(--muted);text-align:center;">
+        Soporta PDF · Word (.docx) · Arrastra y suelta o usa 📎
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="rp-header">
+      <span>📋</span> Estado del protocolo
+    </div>
+    <div class="rp-body">
+      <div class="score-ring-wrap">
+        <div class="score-ring">
+          <svg width="90" height="90" viewBox="0 0 90 90">
+            <circle class="score-bg" cx="45" cy="45" r="36"/>
+            <circle class="score-fill" id="score-circle" cx="45" cy="45" r="36"/>
+          </svg>
+          <div class="score-val">
+            <span id="score-num">—</span>
+            <span class="score-label">SCORE</span>
+          </div>
+        </div>
+        <div class="score-sub" id="score-sub">Sin protocolo cargado aún</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="sidebar-label" style="padding:0 4px;margin-bottom:10px;">Checklist IMSS/COFEPRIS</div>
+
+      <div class="checklist" id="checklist">
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Título</strong> — descriptivo, ≤20 palabras</span></div>
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Resumen estructurado</strong> — IMRAD</span></div>
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Pregunta PICO</strong> — explícita</span></div>
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Objetivos</strong> — primario y secundarios</span></div>
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Hipótesis</strong> — nula y alterna</span></div>
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Diseño</strong> — coherente con objetivos</span></div>
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Tamaño de muestra</strong> — calculado</span></div>
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Variables</strong> — tabla completa</span></div>
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Análisis estadístico</strong> — especificado</span></div>
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Aspectos éticos</strong> — riesgo, consentimiento</span></div>
+        <div class="cl-item"><span class="cl-icon">⬜</span><span class="cl-text"><strong>Referencias</strong> — Vancouver, ≥20</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="sidebar-label" style="padding:0 4px;margin-bottom:10px;">Sesión</div>
+      <div class="rp-stat">
+        <span class="rp-stat-label">Mensajes</span>
+        <span class="rp-stat-val" id="stat-msgs">0</span>
+      </div>
+      <div class="rp-stat">
+        <span class="rp-stat-label">Hallazgos</span>
+        <span class="rp-stat-val" id="stat-findings">0</span>
+      </div>
+      <div class="rp-stat">
+        <span class="rp-stat-label">Modo activo</span>
+        <span class="rp-stat-val" id="stat-mode">Revisión</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SYSTEM_PROMPT = `Eres el Agente de Protocolos de Investigación de AnesthTR, especializado en anestesiología clínica del IMSS (HGR 200 Tecámac). Tu función es ayudar al Dr. David Flores Carrasco, Coordinador de Residentes de Anestesiología, a revisar, crear y mejorar protocolos de investigación.
+
+════════════════════════════════════════
+GUÍA OFICIAL IMSS — CRITERIOS EXACTOS DEL COMITÉ
+(Delegación Regional Estado de México Oriente, basada en documento 2810-003-002, actualizado 18 octubre 2018)
+════════════════════════════════════════
+
+ASPECTOS GENERALES (formato):
+- Letra Arial 11, interlineado 1.5
+- Márgenes: arriba 2.5 cm, abajo 2.5 cm, izquierdo 3.0 cm, derecho 3.0 cm
+- Documento en PDF, peso menor a 2 MB
+- Sin logos universitarios; se permite solo el logo institucional IMSS
+
+HOJA FRONTAL:
+- Debe contener: Título, Identificación de autores, Tema prioritario
+- Temas prioritarios aceptados: Condiciones Neurológicas, Desórdenes Mentales y de Comportamiento, Diabetes Mellitus, Enfermedades Cardiovasculares y Circulatorias, Enfermedades de los Órganos de los Sentidos, Enfermedades Digestivas, Enfermedades Respiratorias Crónicas, Neoplasias Malignas, Salud Reproductiva/Neonatales/Anomalías congénitas, Traumatología y Ortopedia.
+- IMPORTANTE: El tema prioritario NO puede ser causa de dictamen "Modificar y volver a presentar" si el protocolo ya cumple con uno.
+
+TÍTULO:
+- Conciso pero suficientemente informativo
+- Debe incorporar las variables de interés
+- Debe indicar dirección del estudio (descriptivo, analítico)
+- NO colocar periodos de tiempo en el título
+
+IDENTIFICACIÓN DE AUTORES (datos obligatorios):
+- Nombre completo, adscripción, área de trabajo, teléfono con extensión, correo electrónico, grado académico
+
+RESUMEN ESTRUCTURADO (250-300 palabras exactas):
+Debe incluir TODOS estos apartados: Título del protocolo, Antecedentes, Objetivo, Material y métodos, Recursos e infraestructura, Experiencia del grupo, Tiempo a desarrollarse.
+- NO incluir referencias en el resumen
+
+MARCO TEÓRICO:
+- Mínimo 10 hojas
+- Mínimo 30 bibliografías
+- Bibliografía no mayor de 5 años (con 30% en inglés mínimo)
+- Referencias en orden de aparición con número arábigo en superíndice
+- Una bibliografía NO debe repetirse en más de 2 párrafos (se considera plagio)
+- Evitar revisión monográfica; enfocarse al problema específico
+
+JUSTIFICACIÓN:
+- Explicar la pertinencia del estudio
+- Describir la contribución o beneficio para: el conocimiento, los participantes, la comunidad y/o el IMSS
+
+PLANTEAMIENTO DEL PROBLEMA Y PREGUNTA DE INVESTIGACIÓN:
+- Debe responder: Trascendencia (¿a quién afecta?), Magnitud/frecuencia/distribución, Vulnerabilidad (¿qué tan posible es resolverlo?), Factibilidad, ¿Qué se ha hecho antes?
+- La pregunta debe cumplir criterios de Kerlinger: expresar relación entre ≥2 variables, formularse claramente como pregunta sin ambigüedad, implicar posibilidad de prueba empírica
+
+OBJETIVO:
+- Un objetivo general + los objetivos específicos necesarios
+- El objetivo general debe ser congruente con: título, hipótesis, objetivos específicos y métodos
+- El verbo debe ser cuantificable y factible con el diseño
+- Debe incluir variable independiente, dependiente e indicar dirección (descripción, asociación, correlación, predicción)
+
+HIPÓTESIS:
+- Debe predecir lógicamente la respuesta a la pregunta de investigación
+- Plantearse como afirmación en términos cuantificables
+- OBLIGATORIO: contar con magnitud y dirección (ej: "La frecuencia de X será de 15% en el grupo A, mientras que en el grupo B será de 35%")
+- Congruente con objetivo, pregunta de investigación y título
+- NOTA: En estudios descriptivos puede omitirse; en analíticos es obligatoria
+
+MATERIAL Y MÉTODOS — RIGOR METODOLÓGICO Y ESTADÍSTICO OBLIGATORIO:
+1. Características del estudio (tipo de unidad, localización, nivel de atención)
+2. Diseño — clasificar en TODOS estos ejes:
+   - Control de la maniobra: Experimental / Cuasi-experimental / Observacional
+   - Captación: Prolectivo / Retrolectivo / Retroprolectivo
+   - Medición en el tiempo: Longitudinal / Transversal
+   - Grupo control: Descriptivo / Comparativo
+   - Control de Sesgos: Exigir descripción explícita de cómo se controlarán sesgos de selección, de información (ej. cegamiento de evaluadores), y de confusión.
+3. Universo de trabajo (población de estudio definida estrictamente)
+4. Grupos de estudio (características clínicas y demográficas base)
+5. Criterios de selección (NO deben ser laxos):
+   - Inclusión: diagnósticos precisos mediante guías actuales.
+   - Exclusión: comorbilidades u otras condiciones que actúen como variables confusoras (¡evitar criterios en espejo!).
+   - Eliminación: fallas en medición, pérdida de seguimiento, retiro de CI.
+6. Tamaño de muestra (Cálculo Riguroso Requerido):
+   - Nivel III y IV: Es INACEPTABLE no presentar el desarrollo del cálculo exacto. Debe incluir: Software utilizado, nivel de confianza (usualmente 95%, alfa=0.05), potencia estadística (mínimo 80%, beta=0.20), y la diferencia clínica esperada (Delta) con base en la "referencia bibliográfica maestra" (detallar varianzas, DE, o proporciones base). Todo tamaño debe estar referenciado.
+7. Técnica de muestreo y Asignación:
+   - Para ensayos clínicos: Especificar mecanismo de generación de secuencia aleatoria, ocultación de la asignación y método de cegamiento (simple, doble, triple ciego).
+   - Para observacionales analíticos: Método estricto para evitar sesgo de selección consecutivo.
+8. Definición de variables — para CADA variable especificar:
+   - Definición conceptual (con referencia bibliográfica)
+   - Definición operacional (cómo se medirá, indicando uso de instrumentos validados).
+   - Tipo y Escala de medición (Razón, Intervalo, Ordinal, Nominal).
+   - Función: Dependiente / Independiente / Confusión / Covariable. En estudios analíticos, exigir la identificación de covariables que requerirán ajuste estadístico multicéntrico o multivariado.
+9. Descripción del estudio (secuencia temporal exacta y estandarización del personal investigador)
+10. Instrumentos: Toda escala (ej. EVA, Ramsay, Aldrete, ENN) DEBE reportar estar validada en la población de estudio (o mexicana) y mencionar alfa de Cronbach o confiabilidad si aplica.
+11. Análisis de datos (Rigor Analítico Extremo):
+    - Especificar software estadístico detallado con versión.
+    - Manejo de Datos Faltantes (Missing Data): Imputación múltiple o casos completos (con justificación rigurosa). Análisis por intención de tratar vs. por protocolo obligatorio en ensayos aleatorizados.
+    - Análisis Univariado y de Normalidad: Exigir prueba formal de distribución de normalidad (Kolmogorov-Smirnov o Shapiro-Wilk) ANTES de elegir entre vías paramétricas o no paramétricas.
+    - Análisis Bivariado: Pruebas exactas (T-Student, U-Mann-Whitney, Chi-cuadrada, Fisher, ANOVA) justificando varianzas (homocedasticidad).
+    - Análisis Multivariado (si aplica): Regresión logística/lineal u otros modelos multivariables para control de variables de confusión (obligatorio en observacionales analíticos con alto riesgo de sesgo).
+    - TODOS los análisis deben ir descritos en texto y con correspondencia exacta a objetivos primarios y secundarios.
+
+ASPECTOS ÉTICOS — Rigor Normativo y Confidencialidad:
+1. Redacción de aspectos éticos (mencionar normativos y aplicación concreta y exacta al estudio):
+   - Declaración de Helsinki, Informe de Belmont, Código de Núremberg.
+   - Reglamento de la Ley General de Salud — Título Segundo: Arts. aplicables (13,14,15,16,17,20,21,22,24,27).
+   - NOM-012-SSA3-2012 (apartados 6,7,8,10,11,12) y NOM-004-SSA3-2012 (Expediente Clínico).
+   - Ley Federal de Protección de Datos Personales (Art. 7,8,9,11,12,13,14): Específicamente el mecanismo estricto de pseudonimización o encriptación de datos en la matriz base para garantizar anonimato riguroso.
+   - Clasificación de riesgo (Art. 17). Justificación estricta de riesgo mayor al mínimo si la intervención anestésica o analgésica difiere del estándar gold de oro.
+   - Si el investigador principal tiene jerarquía/ascendencia (ej. adscrito a residente, o médico a paciente cautivo), el consentimiento lo debe solicitar alguien independiente (Art. 24).
+2. Carta de Consentimiento Informado (CI):
+   - Usar formato oficial validado. Especificar claramente beneficios sin exagerar, gratuidad, indemnización médica inmediata por EAs (Eventos Adversos), confidencialidad absoluta y retiro voluntario libre sin amenaza a su atención anestésico-quirúrgica estándar.
+
+CARTA DE NO INCONVENIENTE DEL DIRECTOR:
+- Requerida solo si se investiga fuera de su unidad de adscripción. Identificar incongruencias en sedes.
+
+RECURSOS, FINANCIAMIENTO Y FACTIBILIDAD:
+- Exigir una evaluación crítica y objetiva: ¿Es el tamaño de muestra factible de alcanzar en la unidad sede durante el tiempo propuesto, en base a la afluencia promedio histórica de casos con esos criterios de inclusión?
+
+CRONOGRAMA Y REFERENCIAS BIBLIOGRÁFICAS (Mínimo 30, formato Vancouver estricto, >30% inglés recientes 5 años).
+
+ANEXOS OBLIGATORIOS:
+- Tablas maniquí con campos ficticios exactos para pre-visualizar que el diseño analítico propuesto da respuestas a la pregunta PICO.
+- Matriz de recolección de datos y hoja de diccionario de códigos paramétricos.
+- Instrumentos y escalas de medición textuales anexas.
+
+════════════════════════════════════════
+ERRORES FRECUENTES EN RESIDENTES (Detección Proactiva e Implacable):
+1. Cálculo de Muestra Matemáticamente Incompleto: No justifican de dónde sale la prevalencia base, el efecto clínico esperado (Delta) o la varianza. El cálculo "aleatorio o mágico" de la fórmula es motivo automático de ERROR CRÍTICO.
+2. Tratamiento Ausente de Variables de Confusión: Ausencia de una estrategia analítica para aislar el verdadero efecto de variables independientes sobre dependientes.
+3. Normalidad Asumida Automáticamente: Proponen T-Student / ANOVA sin antes establecer explícitamente haber evaluado Pruebas de Normalidad y Homocedasticidad de la curva poblacional.
+4. Diseños Analíticos sin Cegamiento u Ocultación: Alta vulnerabilidad a sesgo de selección/medición en la intervención técnica anestésica.
+5. Variables mal Escalonadas Paramétricamente: Ej. Dolor (EVA) tratada exclusivamente como variable continua con medias/DS, cuando estadísticamente alude a métodos no paramétricos.
+6. Criterios de Selección Subjetivos o Débiles: Exclusión en espejo exacto de los de inclusión.
+7. Falta de validación local en escalas o ausencia del factor de confiabilidad en traducciones (alfa de Cronbach).
+8. Omisión en la Ley de Protección de Datos: Nula explicación del almacenamiento cifrado y custodia de bases.
+9. Aspectos éticos "Tipo Machote": Nombran Helsinki o NOM-012 solo de memoria, sin asentar en un párrafo la correlación de cómo protegen la beneficencia y de qué manera previenen la no maleficencia en el periprocedimiento.
+10. Cronograma Desfasado: Olvidan contemplar un periodo realista de 3 a 6 meses para la pura autorización del Comité Local de Investigación y Etica.
+11. Referencias Inapropiadas: Carecen de volumen o número, usan links muertos o incluyen "et al." desde el primer autor.
+12. Título de Proyecto que no empata integralmente con el Objetivo Primario.
+13. Objetivos con verbos no medibles en investigación ("comprender", "conocer").
+14. Carta de Consentimiento que exime de responsabilidad y no asegura la atención total en eventos adversos.
+
+════════════════════════════════════════
+FORMATO DE RESPUESTA:
+- Usa markdown: **negritas**, listas con guiones
+- Clasifica hallazgos: 🔴 **ERROR CRÍTICO** (causaría rechazo), 🟡 **OBSERVACIÓN** (condicionaría), ✅ **CORRECTO**
+- Sé directo y práctico — el Dr. Flores trabaja bajo presión de tiempo
+- Si creas contenido, usa formato listo para copiar/pegar
+- Responde en español mexicano formal
+- Al finalizar una revisión completa, indica el porcentaje estimado de cumplimiento
+
+CONTEXTO:
+- HGR 200 IMSS Tecámac, Delegación Regional Estado de México Oriente
+- El Dr. Flores tiene un protocolo activo: sedación con propofol TCI (modelo Schnider) para colonoscopias — observacional prospectivo, pendiente comité de ética
+- Residentes R1/R2/R3 de guardias A, B, C, D pueden ser investigadores principales con el Dr. Flores como asesor/investigador asociado`;
+
+let mode = 'revisar';
+let msgCount = 0;
+let findingsCount = 0;
+let chatHistory = [];
+let attachedFile = null; // { name, type, base64 } or { name, type:'docx', text }
+
+const modeLabels = {
+  revisar: 'Modo: Revisión de protocolo',
+  crear: 'Modo: Crear protocolo',
+  mejorar: 'Modo: Mejorar sección',
+  estadistica: 'Modo: Diseño estadístico'
+};
+
+const modeStats = {
+  revisar: 'Revisión',
+  crear: 'Creación',
+  mejorar: 'Mejora',
+  estadistica: 'Estadística'
+};
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + m).classList.add('active');
+  document.getElementById('mode-label').textContent = modeLabels[m];
+  document.getElementById('stat-mode').textContent = modeStats[m];
+}
+
+function quickAction(text) {
+  document.getElementById('user-input').value = text;
+  sendMessage();
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function addMessage(role, html) {
+  const chat = document.getElementById('chat');
+  const div = document.createElement('div');
+  div.className = 'msg';
+
+  if (role === 'user') {
+    div.innerHTML = `<div class="msg-user"><div class="bubble">${escapeHtml(html)}</div></div>`;
+  } else {
+    div.innerHTML = `
+      <div class="msg-agent">
+        <div class="agent-avatar">🤖</div>
+        <div class="agent-content">
+          <div class="agent-name">AGENTE PROTOCOLOS · AnesthTR</div>
+          <div class="agent-bubble">${formatResponse(html)}</div>
+        </div>
+      </div>`;
+  }
+
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function addThinking() {
+  const chat = document.getElementById('chat');
+  const div = document.createElement('div');
+  div.className = 'msg';
+  div.id = 'thinking-msg';
+  div.innerHTML = `
+    <div class="msg-agent">
+      <div class="agent-avatar">🤖</div>
+      <div class="agent-content">
+        <div class="agent-name">AGENTE PROTOCOLOS · AnesthTR</div>
+        <div class="thinking">
+          <div class="dots"><span></span><span></span><span></span></div>
+          Analizando...
+        </div>
+      </div>
+    </div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function removeThinking() {
+  const t = document.getElementById('thinking-msg');
+  if (t) t.remove();
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatResponse(text) {
+  // Detectar hallazgos para el contador
+  const errorMatches = text.match(/🔴/g);
+  const warnMatches = text.match(/🟡/g);
+  if (errorMatches || warnMatches) {
+    findingsCount += (errorMatches?.length || 0) + (warnMatches?.length || 0);
+    document.getElementById('stat-findings').textContent = findingsCount;
+  }
+
+  // Formatear markdown básico
+  let html = text
+    .replace(/🔴 \*\*([^*]+)\*\*/g, '<div class="finding-block"><div class="finding-header finding-error">🔴 ERROR CRÍTICO</div><div class="finding-body">$1</div></div>')
+    .replace(/🟡 \*\*([^*]+)\*\*/g, '<div class="finding-block"><div class="finding-header finding-warn">🟡 OBSERVACIÓN</div><div class="finding-body">$1</div></div>')
+    .replace(/✅ \*\*([^*]+)\*\*/g, '<div class="finding-block"><div class="finding-header finding-ok">✅ CORRECTO</div><div class="finding-body">$1</div></div>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
+    .replace(/\n\n+/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+
+  return `<p>${html}</p>`;
+}
+
+function updateScore(score) {
+  if (score === null) return;
+  const circle = document.getElementById('score-circle');
+  const numEl = document.getElementById('score-num');
+  const subEl = document.getElementById('score-sub');
+
+  const circumference = 226;
+  const offset = circumference - (score / 100) * circumference;
+  circle.style.strokeDashoffset = offset;
+
+  if (score >= 80) { circle.style.stroke = 'var(--accent3)'; }
+  else if (score >= 60) { circle.style.stroke = 'var(--warn)'; }
+  else { circle.style.stroke = 'var(--danger)'; }
+
+  numEl.textContent = score + '%';
+  subEl.textContent = score >= 80 ? 'Listo para comité' : score >= 60 ? 'Necesita ajustes' : 'Requiere revisión';
+}
+
+
+// ── FILE HANDLING ──────────────────────────────────────────
+
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').style.background = 'rgba(59,130,246,0.12)';
+}
+
+function handleDragLeave(e) {
+  document.getElementById('drop-zone').style.background = 'rgba(59,130,246,0.05)';
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  handleDragLeave(e);
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+  e.target.value = '';
+}
+
+function processFile(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (!['pdf','doc','docx'].includes(ext)) {
+    alert('Solo se aceptan archivos PDF o Word (.docx)');
+    return;
+  }
+
+  const reader = new FileReader();
+
+  if (ext === 'pdf') {
+    reader.onload = function(e) {
+      const base64 = e.target.result.split(',')[1];
+      attachedFile = { name: file.name, type: 'pdf', base64 };
+      showFileChip(file.name);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // DOCX — extract text using mammoth via CDN
+    reader.onload = async function(e) {
+      try {
+        showFileChip(file.name + ' (procesando...)');
+        const arrayBuffer = e.target.result;
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        attachedFile = { name: file.name, type: 'docx', text: result.value };
+        showFileChip(file.name);
+      } catch(err) {
+        alert('Error al leer el archivo Word. Intenta guardarlo como .docx');
+        clearFile();
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+function showFileChip(name) {
+  document.getElementById('file-name').textContent = name;
+  document.getElementById('file-chip').classList.add('visible');
+}
+
+function clearFile() {
+  attachedFile = null;
+  document.getElementById('file-chip').classList.remove('visible');
+  document.getElementById('file-name').textContent = '';
+}
+
+// ── END FILE HANDLING ──────────────────────────────────────
+
+async function sendMessage() {
+  const input = document.getElementById('user-input');
+  const text = input.value.trim();
+
+  // Necesita texto O archivo adjunto
+  if (!text && !attachedFile) return;
+
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  input.value = '';
+  input.style.height = 'auto';
+
+  const displayText = text || (attachedFile ? '📄 ' + attachedFile.name : '');
+  addMessage('user', displayText);
+  msgCount++;
+  document.getElementById('stat-msgs').textContent = msgCount;
+
+  // Build message content — include file if attached
+  let userContent;
+  if (attachedFile) {
+    if (attachedFile.type === 'pdf') {
+      userContent = [
+        {
+          type: 'document',
+          source: { type: 'base64', media_type: 'application/pdf', data: attachedFile.base64 }
+        },
+        {
+          type: 'text',
+          text: `[MODO: ${modeLabels[mode]}]\n\nArchivo adjunto: ${attachedFile.name}\n\n${text || 'Por favor revisa este protocolo con los criterios exactos de la guía IMSS y detecta todos los errores.'}`
+        }
+      ];
+    } else {
+      // DOCX — send as text
+      userContent = `[MODO: ${modeLabels[mode]}]\n\nArchivo adjunto: ${attachedFile.name}\n\nCONTENIDO DEL PROTOCOLO:\n${attachedFile.text}\n\n${text || 'Por favor revisa este protocolo con los criterios exactos de la guía IMSS y detecta todos los errores.'}`;
+    }
+    clearFile();
+  } else {
+    userContent = `[MODO: ${modeLabels[mode]}]\n\n${text}`;
+  }
+  chatHistory.push({ role: 'user', content: userContent });
+
+  addThinking();
+
+  try {
+    const response = await fetch('http://localhost:8000/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        provider: document.getElementById('provider-select').value,
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: chatHistory
+      })
+    });
+
+    const data = await response.json();
+    removeThinking();
+
+    const reply = data.content?.[0]?.text || 'Error al obtener respuesta.';
+    chatHistory.push({ role: 'assistant', content: reply });
+
+    addMessage('agent', reply);
+
+    // Intentar extraer score si el agente lo menciona
+    const scoreMatch = reply.match(/(\d{1,3})\/100|(\d{1,3})%\s*(de\s*cumplimiento|score|completitud)/i);
+    if (scoreMatch) {
+      const s = parseInt(scoreMatch[1] || scoreMatch[2]);
+      if (s >= 0 && s <= 100) updateScore(s);
+    }
+
+  } catch (err) {
+    removeThinking();
+    addMessage('agent', 'Error de conexión. Verifica tu acceso a internet e intenta de nuevo.');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  input.focus();
+}
+</script>
+
+</body>
+</html>

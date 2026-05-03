@@ -10,7 +10,7 @@ export default function R2Portal() {
       <div className="header" style={{ marginBottom: '32px' }}>
         <div className="card-grade r2-tag" style={{ display: 'inline-block', marginBottom: '12px' }}>R2</div>
         <h1 className="logo-subtitle" style={{ fontSize: '24px', color: '#F1F5F9', fontWeight: 800 }}>Exámenes R2 — Marzo 2026</h1>
-        <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Anestesiología · DFC Medical Apps</p>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Anestesiología · Medicode Solutions</p>
       </div>
 
       <div className="section-label">Anestesia Regional y Ultrasonido</div>

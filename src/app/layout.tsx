@@ -10,7 +10,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: "AnesthTR — Evaluaciones de Anestesiología",
-  description: "Portal interactivo de simuladores y evaluaciones para Anestesiología. Desarrollado por DFC Medical Apps.",
+  description: "Portal interactivo de simuladores y evaluaciones para Anestesiología. Desarrollado por Medicode Solutions.",
 };
 
 export default function RootLayout({
