@@ -112,6 +112,23 @@ export default function Home() {
         <div className="card-arrow">→</div>
       </Link>
 
+      <div className="section-label">Herramientas de investigación</div>
+
+      <Link href="/protocolos" className="glass-card card-link general">
+        <div className="card-header">
+          <span className="card-grade general-tag">IA</span>
+          <span className="card-status active">● Activo</span>
+        </div>
+        <h2 className="card-title">Revisor de Protocolos de Investigación</h2>
+        <p className="card-desc">Agente de IA que revisa, crea y mejora protocolos clínicos. Basado en la guía oficial de criterios 2019 y el Oficio 2810/2026/345.</p>
+        <div className="card-meta">
+          <span>🤖 Agente IA</span>
+          <span>📋 Checklist oficial</span>
+          <span>🏥 CEI / CNIC</span>
+        </div>
+        <div className="card-arrow">→</div>
+      </Link>
+
       <footer className="footer">
         <div className="footer-text">
           Coordinación de Anestesiología — Turno Vespertino<br />
