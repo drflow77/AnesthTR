@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Escala AIR - Apendicitis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0d1117;
+            --bg-panel: #161b22;
+            --bg-panel-hover: #21262d;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-green: #238636;
+            --accent-yellow: #d29922;
+            --accent-red: #da3633;
+            
+            --risk-low: #2ea043;
+            --risk-med: #d29922;
+            --risk-high: #f85149;
+            
+            --shadow-sm: 0 4px 6px rgba(0,0,0,0.3);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: rgba(22, 27, 34, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title i {
+            font-size: 28px;
+            color: var(--accent-blue);
+            background: rgba(88, 166, 255, 0.1);
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            padding: 30px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-fixed {
+                position: relative !important;
+                top: 0 !important;
+            }
+        }
+
+        /* Calculator Section */
+        .calc-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .category-block {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .category-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .category-header i {
+            color: var(--accent-blue);
+        }
+
+        /* Custom Toggle Groups */
+        .toggle-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .toggle-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pts-badge {
+            background: rgba(139, 148, 158, 0.1);
+            color: var(--text-muted);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+        }
+
+        .options-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            flex: 1;
+            min-width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .option-btn:hover {
+            border-color: #8b949e;
+            background: rgba(139, 148, 158, 0.1);
+        }
+
+        .option-btn.active {
+            background: rgba(88, 166, 255, 0.15);
+            border-color: var(--accent-blue);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(88, 166, 255, 0.1);
+        }
+
+        /* Sidebar / Results Menu */
+        .sidebar-fixed {
+            position: sticky;
+            top: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: max-content;
+        }
+
+        .result-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Score Display */
+        .score-display {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: conic-gradient(var(--border-color) 100%, transparent 0);
+            transition: background 0.5s ease;
+        }
+        
+        .score-display::before {
+            content: "";
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            background: var(--bg-panel);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .score-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-number {
+            font-size: 56px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+
+        .score-max {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .risk-label {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        .action-plan {
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-main);
+            text-align: left;
+            border-left: 4px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .action-plan i {
+            margin-right: 8px;
+        }
+
+        /* Clinical Case Generator */
+        .case-generator {
+            background: linear-gradient(145deg, #1c2128, #161b22);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .case-btn {
+            width: 100%;
+            background: var(--accent-blue);
+            color: #0d1117;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .case-btn:hover {
+            background: #79c0ff;
+            transform: translateY(-2px);
+        }
+
+        .case-btn.outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
+
+        .case-btn.outline:hover {
+            background: rgba(139, 148, 158, 0.1);
+            color: #fff;
+        }
+
+        .case-description {
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-blue);
+            display: none;
+        }
+
+        /* Animations */
+        @keyframes pulseBg {
+            0% { box-shadow: 0 0 0 0 rgba(var(--rgb-color), 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(var(--rgb-color), 0); }
+            100% { box-shadow: 0 0 0 0 rgba(var(--rgb-color), 0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <i class="fa-solid fa-notes-medical"></i>
+            <div>
+                <h1>Escala AIR (Appendicitis Inflammatory Response)</h1>
+                <div class="header-subtitle">Herramienta Interactiva de Estratificación de Riesgo</div>
+            </div>
+        </div>
+        <button class="case-btn outline" style="width: auto;" onclick="resetForm()">
+            <i class="fa-solid fa-rotate-right"></i> Reiniciar
+        </button>
+    </header>
+
+    <div class="container">
+        
+        <!-- Left: Calculator Form -->
+        <div class="calc-section">
+            
+            <!-- Clínico -->
+            <div class="category-block">
+                <div class="category-header">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    <h2>Hallazgos Clínicos</h2>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-label">
+                        <span>Dolor en Fosa Ilíaca Derecha (FID)</span>
+                        <span class="pts-badge">1 pts</span>
+                    </div>
+                    <div class="options-row">
+                        <label class="option-btn active">
+                            <input type="radio" name="fid" value="0" checked onchange="calculateScore()"> Ausente
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="fid" value="1" onchange="calculateScore()"> Presente
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-label">
+                        <span>Vómito</span>
+                        <span class="pts-badge">1 pts</span>
+                    </div>
+                    <div class="options-row">
+                        <label class="option-btn active">
+                            <input type="radio" name="vomit" value="0" checked onchange="calculateScore()"> Ausente
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="vomit" value="1" onchange="calculateScore()"> Presente
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-label">
+                        <span>Temperatura ≥ 38.5 °C</span>
+                        <span class="pts-badge">1 pts</span>
+                    </div>
+                    <div class="options-row">
+                        <label class="option-btn active">
+                            <input type="radio" name="temp" value="0" checked onchange="calculateScore()"> No
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="temp" value="1" onchange="calculateScore()"> Sí
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-label">
+                        <span>Defensa Muscular / Rebote</span>
+                        <span class="pts-badge">hasta 3 pts</span>
+                    </div>
+                    <div class="options-row">
+                        <label class="option-btn active">
+                            <input type="radio" name="defensa" value="0" checked onchange="calculateScore()"> No / Ninguna
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="defensa" value="1" onchange="calculateScore()"> Leve (1 pt)
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="defensa" value="2" onchange="calculateScore()"> Moderada (2 pts)
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="defensa" value="3" onchange="calculateScore()"> Fuerte/Abdomen en tabla (3 pts)
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Laboratorios -->
+            <div class="category-block">
+                <div class="category-header">
+                    <i class="fa-solid fa-vial"></i>
+                    <h2>Laboratorios</h2>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-label">
+                        <span>Leucocitos (WBC) absolutos</span>
+                        <span class="pts-badge">hasta 2 pts</span>
+                    </div>
+                    <div class="options-row">
+                        <label class="option-btn active">
+                            <input type="radio" name="wbc" value="0" checked onchange="calculateScore()"> &lt; 10.0
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="wbc" value="1" onchange="calculateScore()"> 10.0 - 14.9 (1 pt)
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="wbc" value="2" onchange="calculateScore()"> ≥ 15.0 (2 pts)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-label">
+                        <span>Polimorfonucleares (PMN) %</span>
+                        <span class="pts-badge">hasta 2 pts</span>
+                    </div>
+                    <div class="options-row">
+                        <label class="option-btn active">
+                            <input type="radio" name="pmn" value="0" checked onchange="calculateScore()"> &lt; 70%
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="pmn" value="1" onchange="calculateScore()"> 70 - 84% (1 pt)
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="pmn" value="2" onchange="calculateScore()"> ≥ 85% (2 pts)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-label">
+                        <span>Proteína C Reactiva (PCR) mg/L</span>
+                        <span class="pts-badge">hasta 2 pts</span>
+                    </div>
+                    <div class="options-row">
+                        <label class="option-btn active">
+                            <input type="radio" name="pcr" value="0" checked onchange="calculateScore()"> &lt; 10
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="pcr" value="1" onchange="calculateScore()"> 10 - 49 (1 pt)
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="pcr" value="2" onchange="calculateScore()"> ≥ 50 (2 pts)
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Right: Fixed Sidebar with Results -->
+        <div class="sidebar-fixed">
+            
+            <div class="result-card" id="resultCard">
+                <div class="score-display" id="scoreGraph">
+                    <div class="score-content">
+                        <div class="score-number" id="scoreNum">0</div>
+                        <div class="score-max">/ 12 pts</div>
+                    </div>
+                </div>
+                
+                <h3 class="risk-label" id="riskLabel" style="color: var(--text-muted)">Evaluación</h3>
+                
+                <div class="action-plan" id="actionPlan">
+                    <i class="fa-solid fa-circle-info"></i> Selecciona los síntomas y laboratorios del paciente para ver la clasificación del riesgo y el manejo sugerido.
+                </div>
+            </div>
+
+            <div class="case-generator">
+                <h3 style="font-family:'Outfit'; margin-bottom:15px; font-size: 16px;">📚 Entrenamiento por Casos</h3>
+                <button class="case-btn" onclick="generateRandomCase()">
+                    <i class="fa-solid fa-user-injured"></i> Generar Caso Clínico Aleatorio
+                </button>
+                <div class="case-description" id="caseText">
+                    <!-- Text will appear here -->
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const clinicalCases = [
+            {
+                text: "Masculino de 24 años, dolor abdominal periumbilical que migró a FID. Presenta vómito. Temp 38.8°C. A la exploración: Rebote moderado. Labs: Leucos 16,000, PMN 86%, PCR 55 mg/L. <br><br><strong>Score Real: 11 pts.</strong> ¿Puedes replicarlo en la calculadora?",
+                expectedData: { fid: "1", vomit: "1", temp: "1", defensa: "2", wbc: "2", pmn: "2", pcr: "2" }
+            },
+            {
+                text: "Femenina de 30 años, refiere dolor en fosa ilíaca derecha sin irradiación clara. Refiere haber vomitado una vez en casa. Afebril. A la exploración sólo leve molestia a la palpación profunda, sin signos irritativos francos. Labs: Leucos 11,000, PMN 75%, PCR 15 mg/L.<br><br><strong>Score Real: 6 pts.</strong> ¿Puedes replicarlo en la calculadora?",
+                expectedData: { fid: "1", vomit: "1", temp: "0", defensa: "1", wbc: "1", pmn: "1", pcr: "1" }
+            },
+            {
+                text: "Joven de 18 años, dolor difuso en abdomen inferior. No dolor exquisito en FID. No ha vomitado. Temp 37.2°C. A la palpación abdomen blando depresible, no defensa. Labs: Leucos 8,000, PMN 65%, PCR 5 mg/L.<br><br><strong>Score Real: 0 pts.</strong> ¿Puedes replicarlo en la calculadora?",
+                expectedData: { fid: "0", vomit: "0", temp: "0", defensa: "0", wbc: "0", pmn: "0", pcr: "0" }
+            }
+        ];
+
+        function initEventListeners() {
+            const radios = document.querySelectorAll('input[type="radio"]');
+            radios.forEach(r => {
+                r.addEventListener('change', function() {
+                    // Remove active class from all siblings
+                    const parent = this.closest('.options-row');
+                    parent.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
+                    // Add active class to current
+                    this.parentElement.classList.add('active');
+                });
+            });
+        }
+
+        function getRadioValue(name) {
+            const ele = document.querySelector(`input[name="${name}"]:checked`);
+            return ele ? parseInt(ele.value) : 0;
+        }
+
+        function calculateScore() {
+            const fid = getRadioValue('fid');
+            const vomit = getRadioValue('vomit');
+            const temp = getRadioValue('temp');
+            const defensa = getRadioValue('defensa');
+            const wbc = getRadioValue('wbc');
+            const pmn = getRadioValue('pmn');
+            const pcr = getRadioValue('pcr');
+
+            const totalScore = fid + vomit + temp + defensa + wbc + pmn + pcr;
+            
+            updateUI(totalScore);
+        }
+
+        function updateUI(score) {
+            // Update Number
+            const scoreNum = document.getElementById('scoreNum');
+            scoreNum.textContent = score;
+
+            // Update Radial Graph properties
+            const percentage = (score / 12) * 100;
+            const scoreGraph = document.getElementById('scoreGraph');
+            const riskLabel = document.getElementById('riskLabel');
+            const actionPlan = document.getElementById('actionPlan');
+            const resultCard = document.getElementById('resultCard');
+
+            let color = 'var(--text-muted)';
+            let rgbColor = '139, 148, 158'; // muted
+            let riskText = 'Evaluación';
+            let actionHtml = '<i class="fa-solid fa-circle-info"></i> Selecciona los síntomas y laboratorios del paciente para ver la clasificación del riesgo y el manejo sugerido.';
+
+            if (score === 0 && !document.querySelector('input:checked[value="1"], input:checked[value="2"], input:checked[value="3"]')) {
+                // Initial state
+            } else {
+                // Logic based on AIR Score standard
+                if (score <= 4) {
+                    // Low Risk
+                    color = 'var(--risk-low)';
+                    rgbColor = '46, 160, 67';
+                    riskText = 'Probabilidad Baja';
+                    actionHtml = `<i class="fa-solid fa-house-medical-circle-check"></i> <strong>Recomendación:</strong> Alta médica si el paciente se encuentra bien y no alterado, con seguimiento ambulatorio e indicaciones de alarma explícitas.`;
+                } else if (score >= 5 && score <= 8) {
+                    // Indeterminate Risk
+                    color = 'var(--risk-med)';
+                    rgbColor = '210, 153, 34';
+                    riskText = 'Prob. Indeterminada';
+                    actionHtml = `<i class="fa-solid fa-hospital-user"></i> <strong>Recomendación:</strong> Observación hospitalaria. Repetir puntaje clínico y laboratorios o realizar estudios de imagen (Ultrasonido o TAC según el grupo etario y protocolos locales).`;
+                } else {
+                    // High Risk
+                    color = 'var(--risk-high)';
+                    rgbColor = '248, 81, 73';
+                    riskText = 'Probabilidad Alta';
+                    actionHtml = `<i class="fa-solid fa-scalpel-line-dashed"></i> <strong>Recomendación:</strong> Alta sospecha de apendicitis aguda. Se recomienda exploración quirúrgica pronta (Apendicectomía).`;
+                }
+            }
+
+            // Apply Visuals
+            scoreNum.style.color = color;
+            riskLabel.style.color = color;
+            riskLabel.textContent = riskText;
+            actionPlan.innerHTML = actionHtml;
+            actionPlan.style.borderLeftColor = color;
+            
+            scoreGraph.style.background = `conic-gradient(${color} ${percentage}%, var(--border-color) 0)`;
+            
+            // Pulse animation based on color
+            document.documentElement.style.setProperty('--rgb-color', rgbColor);
+            
+            // Remove animation to retrigger
+            resultCard.style.animation = 'none';
+            resultCard.offsetHeight; /* trigger reflow */
+            resultCard.style.animation = score > 0 ? 'pulseBg 1s ease' : 'none';
+        }
+
+        function setRadioValue(name, value) {
+            const r = document.querySelector(`input[name="${name}"][value="${value}"]`);
+            if(r) {
+                r.checked = true;
+                const parent = r.closest('.options-row');
+                parent.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
+                r.parentElement.classList.add('active');
+            }
+        }
+
+        function generateRandomCase() {
+            // Pick a random case
+            const rcase = clinicalCases[Math.floor(Math.random() * clinicalCases.length)];
+            
+            // Show case description
+            const caseText = document.getElementById('caseText');
+            caseText.innerHTML = rcase.text;
+            caseText.style.display = 'block';
+
+            // Reset UI slightly so user does it
+            resetFormInputs();
+            calculateScore();
+        }
+
+        function resetFormInputs() {
+            setRadioValue('fid', "0");
+            setRadioValue('vomit', "0");
+            setRadioValue('temp', "0");
+            setRadioValue('defensa', "0");
+            setRadioValue('wbc', "0");
+            setRadioValue('pmn', "0");
+            setRadioValue('pcr', "0");
+        }
+
+        function resetForm() {
+            resetFormInputs();
+            const caseText = document.getElementById('caseText');
+            caseText.style.display = 'none';
+            calculateScore();
+        }
+
+        // Initialize setup
+        window.onload = () => {
+            initEventListeners();
+            calculateScore();
+        };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dermatomos & Nervios — Plexo Braquial</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Unbounded:wght@300;700;900&display=swap');
+
+:root {
+  --bg: #060a12;
+  --surface: #0d1420;
+  --surface2: #121c2e;
+  --border: #1a2840;
+  --text: #dde8f5;
+  --muted: #4a6580;
+
+  /* zona colors */
+  --col-C5:   #a78bfa;
+  --col-C6:   #38bdf8;
+  --col-C7:   #34d399;
+  --col-C8:   #fb923c;
+  --col-T1:   #f472b6;
+  --col-med:  #60a5fa;
+  --col-cub:  #f59e0b;
+  --col-rad:  #4ade80;
+  --col-ax:   #c084fc;
+  --col-musc: #fb7185;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* subtle noise texture */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+
+.app {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  gap: 0;
+}
+
+/* ── HEADER ── */
+header {
+  grid-column: 1 / -1;
+  padding: 24px 32px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.brand { display: flex; flex-direction: column; gap: 2px; }
+
+.brand-tag {
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.brand-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(14px, 2vw, 20px);
+  font-weight: 900;
+  background: linear-gradient(90deg, #fff 0%, #a78bfa 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 4px;
+}
+
+.mode-btn {
+  padding: 6px 16px;
+  border-radius: 100px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+
+.mode-btn.active {
+  background: var(--border);
+  color: var(--text);
+}
+
+.info-bar {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+/* ── LEFT PANEL: RAÍCES / TRONCOS ── */
+.left-panel {
+  border-right: 1px solid var(--border);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+/* ── CENTER: ARM ── */
+.center-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+}
+
+.arm-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0,0,0,0.5);
+  background: #000;
+}
+
+#arm-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* zone paths default */
+.zone-path {
+  fill: currentColor;
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+  cursor: pointer;
+  mix-blend-mode: screen;
+}
+
+.zone-path.active {
+  opacity: 0.9 !important;
+}
+
+/* ── RIGHT PANEL: NERVIOS TERMINALES ── */
+.right-panel {
+  border-left: 1px solid var(--border);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+/* ── SELECTOR BUTTONS ── */
+.section-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 4px;
+  margin-top: 8px;
+  margin-bottom: 2px;
+}
+
+.nerve-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: left;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.nerve-btn::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--dot-color, transparent);
+  border-radius: 3px 0 0 3px;
+}
+
+.nerve-btn:hover {
+  border-color: var(--dot-color, var(--border));
+  background: var(--surface2);
+}
+
+.nerve-btn.active {
+  border-color: var(--dot-color);
+  background: var(--surface2);
+  box-shadow: 0 0 0 1px var(--dot-color), inset 0 0 20px rgba(255,255,255,0.02);
+}
+
+.dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--dot-color);
+  flex-shrink: 0;
+  box-shadow: 0 0 6px var(--dot-color);
+}
+
+.btn-label { flex: 1; line-height: 1.3; }
+.btn-roots {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-top: 1px;
+}
+
+/* ── INFO CARD ── */
+.info-card {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--border);
+  padding: 16px 32px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: var(--surface);
+  transition: all 0.3s;
+}
+
+.info-card.hidden { opacity: 0.3; }
+
+.info-color-bar {
+  width: 4px;
+  height: 48px;
+  border-radius: 4px;
+  background: var(--active-color, var(--border));
+  flex-shrink: 0;
+  transition: background 0.3s;
+  box-shadow: 0 0 12px var(--active-color, transparent);
+}
+
+.info-name {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.info-roots {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.info-desc {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.7;
+  max-width: 700px;
+}
+
+.info-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.tag {
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  border: 1px solid currentColor;
+  opacity: 0.7;
+  letter-spacing: 1px;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .left-panel, .right-panel {
+    border: none;
+    border-bottom: 1px solid var(--border);
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+  .center-panel { order: -1; }
+  .arm-container { max-width: 320px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <span class="brand-tag">AnesthTR · HGR 200</span>
+      <span class="brand-title">Dermatomos & Nervios</span>
+    </div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="setMode('dermatomos')">Dermatomos</button>
+      <button class="mode-btn" onclick="setMode('nervios')">Nervios terminales</button>
+      <button class="mode-btn" onclick="setMode('bloqueos')">Cobertura Bloqueos</button>
+    </div>
+    <div class="info-bar">Toca cualquier nivel para ver su territorio</div>
+  </header>
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel" id="left-panel"></div>
+
+  <!-- CENTER: ARM -->
+  <div class="center-panel">
+    <div class="arm-container">
+      <svg id="arm-svg" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="35" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          
+          <filter id="mask-boost">
+            <!-- Multiplicar luminancia para asegurar que el brazo recorte perfectamente el fondo negro -->
+            <feColorMatrix type="matrix" values="
+              5 0 0 0 0
+              0 5 0 0 0
+              0 0 5 0 0
+              0 0 0 1 0"/>
+          </filter>
+          
+          <mask id="arm-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+            <image href="arm_3d.jpg" width="1024" height="1024" x="0" y="0" filter="url(#mask-boost)"></image>
+          </mask>
+        </defs>
+
+        <!-- Fondo del Brazo 3D -->
+        <image href="arm_3d.jpg" width="1024" height="1024" x="0" y="0"></image>
+
+        <!-- ═══ DERMATOME / NERVE HOVER ZONES (Neon Blobs) ═══ -->
+        <!-- La máscara impide que la luz salga del volumen corporal -->
+        <g mask="url(#arm-mask)">
+        
+            <g id="zone-C5" class="zone-path">
+                <ellipse cx="620" cy="300" rx="80" ry="120" transform="rotate(30 620 300)" />
+            </g>
+            
+            <g id="zone-C6" class="zone-path">
+                <ellipse cx="460" cy="580" rx="60" ry="150" transform="rotate(45 460 580)" />
+                <circle cx="280" cy="740" r="60" />
+            </g>
+
+            <g id="zone-C7" class="zone-path">
+                <ellipse cx="500" cy="620" rx="55" ry="140" transform="rotate(45 500 620)" />
+                <circle cx="310" cy="780" r="50" />
+            </g>
+
+            <g id="zone-C8" class="zone-path">
+                <ellipse cx="560" cy="580" rx="60" ry="140" transform="rotate(45 560 580)" />
+                <circle cx="360" cy="800" r="60" />
+            </g>
+
+            <g id="zone-T1" class="zone-path">
+                <ellipse cx="650" cy="400" rx="70" ry="140" transform="rotate(45 650 400)" />
+                <circle cx="700" cy="300" r="50" />
+            </g>
+
+            <g id="zone-med" class="zone-path">
+                <circle cx="310" cy="760" r="65" />
+                <ellipse cx="440" cy="680" rx="50" ry="100" transform="rotate(45 440 680)" />
+            </g>
+
+            <g id="zone-cub" class="zone-path">
+                <circle cx="370" cy="800" r="55" />
+                <ellipse cx="560" cy="620" rx="50" ry="100" transform="rotate(45 560 620)" />
+            </g>
+
+            <g id="zone-rad" class="zone-path">
+                <ellipse cx="480" cy="550" rx="70" ry="170" transform="rotate(45 480 550)" />
+                <circle cx="300" cy="700" r="50" />
+            </g>
+
+            <g id="zone-ax" class="zone-path">
+                <circle cx="660" cy="220" r="80" />
+            </g>
+
+            <g id="zone-musc" class="zone-path">
+                <ellipse cx="460" cy="580" rx="65" ry="130" transform="rotate(45 460 580)" />
+            </g>
+
+        </g>
+      </svg>
+    </div>
+
+    <!-- pulse hint -->
+    <p style="font-size:10px;color:var(--muted);text-align:center;margin-top:12px;letter-spacing:2px">
+      SELECCIONA UN NIVEL →
+    </p>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel" id="right-panel"></div>
+
+  <!-- INFO CARD -->
+  <div class="info-card hidden" id="info-card">
+    <div class="info-color-bar" id="info-bar"></div>
+    <div>
+      <div class="info-name" id="info-name">—</div>
+      <div class="info-roots" id="info-roots"></div>
+      <div class="info-desc" id="info-desc"></div>
+      <div class="info-tags" id="info-tags"></div>
+    </div>
+  </div>
+
+  <!-- EDUCATIONAL FOOTER -->
+  <footer style="grid-column: 1 / -1; margin-top: auto; padding: 20px 32px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 15px;">
+    <span style="font-size: 1.5rem;">⚠️</span>
+    <p style="margin: 0; text-align: left; line-height: 1.5; color: var(--muted); font-size: 11px;">
+      Este sitio tiene fines exclusivamente educativos. La información aquí presentada no sustituye el juicio clínico ni las recomendaciones de sociedades médicas vigentes. Siempre consulta fuentes primarias antes de tomar decisiones clínicas.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+// ═══════════════════════ DATA ═══════════════════════
+const DERMATOMOS = [
+  {
+    id: 'C5', label: 'C5', roots: 'RAÍZ', color: 'var(--col-C5)',
+    zones: ['zone-C5'],
+    motor: 'Deltoides, bíceps (flex. codo)',
+    desc: 'Hombro lateral, cara lateral del brazo hasta el codo. Tronco superior junto con C6.',
+    tags: ['Tronco Superior', 'Bloqueo interescalénico', 'N. Axilar', 'N. Musculocutáneo'],
+    reflex: 'Reflejo bicipital (C5-C6)'
+  },
+  {
+    id: 'C6', label: 'C6', roots: 'RAÍZ', color: 'var(--col-C6)',
+    zones: ['zone-C6'],
+    motor: 'Bíceps, braquiorradial, extensores muñeca',
+    desc: 'Antebrazo lateral, pulgar e índice. La raíz más relevante para la sensibilidad del pulgar.',
+    tags: ['Tronco Superior', 'Fascículo Lateral', 'N. Mediano (parcial)', 'N. Radial (parcial)'],
+    reflex: 'Reflejo braquiorradial (C6)'
+  },
+  {
+    id: 'C7', label: 'C7', roots: 'RAÍZ', color: 'var(--col-C7)',
+    zones: ['zone-C7'],
+    motor: 'Tríceps, flexores muñeca, extensores dedos',
+    desc: 'Dedo medio. Cara posterior del brazo y antebrazo. La raíz más gruesa del plexo, forma sola el tronco medio.',
+    tags: ['Tronco Medio', 'Fascículo Posterior', 'N. Radial', 'N. Mediano (parcial)'],
+    reflex: 'Reflejo tricipital (C7)'
+  },
+  {
+    id: 'C8', label: 'C8', roots: 'RAÍZ', color: 'var(--col-C8)',
+    zones: ['zone-C8'],
+    motor: 'Flexores dedos, intrínsecos mano (parcial)',
+    desc: 'Anular y meñique, cara medial del antebrazo distal. Junto con T1 forma el tronco inferior.',
+    tags: ['Tronco Inferior', 'Fascículo Medial', 'N. Cubital', 'N. Mediano (parcial)'],
+    reflex: '—'
+  },
+  {
+    id: 'T1', label: 'T1', roots: 'RAÍZ', color: 'var(--col-T1)',
+    zones: ['zone-T1'],
+    motor: 'Intrínsecos mano (lumbricales, interóseos)',
+    desc: 'Cara medial del brazo y axila. Tronco inferior con C8. Costilla cervical puede comprimir este nivel → síndrome del desfiladero.',
+    tags: ['Tronco Inferior', 'Fascículo Medial', 'Síndrome Pancoast', 'Desfiladero torácico'],
+    reflex: '—'
+  },
+];
+
+const NERVIOS = [
+  {
+    id: 'med', label: 'N. Mediano', roots: 'C6–T1', color: 'var(--col-med)',
+    zones: ['zone-med'],
+    fasciculo: 'Lateral + Medial',
+    desc: 'Palma radial (3½ dedos): pulgar, índice, medio y ½ anular. Motor: LOAF (Lumbricales 1-2, Oponente pulgar, Abductor corto pulgar, Flexor corto pulgar). "M" sobre arteria axilar en USG.',
+    tags: ['LOAF', '"Mano del predicador"', 'Síndrome del túnel carpiano', 'Pronador redondo'],
+    lesion: 'Pérdida de oposición del pulgar, anestesia pulpejos radiales'
+  },
+  {
+    id: 'cub', label: 'N. Cubital', roots: 'C8–T1', color: 'var(--col-cub)',
+    zones: ['zone-cub'],
+    fasciculo: 'Medial',
+    desc: '1½ dedos cubitales (anular medial + meñique), hipotenar. Motor: interóseos, lumbricales 3°-4°, hipotenar, aductor pulgar. Canal epitroclear = punto vulnerable.',
+    tags: ['Mano en garra', 'Signo de Froment', 'Canal epitroclear', '"Funny bone"'],
+    lesion: 'Garra 4°-5° dedos, signo de Froment +, pérdida abducción dedos'
+  },
+  {
+    id: 'rad', label: 'N. Radial', roots: 'C5–T1', color: 'var(--col-rad)',
+    zones: ['zone-rad'],
+    fasciculo: 'Posterior',
+    desc: 'Dorso lateral de la mano y antebrazo. Motor: extensores muñeca/dedos, supinador, tríceps. Surco de torsión humeral = sitio de lesión clásica.',
+    tags: ['Muñeca caída', 'Surco de torsión', '"Parálisis del sábado"', 'Braquiorradial'],
+    lesion: 'Wrist drop, extensión dedos imposible, pérdida sensitiva dorso radial'
+  },
+  {
+    id: 'ax', label: 'N. Axilar', roots: 'C5–C6', color: 'var(--col-ax)',
+    zones: ['zone-ax'],
+    fasciculo: 'Posterior',
+    desc: 'Área del hombro en "charretera" (badge area). Motor: deltoides y redondo menor. Atraviesa el espacio cuadrilateral posterior.',
+    tags: ['Charretera', 'Espacio cuadrilateral', 'Fractura cuello humeral', 'Luxación glenohumeral'],
+    lesion: 'Imposibilidad de abducción >15°, anestesia en charretera'
+  },
+  {
+    id: 'musc', label: 'N. Musculocutáneo', roots: 'C5–C7', color: 'var(--col-musc)',
+    zones: ['zone-musc'],
+    fasciculo: 'Lateral',
+    desc: 'Antebrazo lateral (continúa como n. cutáneo lateral del antebrazo). Motor: bíceps braquial, braquial anterior, coracobraquial (al que perfora).',
+    tags: ['Perfora coracobraquial', 'Cutáneo lat. antebrazo', 'Fascículo Lateral', 'Bíceps'],
+    lesion: 'Debilidad flexión codo, anestesia antebrazo lateral'
+  },
+];
+
+const BLOQUEOS = [
+  {
+    id: 'is', label: 'Interescalénico', roots: 'ABR. PROXIMAL', color: '#facc15',
+    zones: ['zone-C5', 'zone-C6', 'zone-C7'],
+    desc: 'Bloqueo a nivel de las raíces cervicales bajas. Anestesia ideal para cirugía de hombro y brazo proximal.',
+    tags: ['Hombro', 'Clavícula distal', 'Omite territorio cubital (vuelo ciego)'],
+    motor: 'Deltoides, Bíceps, Braquiorradial disminuidos',
+    lesion: 'Frénico (100%), Horner'
+  },
+  {
+    id: 'sc', label: 'Supraclavicular', roots: 'ABR. TRONCOS', color: '#f43f5e',
+    zones: ['zone-C5', 'zone-C6', 'zone-C7', 'zone-C8', 'zone-T1', 'zone-musc', 'zone-ax', 'zone-rad'],
+    desc: 'El "espinal" del brazo. Cubre densamente todo el miembro superior por debajo del hombro.',
+    tags: ['Cirugía de codo, antebrazo y mano', 'Rápido inicio', 'Gran volumen'],
+    motor: 'Bloqueo motor masivo del MS',
+    lesion: 'Neumotórax (raro con USG)'
+  },
+  {
+    id: 'ic', label: 'Infraclavicular', roots: 'ABR. FASCÍCULOS', color: '#10b981',
+    zones: ['zone-med', 'zone-rad', 'zone-cub', 'zone-musc'],
+    desc: 'Bloqueo a nivel de fascículos alrededor de la arteria axilar. Excelente para cirugías de codo, antebrazo y mano.',
+    tags: ['Evita el neumotórax', 'Ideal para torniquete', 'Evita el n. cutáneo medial'],
+    motor: 'Todo el brazo distal y mano',
+    lesion: 'Riesgo vascular'
+  },
+  {
+    id: 'axb', label: 'Axilar', roots: 'ABR. RAMAS TERM.', color: '#38bdf8',
+    zones: ['zone-med', 'zone-rad', 'zone-cub', 'zone-musc'],
+    desc: 'Bloqueo distal seguro. Excelente para cirugías de mano y antebrazo. El nervio musculocutáneo suele bloquearse por separado (inyectando en el coracobraquial).',
+    tags: ['Seguro', 'Cirugía de mano', 'Múltiples inyecciones'],
+    motor: 'Antebrazo y mano',
+    lesion: 'Hematoma local'
+  }
+];
+
+// ═══════════════════════ STATE ═══════════════════════
+let mode = 'dermatomos';
+let activeId = null;
+
+// ═══════════════════════ BUILD PANELS ═══════════════════════
+function buildPanels() {
+  const left = document.getElementById('left-panel');
+  const right = document.getElementById('right-panel');
+  left.innerHTML = '';
+  right.innerHTML = '';
+
+  if (mode === 'dermatomos') {
+    left.innerHTML = '<div class="section-label">Raíces nerviosas</div>';
+    DERMATOMOS.forEach(d => left.appendChild(makeBtn(d)));
+    right.innerHTML = '<div class="section-label">Guía rápida</div>' +
+      `<div style="font-size:11px;color:var(--muted);line-height:1.8;padding:8px 4px">
+        <b style="color:#a78bfa">C5</b> — Hombro lat.<br>
+        <b style="color:#38bdf8">C6</b> — Pulgar / índice<br>
+        <b style="color:#34d399">C7</b> — Dedo medio<br>
+        <b style="color:#fb923c">C8</b> — Anular / meñique<br>
+        <b style="color:#f472b6">T1</b> — Cara medial brazo<br><br>
+        <span style="opacity:0.5;font-size:10px">Regla: "los dedos del medio<br>son el middle (C7)"</span>
+      </div>`;
+  } else if (mode === 'nervios') {
+    left.innerHTML = '<div class="section-label">Nervios terminales</div>';
+    NERVIOS.slice(0,3).forEach(n => left.appendChild(makeBtn(n)));
+    right.innerHTML = '<div class="section-label">Nervios terminales</div>';
+    NERVIOS.slice(3).forEach(n => right.appendChild(makeBtn(n)));
+    right.innerHTML += `<div style="font-size:11px;color:var(--muted);line-height:1.8;padding:12px 4px;margin-top:8px;border-top:1px solid var(--border)">
+      <b style="color:#60a5fa">Mediano</b> = LOAF<br>
+      <b style="color:#f59e0b">Cubital</b> = Garra + Froment<br>
+      <b style="color:#4ade80">Radial</b> = Wrist drop<br>
+      <b style="color:#c084fc">Axilar</b> = Charretera
+    </div>`;
+  } else if (mode === 'bloqueos') {
+    left.innerHTML = '<div class="section-label">Abordajes Regionales</div>';
+    BLOQUEOS.slice(0,2).forEach(b => left.appendChild(makeBtn(b)));
+    right.innerHTML = '<div class="section-label">Abordajes Distales</div>';
+    BLOQUEOS.slice(2).forEach(b => right.appendChild(makeBtn(b)));
+    right.innerHTML += `<div style="font-size:11px;color:var(--muted);line-height:1.8;padding:12px 4px;margin-top:8px;border-top:1px solid var(--border)">
+      💡 <b>Tip Clínico:</b> Estas iluminaciones de cobertura asumen un bloqueo exitoso de buen volumen. Útil para notar qué zonas anatómicas escapan a tu abordaje y requieren suplementación.
+    </div>`;
+  }
+}
+
+function makeBtn(item) {
+  const btn = document.createElement('button');
+  btn.className = 'nerve-btn';
+  btn.id = 'btn-' + item.id;
+  btn.style.setProperty('--dot-color', item.color);
+  btn.innerHTML = `
+    <div class="dot"></div>
+    <div class="btn-label">
+      <div>${item.label}</div>
+      <div class="btn-roots">${item.roots}</div>
+    </div>`;
+  btn.addEventListener('click', () => selectItem(item));
+  btn.addEventListener('mouseenter', () => previewItem(item));
+  btn.addEventListener('mouseleave', () => {
+    if (activeId !== item.id) clearPreview();
+  });
+  return btn;
+}
+
+// ═══════════════════════ INTERACTIONS ═══════════════════════
+function previewItem(item) {
+  clearZones();
+  item.zones.forEach(z => {
+    const el = document.getElementById(z);
+    if (el) {
+      el.classList.add('active');
+      el.style.fill = item.color;
+      el.style.filter = 'url(#glow)';
+    }
+  });
+}
+
+function clearPreview() {
+  if (activeId) {
+    const data = [...DERMATOMOS, ...NERVIOS, ...BLOQUEOS].find(x => x.id === activeId);
+    if (data) previewItem(data);
+  } else {
+    clearZones();
+  }
+}
+
+function clearZones() {
+  document.querySelectorAll('.zone-path').forEach(z => {
+    z.classList.remove('active');
+    z.style.fill = 'transparent';
+    z.style.filter = '';
+  });
+}
+
+function selectItem(item) {
+  // toggle off
+  if (activeId === item.id) {
+    activeId = null;
+    clearZones();
+    document.querySelectorAll('.nerve-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('info-card').classList.add('hidden');
+    return;
+  }
+
+  activeId = item.id;
+  document.querySelectorAll('.nerve-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + item.id)?.classList.add('active');
+
+  clearZones();
+  item.zones.forEach(z => {
+    const el = document.getElementById(z);
+    if (el) {
+      el.classList.add('active');
+      el.style.fill = item.color;
+      el.style.filter = 'url(#glow)';
+    }
+  });
+
+  // Info card
+  const card = document.getElementById('info-card');
+  card.classList.remove('hidden');
+  card.style.setProperty('--active-color', item.color);
+  document.getElementById('info-bar').style.background = item.color;
+  document.getElementById('info-bar').style.boxShadow = `0 0 16px ${item.color}`;
+  document.getElementById('info-name').textContent = item.label;
+  document.getElementById('info-roots').textContent = item.roots + (item.fasciculo ? ' · Fascículo ' + item.fasciculo : '');
+
+  let descHTML = item.desc;
+  if (item.motor) descHTML += `<br><span style="color:var(--muted)">Motor:</span> ${item.motor}`;
+  if (item.lesion) descHTML += `<br><span style="color:var(--muted)">Lesión:</span> ${item.lesion}`;
+  if (item.reflex && item.reflex !== '—') descHTML += `<br><span style="color:var(--muted)">Reflejo:</span> ${item.reflex}`;
+  document.getElementById('info-desc').innerHTML = descHTML;
+
+  const tagsEl = document.getElementById('info-tags');
+  tagsEl.innerHTML = (item.tags || []).map(t =>
+    `<span class="tag" style="color:${item.color}">${t}</span>`
+  ).join('');
+}
+
+// ═══════════════════════ MODE SWITCH ═══════════════════════
+function setMode(m) {
+  mode = m;
+  activeId = null;
+  clearZones();
+  document.getElementById('info-card').classList.add('hidden');
+  document.querySelectorAll('.mode-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['dermatomos','nervios','bloqueos'][i] === m);
+  });
+  buildPanels();
+}
+
+// ═══════════════════════ INIT ═══════════════════════
+buildPanels();
+</script>
+</body>
+</html>
