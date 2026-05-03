@@ -31,7 +31,7 @@ export default function R2Portal() {
 
       <footer className="footer">
         <div className="footer-text">
-          <p>Coordinación de Anestesiología — Turno Vespertino</p>
+          
         </div>
       </footer>
     </main>

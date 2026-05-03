@@ -47,7 +47,7 @@ export default function R1Portal() {
 
       <footer className="footer">
         <div className="footer-text">
-          <p>Coordinación de Anestesiología — Turno Vespertino</p>
+          
         </div>
       </footer>
     </main>

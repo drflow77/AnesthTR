@@ -131,7 +131,7 @@ export default function Home() {
 
       <footer className="footer">
         <div className="footer-text">
-          Coordinación de Anestesiología — Turno Vespertino<br />
+          
           Medicode Solutions<br /><br />
           Desarrollado por Medicode Solutions
           <p className="disclaimer">
