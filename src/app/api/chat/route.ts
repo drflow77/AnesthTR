@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
+    const accessKey = req.headers.get('x-access-key');
+    const expectedKey = process.env.PROTOCOLO_PASSWORD;
+    if (!expectedKey || accessKey !== expectedKey) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     const data = await req.json();
     const provider = data.provider || 'gemini';
     const system_msg = data.system || '';

@@ -256,6 +256,32 @@ function formatMarkdown(text: string): string {
 }
 
 export default function ProtocolosPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [accessKey, setAccessKey] = useState('');
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem('protocolo_auth');
+    if (saved) { setAccessKey(saved); setIsAuthenticated(true); }
+  }, []);
+
+  const handleLogin = async () => {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-access-key': password },
+      body: JSON.stringify({ provider: 'gemini', messages: [{ role: 'user', content: 'ping' }] })
+    });
+    if (res.status === 401) {
+      setPasswordError('Contraseña incorrecta.');
+      return;
+    }
+    sessionStorage.setItem('protocolo_auth', password);
+    setAccessKey(password);
+    setIsAuthenticated(true);
+    setPasswordError('');
+  };
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -305,7 +331,7 @@ export default function ProtocolosPage() {
 
       const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-access-key': accessKey },
         body: JSON.stringify(payload)
       });
       setAttachedFile(null);
@@ -377,6 +403,33 @@ export default function ProtocolosPage() {
 
   const dashOffset = score !== null ? 226 - (226 * score) / 100 : 226;
   const scoreColor = score !== null ? (score >= 80 ? 'var(--accent3)' : score >= 60 ? 'var(--warn)' : 'var(--danger)') : 'var(--accent3)';
+
+  if (!isAuthenticated) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
+        <div style={{ background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(51,65,85,0.4)', borderRadius: 20, padding: '48px 40px', width: '100%', maxWidth: 380, textAlign: 'center' }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>🔒</div>
+          <div style={{ fontSize: 20, fontWeight: 700, color: '#f1f5f9', marginBottom: 4 }}>Revisor de Protocolos</div>
+          <div style={{ fontSize: 13, color: '#64748b', marginBottom: 32 }}>AnesthTR · Acceso restringido</div>
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={e => { setPassword(e.target.value); setPasswordError(''); }}
+            onKeyDown={e => e.key === 'Enter' && handleLogin()}
+            style={{ width: '100%', padding: '12px 16px', borderRadius: 10, border: '1px solid rgba(51,65,85,0.5)', background: 'rgba(0,0,0,0.3)', color: '#f1f5f9', fontSize: 15, marginBottom: 8, outline: 'none', boxSizing: 'border-box' }}
+            autoFocus
+          />
+          {passwordError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 8 }}>{passwordError}</div>}
+          <button
+            onClick={handleLogin}
+            style={{ width: '100%', padding: '12px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #38bdf8, #818cf8)', color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginTop: 4 }}>
+            Entrar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={s.container}>
