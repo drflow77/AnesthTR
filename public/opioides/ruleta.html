@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruleta de Opioides — AnesthTR</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e1a;--surface:#111827;--surface2:#1a2235;--surface3:#212d45;
+  --border:#2a3a5c;
+  --ink:#e8ecf4;--ink-soft:#8896b3;--ink-muted:#5a6a8a;
+  --fire:#ff6b35;--fire-soft:rgba(255,107,53,0.12);
+  --gold:#fbbf24;
+  --green:#34d399;--green-soft:rgba(52,211,153,0.12);--green-bd:rgba(52,211,153,0.4);
+  --red:#f87171;--red-soft:rgba(248,113,113,0.1);--red-bd:rgba(248,113,113,0.4);
+  --violet:#a78bfa;
+  --teal:#22d3ee;
+  --sans:'Plus Jakarta Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --nav-h:60px;--radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+.topnav{height:var(--nav-h);position:fixed;top:0;left:0;right:0;z-index:200;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px;}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;}
+.logo-mark{width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,var(--fire),var(--gold));color:#0a0e1a;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+.logo-name{font-size:17px;font-weight:800;letter-spacing:-0.3px;color:var(--ink);}
+.nav-divider{width:1px;height:24px;background:var(--border);}
+.nav-topic{font-size:13px;font-weight:600;color:var(--ink-soft);}
+
+main{padding-top:var(--nav-h);}
+.container{max-width:860px;margin:0 auto;padding:32px 24px 64px;}
+
+.page-header{margin-bottom:28px;}
+.eyebrow-badge{display:inline-flex;align-items:center;gap:5px;background:var(--fire-soft);color:var(--fire);padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.4px;border:1px solid rgba(255,107,53,0.3);margin-bottom:10px;}
+.page-title{font-size:28px;font-weight:800;letter-spacing:-0.6px;background:linear-gradient(135deg,var(--ink) 0%,var(--fire) 60%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.page-sub{font-size:13px;color:var(--ink-soft);margin-top:6px;}
+
+.stats-bar{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.stat-label{font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink-muted);}
+.stat-value{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--ink);line-height:1.1;margin-top:2px;}
+.streak-card{background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3);border-radius:var(--radius);padding:10px 16px;display:none;align-items:center;gap:10px;}
+.streak-card.visible{display:flex;}
+.streak-label{font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--fire);}
+.streak-value{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--fire);line-height:1.1;margin-top:2px;}
+
+.main-grid{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start;}
+@media(max-width:620px){.main-grid{grid-template-columns:1fr}}
+
+.wheel-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.wheel-container{position:relative;display:flex;align-items:center;justify-content:center;}
+canvas#wheel{border-radius:50%;display:block;}
+.wheel-pointer{position:absolute;right:-16px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:22px solid var(--fire);filter:drop-shadow(0 0 6px rgba(255,107,53,0.6));}
+
+.spin-btn{width:100%;padding:13px;font-size:14px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--fire),var(--gold));color:#0a0e1a;border:none;border-radius:var(--radius);font-family:var(--sans);transition:opacity 0.15s;letter-spacing:0.2px;}
+.spin-btn:hover{opacity:0.9;}
+.spin-btn:disabled{opacity:0.4;cursor:default;}
+
+.card-area{min-height:320px;}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:12px;position:relative;overflow:hidden;animation:slideIn 0.3s ease;}
+.q-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.q-card.farmaco::before{background:linear-gradient(90deg,#a78bfa,#60a5fa);}
+.q-card.receptor::before{background:linear-gradient(90deg,var(--teal),var(--green));}
+.q-card.adverso::before{background:linear-gradient(90deg,var(--red),var(--fire));}
+.q-card.caso::before{background:linear-gradient(90deg,var(--fire),var(--gold));}
+@keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.cat-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;padding:3px 10px;border-radius:4px;margin-bottom:14px;}
+.cat-badge.farmaco{background:rgba(167,139,250,0.12);color:var(--violet);border:1px solid rgba(167,139,250,0.3);}
+.cat-badge.receptor{background:rgba(34,211,238,0.1);color:var(--teal);border:1px solid rgba(34,211,238,0.3);}
+.cat-badge.adverso{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.3);}
+.cat-badge.caso{background:var(--fire-soft);color:var(--fire);border:1px solid rgba(255,107,53,0.3);}
+
+.q-text{font-size:15px;font-weight:600;color:var(--ink);line-height:1.6;margin-bottom:18px;}
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:13.5px;cursor:pointer;background:var(--surface2);text-align:left;color:var(--ink);line-height:1.4;font-family:var(--sans);transition:all 0.12s;}
+.opt:hover:not(:disabled){border-color:var(--fire);background:var(--fire-soft);transform:translateX(4px);}
+.opt.correct{background:var(--green-soft);border-color:var(--green-bd);color:var(--green);}
+.opt.wrong{background:var(--red-soft);border-color:var(--red-bd);color:var(--red);}
+.opt:disabled{cursor:default;}
+.opt:disabled:hover{transform:none;}
+
+.explanation{margin-top:14px;font-size:13px;color:var(--ink-soft);line-height:1.65;padding:14px 16px;background:var(--surface3);border-radius:8px;border-left:3px solid var(--fire);display:none;}
+.explanation strong{color:var(--fire);}
+
+.next-btn{margin-top:14px;width:100%;padding:12px;font-size:14px;font-weight:700;cursor:pointer;background:transparent;border:1px solid var(--border);border-radius:var(--radius);color:var(--ink-soft);font-family:var(--sans);transition:all 0.15s;}
+.next-btn:hover{background:var(--surface2);color:var(--ink);}
+
+.idle{display:flex;align-items:center;justify-content:center;height:240px;font-size:13px;color:var(--ink-muted);font-style:italic;}
+
+.page-footer{text-align:center;padding:20px;font-size:11px;color:var(--ink-muted);border-top:1px solid var(--border);margin-top:8px;}
+
+@media(max-width:600px){
+  .topnav{padding:0 16px;}
+  .container{padding:20px 16px 48px;}
+  .page-title{font-size:22px;}
+  .stats-bar{gap:6px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="nav-logo" href="/opioides">
+    <div class="logo-mark">A</div>
+    <span class="logo-name">AnesthTR</span>
+  </a>
+  <div class="nav-divider"></div>
+  <span class="nav-topic">Farmacología · Opioides</span>
+</nav>
+
+<main>
+<div class="container">
+
+  <div class="page-header">
+    <div class="eyebrow-badge">RULETA DE PREGUNTAS</div>
+    <h1 class="page-title">Opioides en anestesia</h1>
+    <p class="page-sub">Gira la ruleta para obtener una pregunta aleatoria · Fármacos, receptores, efectos adversos y casos clínicos</p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card"><div><div class="stat-label">Correctas</div><div class="stat-value" id="sc">0</div></div></div>
+    <div class="stat-card"><div><div class="stat-label">Incorrectas</div><div class="stat-value" id="sw">0</div></div></div>
+    <div class="stat-card"><div><div class="stat-label">Total</div><div class="stat-value" id="st">0</div></div></div>
+    <div class="streak-card" id="streak-box"><div><div class="streak-label">🔥 Racha</div><div class="streak-value" id="streak">0</div></div></div>
+  </div>
+
+  <div class="main-grid">
+    <div class="wheel-wrap">
+      <div class="wheel-container">
+        <canvas id="wheel" width="250" height="250"></canvas>
+        <div class="wheel-pointer"></div>
+      </div>
+      <button class="spin-btn" id="spin-btn">Girar ruleta</button>
+    </div>
+    <div class="card-area" id="card-area">
+      <div class="idle">Gira la ruleta para empezar</div>
+    </div>
+  </div>
+
+</div>
+<div class="page-footer">AnesthTR · Solo fines educativos · Farmacología de Opioides 2026</div>
+</main>
+
+<script>
+const CATS=[
+  {label:"Fármaco",    key:"farmaco", color:"#7C6FCD",textColor:"#e8ecf4"},
+  {label:"Receptor",   key:"receptor",color:"#0e8f6e",textColor:"#e8ecf4"},
+  {label:"Ef. adverso",key:"adverso", color:"#b84a2a",textColor:"#e8ecf4"},
+  {label:"Caso clínico",key:"caso",   color:"#c05a10",textColor:"#e8ecf4"},
+];
+
+const QUESTIONS={
+  farmaco:[
+    {q:"¿Cuál es el mecanismo de acción principal de los opioides?",opts:["Bloqueo de canales de sodio","Agonismo en receptores acoplados a proteína Gi","Antagonismo NMDA","Inhibición de COX-2"],ans:1,exp:"Los opioides actúan como agonistas en receptores acoplados a proteína Gi, inhibiendo la adenilil ciclasa, hiperpolarizando la neurona y reduciendo la liberación de neurotransmisores."},
+    {q:"El remifentanilo se diferencia de otros opioides porque es metabolizado por:",opts:["CYP3A4 hepático","Esterasas plasmáticas inespecíficas","Glucuronidación renal","MAO mitocondrial"],ans:1,exp:"El remifentanilo tiene un éster susceptible a hidrólisis por esterasas inespecíficas en sangre y tejidos, lo que le da una vida media contexto-sensitiva de ~4 min independientemente de la duración de infusión."},
+    {q:"¿Qué opioide tiene además actividad antagonista sobre receptores NMDA?",opts:["Fentanilo","Tramadol","Metadona","Buprenorfina"],ans:2,exp:"La metadona es un agonista mu con propiedades adicionales: antagonismo NMDA (útil en dolor crónico y neuropático) e inhibición de recaptura de serotonina/norepinefrina."},
+    {q:"La buprenorfina se clasifica como:",opts:["Agonista puro mu","Antagonista puro","Agonista parcial mu / antagonista kappa","Agonista kappa selectivo"],ans:2,exp:"Buprenorfina es agonista parcial de alta afinidad en receptor mu y antagonista kappa. Tiene efecto techo para depresión respiratoria pero no para analgesia, lo que la hace más segura en ciertas poblaciones."},
+    {q:"¿Cuál opioide produce menos histaminoliberación intravenosa?",opts:["Morfina","Codeína","Fentanilo","Meperidina"],ans:2,exp:"Fentanilo y sus derivados (sufentanilo, remifentanilo) no liberan histamina directamente. Morfina y meperidina sí pueden causar liberación de histamina, produciendo prurito, hipotensión y broncoespasmo."},
+    {q:"El sufentanilo comparado con fentanilo es aproximadamente:",opts:["5-10× más potente","50-100× más potente","500-1000× más potente","Igual potencia"],ans:2,exp:"Sufentanilo es el opioide de uso clínico más potente: 500-1000 veces más que morfina y 5-10 veces más que fentanilo. Su alta lipofilia le da rápido inicio y distribución al SNC."},
+  ],
+  receptor:[
+    {q:"¿Qué receptor opioide media principalmente la analgesia supraespinal y euforia?",opts:["Kappa (κ)","Delta (δ)","Mu (μ)","Sigma (σ)"],ans:2,exp:"El receptor mu (μ) es el principal mediador de analgesia, euforia, sedación, depresión respiratoria, disminución de motilidad GI y dependencia física."},
+    {q:"La activación del receptor kappa produce:",opts:["Euforia y miosis","Disforia, sedación y alucinaciones","Analgesia sin sedación","Broncodilatación"],ans:1,exp:"El receptor kappa (κ) produce disforia, alucinaciones y sedación. Esta es la razón por la que agonistas kappa puros no son útiles clínicamente — la disforia los hace intolerables."},
+    {q:"Los receptores opioides están acoplados a proteína:",opts:["Gs (estimuladora)","Gi (inhibidora)","Gq (fosfolipasa C)","Gk (canales K)"],ans:1,exp:"Los receptores opioides (mu, kappa, delta) están acoplados a proteína Gi/Go. Esto inhibe la adenilil ciclasa, abre canales de K+ (hiperpolarización) y cierra canales de Ca2+ voltaje-dependientes."},
+    {q:"¿Cuál receptor opioide modula principalmente el estado de ánimo y tiene distribución predominante en sistema límbico?",opts:["Mu","Kappa","Delta","Nociceptina/ORL1"],ans:2,exp:"El receptor delta (δ) tiene mayor distribución en el sistema límbico y modula el humor, la depresión y la analgesia. Algunos fármacos experimentales actúan en delta para analgesia con menos dependencia."},
+    {q:"La tolerancia opioide se desarrolla principalmente por:",opts:["Downregulation de receptores mu y desensibilización","Inducción de CYP450","Aumento de producción de endorfinas","Cambios en receptor GABA"],ans:0,exp:"La tolerancia implica desensibilización del receptor (fosforilación por GRKs), internalización (downregulation) y cambios en señalización intracelular. También hay componentes de neuroadaptación central (upregulation de AMPc)."},
+  ],
+  adverso:[
+    {q:"¿Cuál es el efecto adverso potencialmente más letal de los opioides?",opts:["Náusea","Depresión respiratoria","Prurito","Estreñimiento"],ans:1,exp:"La depresión respiratoria es el efecto adverso más peligroso. Los opioides reducen la respuesta ventilatoria al CO2 y la hipoxia. El receptor mu en el tronco encefálico (núcleo del rafe y centro respiratorio) es el mediador principal."},
+    {q:"La miosis por opioides es causada por acción en:",opts:["Corteza visual","Núcleo de Edinger-Westphal (vía parasimpática)","Ganglios simpáticos cervicales","Retina directamente"],ans:1,exp:"Los opioides estimulan el núcleo de Edinger-Westphal, aumentando el tono parasimpático al músculo constrictor del iris, produciendo miosis característica. No genera tolerancia a este efecto."},
+    {q:"El prurito inducido por morfina espinal se debe principalmente a:",opts:["Liberación de histamina medular","Activación directa de receptor mu en asta dorsal","Hiperalgesia opioide","Metabolito activo morfina-3-glucurónido"],ans:1,exp:"El prurito espinal con opioides intratecales/epidurales es principalmente central — mediado por receptor mu en el asta dorsal. No se trata bien con antihistamínicos; responde mejor a naloxona en dosis bajas o nalbufina."},
+    {q:"¿Qué efecto adverso de opioides NO desarrolla tolerancia con el uso crónico?",opts:["Sedación","Náusea","Estreñimiento y miosis","Depresión respiratoria"],ans:2,exp:"El estreñimiento y la miosis son los únicos efectos adversos de opioides que no desarrollan tolerancia significativa. Por eso los pacientes en opioides crónicos siempre requieren laxantes, pero la sedación y náusea típicamente mejoran."},
+    {q:"La hiperalgesia inducida por opioides (HIO) se relaciona con:",opts:["Downregulation de receptores mu","Activación de receptores NMDA y sensibilización central","Deficiencia de endorfinas endógenas","Acumulación de morfina-6-glucurónido"],ans:1,exp:"La HIO implica activación del receptor NMDA, upregulation de PKC, cambios en dinorfina espinal y sensibilización glial (astrocitos y microglía). Es paradójica: más opioide = más dolor. La metadona (antagonista NMDA) puede ayudar."},
+  ],
+  caso:[
+    {q:"Paciente post-cirugía mayor con SpO2 88%, FR 6/min, pupilas puntiformes, sin responder. ¿Primer paso?",opts:["Flumazenil IV","Naloxona 0.4 mg IV en bolo","Naloxona 0.04 mg IV titulada","Intubar inmediatamente"],ans:2,exp:"Naloxona titulada (0.04 mg cada 2-3 min) es preferible al bolo de 0.4 mg para evitar reversión brusca con dolor severo, hipertensión, edema pulmonar y síndrome de abstinencia. El objetivo es SpO2 >94% y FR >10, no despertar completo."},
+    {q:"Paciente con dolor crónico en metadona 80 mg/día requiere cirugía. ¿Cuál es la estrategia correcta?",opts:["Suspender metadona 24h antes","Continuar metadona + analgesia multimodal + opioides adicionales","Sustituir por morfina equivalente","No dar opioides adicionales por riesgo de sobredosis"],ans:1,exp:"En pacientes con metadona crónica, se debe continuar la dosis base (tolerancia establecida) y agregar analgesia multimodal. Necesitarán dosis mayores de opioides adicionales por tolerancia cruzada. Suspender la metadona puede precipitar abstinencia."},
+    {q:"¿En cuál de estos pacientes usarías remifentanilo como primera opción?",opts:["Insuficiencia renal crónica severa en cirugía larga","Cirugía ambulatoria de 30 min","Paciente con historia de náusea postoperatoria severa","Cirugía de columna con neuromonitoreo"],ans:0,exp:"En insuficiencia renal, morfina acumula metabolitos activos (M6G) y meperidina acumula normeperidina (convulsivante). El remifentanilo es ideal porque se metaboliza por esterasas plasmáticas — la función renal no afecta su farmacocinética."},
+    {q:"Tras infusión prolongada de remifentanilo, al despertar el paciente tiene dolor severo 9/10. Esto ocurre porque:",opts:["El remifentanilo se acumuló y produce rebote","Hiperalgesia aguda inducida por remifentanilo y ausencia de analgesia residual","El paciente era tolerante a opioides","Falla del neuromonitoreo intraoperatorio"],ans:1,exp:"El remifentanilo tiene contexto-sensitiva muy corta y no deja analgesia residual. Además, infusiones prolongadas pueden causar hiperalgesia aguda (vía NMDA). La estrategia es siempre preparar analgesia de transición 20-30 min antes del despertar."},
+  ]
+};
+
+let sc=0,sw=0,streak=0,spinning=false,answered=false,usedQ={farmaco:[],receptor:[],adverso:[],caso:[]};
+const canvas=document.getElementById("wheel");
+const ctx=canvas.getContext("2d");
+let angle=0;
+
+function drawWheel(rot){
+  ctx.clearRect(0,0,250,250);
+  const cx=125,cy=125,r=118,n=CATS.length,arc=Math.PI*2/n;
+  CATS.forEach((c,i)=>{
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,rot+i*arc,rot+(i+1)*arc);
+    ctx.fillStyle=c.color;ctx.fill();
+    ctx.strokeStyle="#0a0e1a";ctx.lineWidth=3;ctx.stroke();
+    ctx.save();ctx.translate(cx,cy);
+    ctx.rotate(rot+(i+0.5)*arc);
+    ctx.textAlign="center";
+    ctx.fillStyle=c.textColor;
+    ctx.font="700 13px 'Plus Jakarta Sans',sans-serif";
+    ctx.fillText(c.label,r*0.60,5);
+    ctx.restore();
+  });
+  ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);
+  ctx.fillStyle="#0a0e1a";ctx.fill();
+  ctx.strokeStyle="#2a3a5c";ctx.lineWidth=2;ctx.stroke();
+}
+
+drawWheel(angle);
+
+function getQ(cat){
+  const pool=QUESTIONS[cat];
+  let avail=pool.map((_,i)=>i).filter(i=>!usedQ[cat].includes(i));
+  if(avail.length===0){usedQ[cat]=[];avail=pool.map((_,i)=>i);}
+  const idx=avail[Math.floor(Math.random()*avail.length)];
+  usedQ[cat].push(idx);
+  return pool[idx];
+}
+
+function spin(){
+  if(spinning||answered)return;
+  spinning=true;
+  document.getElementById("spin-btn").disabled=true;
+  const totalRot=(5+Math.random()*5)*Math.PI*2;
+  const dur=2800,start=performance.now(),startAngle=angle;
+  function step(now){
+    const t=Math.min((now-start)/dur,1);
+    const ease=1-Math.pow(1-t,4);
+    angle=startAngle+totalRot*ease;
+    drawWheel(angle);
+    if(t<1){requestAnimationFrame(step);}
+    else{
+      angle=angle%(Math.PI*2);spinning=false;
+      const arc=Math.PI*2/CATS.length;
+      const ptr=(-angle+Math.PI*2)%(Math.PI*2);
+      const catIdx=Math.floor(ptr/arc)%CATS.length;
+      const cat=CATS[catIdx];
+      showQuestion(cat.key,cat);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function showQuestion(catKey,catMeta){
+  const q=getQ(catKey);
+  answered=false;
+  const area=document.getElementById("card-area");
+  let html=`<div class="q-card ${catKey}">
+    <span class="cat-badge ${catKey}">${catMeta.label}</span>
+    <p class="q-text">${q.q}</p>
+    <div class="opts">`;
+  q.opts.forEach((o,i)=>{
+    html+=`<button class="opt" onclick="answer(this,${i},${q.ans},'${catKey}')">${o}</button>`;
+  });
+  html+=`</div><div id="exp" class="explanation"><strong>Explicación:</strong> ${q.exp}</div></div>`;
+  area.innerHTML=html;
+}
+
+function answer(btn,chosen,correct,catKey){
+  if(answered)return;
+  answered=true;
+  const opts=btn.closest(".opts").querySelectorAll(".opt");
+  opts.forEach((o,i)=>{
+    o.disabled=true;
+    if(i===correct)o.classList.add("correct");
+    else if(i===chosen&&chosen!==correct)o.classList.add("wrong");
+  });
+  document.getElementById("exp").style.display="block";
+  if(chosen===correct){sc++;streak++;}else{sw++;streak=0;}
+  document.getElementById("sc").textContent=sc;
+  document.getElementById("sw").textContent=sw;
+  document.getElementById("st").textContent=sc+sw;
+  const sb=document.getElementById("streak-box");
+  if(streak>=2){sb.classList.add("visible");document.getElementById("streak").textContent=streak;}
+  else sb.classList.remove("visible");
+  const card=btn.closest(".q-card");
+  const nb=document.createElement("button");
+  nb.className="next-btn";nb.textContent="Siguiente pregunta →";
+  nb.onclick=()=>{
+    answered=false;
+    document.getElementById("card-area").innerHTML='<div class="idle">Gira la ruleta para continuar</div>';
+    document.getElementById("spin-btn").disabled=false;
+    spin();
+  };
+  card.appendChild(nb);
+}
+
+document.getElementById("spin-btn").onclick=spin;
+</script>
+</body>
+</html>
