@@ -12,12 +12,12 @@ export default function Home() {
         <p className="hero-sub">Plataforma de educación en anestesiología</p>
         <div className="hero-stats">
           <div className="stat-pill">
-            <span className="stat-num">7</span>
+            <span className="stat-num">8</span>
             <span className="stat-label">Módulos</span>
           </div>
           <div className="stat-divider" />
           <div className="stat-pill">
-            <span className="stat-num">3</span>
+            <span className="stat-num">4</span>
             <span className="stat-label">Simuladores</span>
           </div>
           <div className="stat-divider" />
@@ -102,6 +102,29 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* OPIOIDES */}
+      <div className="section-label">Farmacología · Módulos temáticos</div>
+
+      <Link href="/opioides" className="glass-card card-link opioides">
+        <div className="card-icon-wrap opioides-icon">💊</div>
+        <div className="card-body">
+          <div className="card-header">
+            <span className="card-grade opioides-tag">Farmacología</span>
+            <span className="card-status active">Activo</span>
+          </div>
+          <h2 className="card-title">Módulo de Opioides</h2>
+          <p className="card-desc">Quiz estilo ENARM, ruleta de preguntas y crucigrama interactivo. Receptores, farmacocinética, efectos adversos y casos perioperatorios.</p>
+          <div className="card-meta">
+            <span>📝 Quiz 15 preguntas</span>
+            <span>🎡 Ruleta</span>
+            <span>🔤 Crucigrama</span>
+          </div>
+        </div>
+        <div className="card-arrow">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+      </Link>
 
       {/* MÓDULOS INTERACTIVOS */}
       <div className="section-label">Simuladores clínicos</div>
