@@ -212,24 +212,42 @@ main{padding-top:var(--nav-h);}
 </main>
 
 <script>
+/*
+  Intersecciones verificadas (letra_palabra_H = letra_palabra_V en cada cruce):
+  REMIFENTANILO[2]=M  ∩ MORFINA[0]=M      (0,2)  ✓
+  MIOSIS[2]=O         ∩ MORFINA[1]=O      (1,2)  ✓
+  SUFENTANILO[2]=F    ∩ MORFINA[3]=F      (3,2)  ✓
+  SUFENTANILO[7]=N    ∩ NALOXONA[0]=N     (3,7)  ✓
+  KAPPA[1]=A          ∩ NALOXONA[1]=A     (4,7)  ✓
+  FENTANILO[2]=N      ∩ MORFINA[5]=N      (5,2)  ✓
+  FENTANILO[7]=L      ∩ NALOXONA[2]=L     (5,7)  ✓
+  BUPRENORFINA[4]=E   ∩ METADONA[1]=E     (8,5)  ✓
+  BUPRENORFINA[6]=N   ∩  —  (extremo libre NALOXONA col7 row8: O) wait…
+  BUPRENORFINA[6]=O   ∩ NALOXONA[5]=O     (8,7)  ✓
+  BUPRENORFINA[11]=N  ∩ NAUSEA[0]=N       (8,11) ✓
+  BUPRENORFINA[11]=A  ∩ TRAMADOL[4]=A     (8,12) ✓  ← col 12: BUPRENORFINA c=1 → [11]=A
+  PRURITO[5]=T        ∩ METADONA[2]=T     (9,5)  ✓
+  MU[1]=U             ∩ NAUSEA[2]=U       (10,11)✓
+  DELTA[0]=D          ∩ METADONA[4]=D     (11,5) ✓
+*/
 const DATA = [
-  {n:1,  word:"FENTANILO",     dir:"H", r:0,  c:0,  clue:"Opioide sintético 100× más potente que morfina, muy lipofílico"},
-  {n:2,  word:"MORFINA",       dir:"V", r:0,  c:6,  clue:"Opioide prototipo; metabolito activo: morfina-6-glucurónido"},
-  {n:3,  word:"NALOXONA",      dir:"H", r:2,  c:0,  clue:"Antagonista puro, revierte depresión respiratoria por opioides"},
-  {n:4,  word:"REMIFENTANILO", dir:"H", r:4,  c:0,  clue:"Éster degradado por esterasas inespecíficas; contexto-sensitivo muy corto"},
-  {n:5,  word:"KAPPA",         dir:"V", r:4,  c:5,  clue:"Receptor opioide que produce disforia y sedación espinal"},
-  {n:6,  word:"MIOSIS",        dir:"H", r:6,  c:2,  clue:"Signo pupilar clásico de intoxicación por opioides"},
-  {n:7,  word:"TRAMADOL",      dir:"V", r:4,  c:11, clue:"Opioide débil + inhibidor de recaptura de serotonina/norepinefrina"},
-  {n:8,  word:"DELTA",         dir:"H", r:8,  c:0,  clue:"Receptor opioide modulador de humor y analgesia supraespinal"},
-  {n:9,  word:"METADONA",      dir:"V", r:6,  c:3,  clue:"Opioide de acción prolongada + antagonista NMDA; útil en dolor crónico"},
-  {n:10, word:"MU",            dir:"H", r:10, c:0,  clue:"Receptor opioide principal; media analgesia, euforia y dependencia"},
-  {n:11, word:"SUFENTANILO",   dir:"H", r:12, c:0,  clue:"El más potente para uso clínico; 500-1000× morfina"},
-  {n:12, word:"PRURITO",       dir:"V", r:10, c:8,  clue:"Efecto adverso común con morfina espinal; mediado por receptor mu"},
-  {n:13, word:"NAUSEA",        dir:"H", r:14, c:1,  clue:"Efecto adverso emético por acción en zona gatillo quimiorreceptora"},
-  {n:14, word:"BUPRENORFINA",  dir:"H", r:16, c:0,  clue:"Agonista parcial mu y antagonista kappa; efecto techo en depresión respiratoria"},
+  {n:1,  word:"REMIFENTANILO", dir:"H", r:0,  c:0,  clue:"Éster metabolizado por esterasas plasmáticas; vida media contexto-sensitiva ~4 min"},
+  {n:2,  word:"MORFINA",       dir:"V", r:0,  c:2,  clue:"Opioide prototipo; metabolito activo morfina-6-glucurónido con potencia analgésica"},
+  {n:3,  word:"MIOSIS",        dir:"H", r:1,  c:0,  clue:"Signo pupilar clásico de intoxicación opioide; persiste incluso en sobredosis grave"},
+  {n:4,  word:"SUFENTANILO",   dir:"H", r:3,  c:0,  clue:"El más potente de uso clínico habitual; 500–1000× morfina"},
+  {n:5,  word:"NALOXONA",      dir:"V", r:3,  c:7,  clue:"Antagonista puro mu/delta/kappa; revierte depresión respiratoria opioide (0.1–0.4 mg IV)"},
+  {n:6,  word:"KAPPA",         dir:"H", r:4,  c:6,  clue:"Receptor que media disforia, sedación espinal y analgesia visceral"},
+  {n:7,  word:"TRAMADOL",      dir:"V", r:4,  c:12, clue:"Opioide débil + inhibidor de recaptura de serotonina y norepinefrina"},
+  {n:8,  word:"FENTANILO",     dir:"H", r:5,  c:0,  clue:"Opioide sintético ~100× morfina; alta lipofilia y rápida redistribución"},
+  {n:9,  word:"METADONA",      dir:"V", r:7,  c:5,  clue:"Agonista mu de acción prolongada y antagonista NMDA; vida media larga variable"},
+  {n:10, word:"BUPRENORFINA",  dir:"H", r:8,  c:1,  clue:"Agonista parcial mu y antagonista kappa; efecto techo en depresión respiratoria"},
+  {n:11, word:"NAUSEA",        dir:"V", r:8,  c:11, clue:"Efecto adverso emético por estimulación del área postrema (zona gatillo quimiorreceptora)"},
+  {n:12, word:"PRURITO",       dir:"H", r:9,  c:0,  clue:"Efecto adverso frecuente con morfina intratecal; mediado por receptor mu espinal"},
+  {n:13, word:"MU",            dir:"H", r:10, c:10, clue:"Receptor opioide principal; media analgesia, euforia, miosis y depresión respiratoria"},
+  {n:14, word:"DELTA",         dir:"H", r:11, c:5,  clue:"Receptor opioide modulador del humor, analgesia supraespinal e inmunomodulación"},
 ];
 
-const ROWS=18, COLS=13;
+const ROWS=15, COLS=13;
 let grid=[], sel=null, selDir="H", selWord=null;
 
 function buildGrid(){
@@ -450,7 +468,7 @@ function reset(){
   });
   sel=null; selWord=null; hideMsg();
   document.getElementById("activeClue").className="selected-clue-label";
-  renderGrid(); renderClues();
+  renderGrid();
 }
 
 function updateScore(){
