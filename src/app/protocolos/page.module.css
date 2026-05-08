@@ -651,3 +651,157 @@
 .agentBubble li::before { content: '›'; position: absolute; left: 4px; color: var(--accent); font-weight: 600; }
 .agentBubble code { background: var(--surface2); padding: 1px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
 .agentBubble strong { color: var(--text); font-weight: 600; }
+
+/* ── MOBILE BOTTOM NAV ────────────────────────────────────── */
+.mobileNav {
+  display: none;
+}
+
+/* ── RESPONSIVE HELPERS ───────────────────────────────────── */
+.hideMobile { /* shown by default, hidden on mobile */ }
+.mobileHide { /* always visible on desktop; controlled via JS on mobile */ }
+.mobileShow { /* mirrors mobileHide for panels */ }
+
+/* ── TABLET (< 1024px): collapse right panel ─────────────── */
+@media (max-width: 1023px) {
+  .sidebar { width: 220px; }
+  .rightPanel { width: 260px; }
+  .chatArea { padding: 20px 20px; }
+  .inputArea { padding: 12px 20px 16px; }
+}
+
+/* ── MOBILE (≤ 767px) ────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Container: fixed height so flex children fill correctly */
+  .container { height: 100vh; overflow: hidden; }
+
+  /* Hide desktop badges */
+  .hideMobile { display: none !important; }
+
+  /* Header compact */
+  .header { padding: 10px 14px; gap: 8px; }
+  .logoMark { width: 30px; height: 30px; font-size: 15px; }
+  .logoText { font-size: 16px; }
+  .logoSub { display: none; }
+  .selectProvider { font-size: 11px; padding: 4px 6px; margin-right: 0; }
+
+  /* Main layout: fill remaining space above the fixed bottom nav */
+  .mainLayout {
+    flex-direction: column;
+    flex: 1;
+    height: 0; /* forces flex child to respect parent height */
+    overflow: hidden;
+    padding-bottom: 60px; /* space for fixed bottom nav */
+  }
+
+  /* All panels take full width when shown */
+  .sidebar,
+  .rightPanel,
+  .mainPanel {
+    width: 100% !important;
+    flex-shrink: unset;
+    border: none;
+    height: 100%;
+  }
+
+  /* Sidebar as scrollable full-screen panel */
+  .sidebar {
+    padding: 16px 0 80px;
+    overflow-y: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Right panel full-screen */
+  .rightPanel {
+    border-left: none;
+    overflow: hidden;
+  }
+
+  /* Hide/show logic driven by JS state */
+  .mobileHide { display: none !important; }
+  .mobileShow { display: flex !important; flex-direction: column; }
+
+  /* Main panel adjustments */
+  .mainPanel { overflow: hidden; }
+  .chatArea { padding: 14px 12px; gap: 14px; }
+  .inputArea { padding: 10px 12px 14px; }
+  .inputHint { display: none; }
+
+  /* Welcome card */
+  .welcomeCard { padding: 20px 16px; border-radius: 12px; }
+  .welcomeTitle { font-size: 20px; }
+  .welcomeSub { font-size: 13px; margin-bottom: 16px; }
+  .welcomeTags { margin-bottom: 14px; }
+  .quickActions { grid-template-columns: 1fr; gap: 8px; }
+
+  /* Messages */
+  .msgUser,
+  .msgAgent { max-width: 100%; }
+  .msgUserBubble { max-width: 85%; font-size: 13px; }
+  .agentBubble { font-size: 13px; padding: 12px 14px; }
+
+  /* Mode indicator */
+  .modeIndicator { padding: 5px 12px; font-size: 10px; }
+  .modeActions { gap: 4px; }
+  .actionBtn { font-size: 10px; padding: 2px 8px; }
+
+  /* Input row */
+  .inputRow { gap: 6px; }
+  .uploadBtn { width: 38px; height: 38px; font-size: 17px; }
+  .sendBtn { width: 38px; height: 38px; font-size: 16px; }
+  .inputBox { font-size: 16px; /* prevents iOS zoom */ padding: 10px 12px; min-height: 42px; }
+
+  /* Bottom nav */
+  .mobileNav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(10,14,26,0.97);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 8px;
+  }
+
+  .mobileNavBtn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 0;
+    border-radius: 10px;
+    transition: background 0.15s;
+    color: var(--muted);
+  }
+
+  .mobileNavBtn:active { background: var(--surface2); }
+
+  .mobileNavActive {
+    color: var(--accent);
+  }
+
+  .mobileNavIcon { font-size: 20px; line-height: 1; }
+  .mobileNavLabel { font-size: 10px; font-family: monospace; letter-spacing: 0.04em; }
+
+  /* Sidebar: show sections stacked */
+  .sidebarSection { padding: 0 14px; margin-bottom: 20px; }
+  .sectionsList { padding: 0 14px; }
+  .modeBtn { font-size: 14px; padding: 12px 14px; }
+
+  /* Right panel scrollable */
+  .rpBody { padding: 12px; }
+
+  /* Score ring: smaller on mobile */
+  .scoreRing { width: 80px; height: 80px; }
+  .scoreRing svg { width: 80px; height: 80px; }
+}

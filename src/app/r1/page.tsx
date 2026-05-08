@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'R1 — Vía Aérea, Evaluación Preanestésica y Anestésicos Locales | AnesthTR',
+  description: 'Simuladores para R1 de anestesiología: escalas de vía aérea, Cormack-Lehane, clasificación ASA, Caprini, valoración preanestésica y farmacología de anestésicos locales.',
+};
 
 export default function R1Portal() {
   return (

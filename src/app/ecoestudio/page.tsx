@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'EcoEstudio — Ultrasonido para Bloqueos Regionales | AnesthTR',
+  description: 'Aprende ecografía para anestesia regional: bloqueo supraclavicular, axilar y plexo braquial guiado por ultrasonido. Módulo interactivo para residentes de anestesiología.',
+};
 
 export default function EcoEstudioPortal() {
   return (
