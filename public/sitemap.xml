@@ -2,13 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://anesthtr.medicode-solutions.com/</loc>
-    <lastmod>2026-05-04</lastmod>
+    <lastmod>2026-05-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://anesthtr.medicode-solutions.com/revisor</loc>
-    <changefreq>weekly</changefreq>
+    <loc>https://anesthtr.medicode-solutions.com/ecoestudio</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://anesthtr.medicode-solutions.com/opioides</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://anesthtr.medicode-solutions.com/r1</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://anesthtr.medicode-solutions.com/r2</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>
