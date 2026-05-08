@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'R2 — Bloqueos Regionales y Anestesia Regional | AnesthTR',
+  description: 'Simuladores para R2 de anestesiología: anatomía de bloqueos regionales, técnicas guiadas por ultrasonido, tipos de bloqueo y manejo de complicaciones.',
+};
 
 export default function R2Portal() {
   return (

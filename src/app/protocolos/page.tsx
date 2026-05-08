@@ -203,6 +203,7 @@ type Message = { role: string; content: string };
 type AttachedFile = { name: string; mimeType: string; data: string } | null;
 type RouteStatus = 'pending' | 'local' | 'cnic';
 type RightTab = 'estado' | 'criterios';
+type MobileSection = 'chat' | 'estado' | 'modos';
 
 const MODES = [
   { id: 'revisar', icon: '🔍', label: 'Revisar protocolo' },
@@ -292,6 +293,7 @@ export default function ProtocolosPage() {
   const [findingsCount, setFindingsCount] = useState(0);
   const [route, setRoute] = useState<RouteStatus>('pending');
   const [rightTab, setRightTab] = useState<RightTab>('estado');
+  const [mobileSection, setMobileSection] = useState<MobileSection>('chat');
 
   const endRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -444,14 +446,14 @@ export default function ProtocolosPage() {
             <option value="gemini">🧪 Gemini Flash</option>
             <option value="anthropic">🤖 Claude Sonnet</option>
           </select>
-          <span className={`${s.badge} ${s.badgeBlue}`}>Protocolos MX</span>
-          <span className={`${s.badge} ${s.badgeGreen}`}>● IA Activa</span>
+          <span className={`${s.badge} ${s.badgeBlue} ${s.hideMobile}`}>Protocolos MX</span>
+          <span className={`${s.badge} ${s.badgeGreen} ${s.hideMobile}`}>● IA Activa</span>
         </div>
       </header>
 
       <div className={s.mainLayout}>
         {/* SIDEBAR */}
-        <div className={s.sidebar}>
+        <div className={`${s.sidebar} ${mobileSection !== 'modos' ? s.mobileHide : s.mobileShow}`}>
           <div className={s.sidebarSection}>
             <div className={s.sidebarLabel}>Modo de trabajo</div>
             {MODES.map(m => (
@@ -477,7 +479,7 @@ export default function ProtocolosPage() {
         </div>
 
         {/* MAIN PANEL */}
-        <div className={s.mainPanel}>
+        <div className={`${s.mainPanel} ${mobileSection !== 'chat' ? s.mobileHide : ''}`}>
           <div className={s.modeIndicator}>
             <span className={s.modeDot} />
             <span>Modo: {MODE_LABELS[activeMode]}</span>
@@ -584,7 +586,7 @@ export default function ProtocolosPage() {
         </div>
 
         {/* RIGHT PANEL */}
-        <div className={s.rightPanel}>
+        <div className={`${s.rightPanel} ${mobileSection !== 'estado' ? s.mobileHide : s.mobileShow}`}>
           <div className={s.rpTabs}>
             <button className={`${s.rpTab} ${rightTab === 'estado' ? s.rpTabActive : ''}`}
               onClick={() => setRightTab('estado')}>Estado</button>
@@ -678,6 +680,25 @@ export default function ProtocolosPage() {
           )}
         </div>
       </div>
+
+      {/* MOBILE BOTTOM NAV */}
+      <nav className={s.mobileNav}>
+        <button className={`${s.mobileNavBtn} ${mobileSection === 'modos' ? s.mobileNavActive : ''}`}
+          onClick={() => setMobileSection('modos')}>
+          <span className={s.mobileNavIcon}>☰</span>
+          <span className={s.mobileNavLabel}>Modos</span>
+        </button>
+        <button className={`${s.mobileNavBtn} ${mobileSection === 'chat' ? s.mobileNavActive : ''}`}
+          onClick={() => setMobileSection('chat')}>
+          <span className={s.mobileNavIcon}>💬</span>
+          <span className={s.mobileNavLabel}>Chat</span>
+        </button>
+        <button className={`${s.mobileNavBtn} ${mobileSection === 'estado' ? s.mobileNavActive : ''}`}
+          onClick={() => setMobileSection('estado')}>
+          <span className={s.mobileNavIcon}>📊</span>
+          <span className={s.mobileNavLabel}>Estado</span>
+        </button>
+      </nav>
     </div>
   );
 }

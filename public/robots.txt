@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /protocolos
+Disallow: /api/
+
+Sitemap: https://anesthtr.medicode-solutions.com/sitemap.xml

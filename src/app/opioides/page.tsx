@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Opioides — Farmacología y Simuladores para Anestesiología | AnesthTR',
+  description: 'Domina la farmacología de opioides para el ENARM: receptores, farmacocinética, efectos adversos y casos clínicos. Cuestionario, crucigrama y ruleta interactiva.',
+};
 
 export default function OpioidesHub() {
   return (
