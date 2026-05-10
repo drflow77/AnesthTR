@@ -15,9 +15,9 @@ export async function POST(req: Request) {
     const file = data.file;
 
     if (provider === 'gemini') {
-      const apiKey = process.env.GEMINI_API_KEY;
+      const apiKey = process.env.GEMINI_API_KEY_CHAT;
       if (!apiKey) {
-        return NextResponse.json({ error: 'GEMINI_API_KEY no está configurada en .env.local' }, { status: 500 });
+        return NextResponse.json({ error: 'GEMINI_API_KEY_CHAT no está configurada en .env.local' }, { status: 500 });
       }
 
       // Convertir formato de mensajes a Gemini

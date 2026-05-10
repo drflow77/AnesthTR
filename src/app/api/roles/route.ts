@@ -37,9 +37,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY_ROLES;
   if (!apiKey) {
-    return NextResponse.json({ error: 'GEMINI_API_KEY no configurada' }, { status: 500 });
+    return NextResponse.json({ error: 'GEMINI_API_KEY_ROLES no configurada' }, { status: 500 });
   }
 
   try {
