@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const GEMINI_URL = (key: string) =>
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
 
 async function callGemini(apiKey: string, systemPrompt: string, userText: string, imageBase64?: string, imageMime?: string) {
   const parts: any[] = [];
