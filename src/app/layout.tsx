@@ -9,8 +9,12 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://anesthtr.medicode-solutions.com"),
   title: "AnesthTR — Evaluaciones de Anestesiología",
   description: "Portal interactivo de simuladores y evaluaciones para Anestesiología. Desarrollado por Medicode Solutions.",
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function RootLayout({
