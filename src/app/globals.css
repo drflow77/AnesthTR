@@ -104,7 +104,8 @@ a { text-decoration: none; color: inherit; }
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 12px;
+  gap: 0;
+  margin-left: -20px;
   margin-bottom: 20px;
   position: relative;
 }
@@ -117,18 +118,18 @@ a { text-decoration: none; color: inherit; }
 }
 
 .logo-img {
-  height: 190px;
+  height: 260px;
   width: auto;
+  margin-right: -85px;
   filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.45));
   transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .logo-img:hover {
-  transform: scale(1.08) rotate(-3deg);
   filter: drop-shadow(0 0 44px rgba(56, 189, 248, 0.6));
 }
 
 .logo-wordmark {
-  font-size: 3.8rem;
+  font-size: 4.4rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #f1f5f9;
