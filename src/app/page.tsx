@@ -8,8 +8,11 @@ export default function Home() {
         <div className="hero-glow" />
         <div className="logo-brand">
           <img src="/logo.PNG" alt="AnesthTR" className="logo-img" />
+          <div className="logo-text-group">
+            <span className="logo-wordmark">Anesth<span className="logo-tr">TR</span></span>
+            <p className="hero-sub">Plataforma de educación en anestesiología</p>
+          </div>
         </div>
-        <p className="hero-sub">Plataforma de educación en anestesiología</p>
         <div className="hero-stats">
           <div className="stat-pill">
             <span className="stat-num">8</span>
