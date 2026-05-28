@@ -105,7 +105,6 @@ a { text-decoration: none; color: inherit; }
   flex-direction: row;
   align-items: center;
   gap: 0;
-  margin-left: -20px;
   margin-bottom: 20px;
   position: relative;
 }
