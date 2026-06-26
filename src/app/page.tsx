@@ -151,6 +151,26 @@ export default function Home() {
         </div>
       </Link>
 
+      <Link href="/anafilaxia" className="glass-card card-link sim" style={{ borderLeft: '4px solid #f87171' }}>
+        <div className="card-icon-wrap sim-icon" style={{ background: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.2)' }}>🚨</div>
+        <div className="card-body">
+          <div className="card-header">
+            <span className="card-grade sim-tag" style={{ background: 'rgba(239, 68, 68, 0.12)', color: '#f87171' }}>Simulador</span>
+            <span className="card-status active">Activo</span>
+          </div>
+          <h2 className="card-title">Anafilaxia Perioperatoria</h2>
+          <p className="card-desc">Simulador interactivo de crisis hemodinámica y respiratoria en quirófano. Algoritmo NAP6 / Association of Anaesthetists y base fisiopatológica.</p>
+          <div className="card-meta">
+            <span>🚨 Simulación interactiva</span>
+            <span>🔬 Fisiopatología</span>
+            <span>📊 Guías 2021-2025</span>
+          </div>
+        </div>
+        <div className="card-arrow">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+      </Link>
+
       <div className="card-grid">
         <Link href="/general/40-intoxicacion-last-simulador.html" className="glass-card card-link sim">
           <div className="card-icon-wrap sim-icon">🧪</div>
