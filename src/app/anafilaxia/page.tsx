@@ -603,6 +603,7 @@ export default function AnafilaxiaPage() {
             padding: 18px !important;
             border-radius: 12px;
           }
+          p, li, td, div { text-align: left !important; }
         }
       `}</style>
 
@@ -1183,7 +1184,7 @@ export default function AnafilaxiaPage() {
                   <div style={{ fontSize: '26px', marginBottom: '12px' }}>🧬</div>
                   <h4 style={{ fontSize: '17px', fontWeight: 700, color: '#f1f5f9', marginBottom: '10px' }}>Inmunológica Mediada por IgE (Clásica)</h4>
                   <ul style={{ fontSize: '15px', color: 'var(--text-secondary)', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '10px', lineHeight: 1.6, textAlign: 'justify' }}>
-                    <li><strong>Mecanismo:</strong> Hipersensibilidad Tipo I. Requiere una fase de **sensibilización** previa en la que se generan anticuerpos IgE específicos contra el alérgeno.</li>
+                    <li><strong>Mecanismo:</strong> Hipersensibilidad Tipo I. Requiere una fase de <strong>sensibilización</strong> previa en la que se generan anticuerpos IgE específicos contra el alérgeno.</li>
                     <li><strong>Fisiopatología:</strong> En la re-exposición, el alérgeno hace un puente de unión cruzando dos IgE unidas a receptores de alta afinidad FCεRI en mastocitos y basófilos.</li>
                     <li><strong>Efectores:</strong> Dispara degranulación explosiva y liberación masiva de histamina, triptasa, leucotrienos, prostaglandinas y factor activador de plaquetas (PAF).</li>
                   </ul>
@@ -1212,7 +1213,7 @@ export default function AnafilaxiaPage() {
                   <span>⚠️</span> Anafilaxia No Inmunológica (Degranulación Directa)
                 </h4>
                 <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.7, textAlign: 'justify' }}>
-                  Anteriormente denominada <em>reacción anafilactoide</em> (término en desuso). En esta vía, la sustancia interactúa directamente con los mastocitos o basófilos para indicar degranulación **sin la participación de anticuerpos** (IgE/IgG) ni del complemento. Ciertos opiáceos (morfina, codeína), bloqueadores neuromusculares benzilisocinolínicos (como el atracurio, mediante la liberación inespecífica de histamina) y el contraste yodado causan esta respuesta. Su característica cardinal es que **puede ocurrir en la primera exposición** del paciente al fármaco, siendo de intensidad variable y habitualmente dosis-dependiente.
+                  Anteriormente denominada <em>reacción anafilactoide</em> (término en desuso). En esta vía, la sustancia interactúa directamente con los mastocitos o basófilos para indicar degranulación <strong>sin la participación de anticuerpos</strong> (IgE/IgG) ni del complemento. Ciertos opiáceos (morfina, codeína), bloqueadores neuromusculares benzilisocinolínicos (como el atracurio, mediante la liberación inespecífica de histamina) y el contraste yodado causan esta respuesta. Su característica cardinal es que <strong>puede ocurrir en la primera exposición</strong> del paciente al fármaco, siendo de intensidad variable y habitualmente dosis-dependiente.
                 </p>
               </div>
 
@@ -1289,7 +1290,7 @@ export default function AnafilaxiaPage() {
                 padding: '20px', fontSize: '15px', lineHeight: 1.6, color: '#cbd5e1', textAlign: 'justify'
               }}>
                 <strong style={{ color: '#34d399', display: 'block', marginBottom: '6px', fontSize: '15.5px' }}>💡 Correlación con la práctica real:</strong>
-                En el caso comentado del paciente que presentó angioedema, pérdida transitoria del conocimiento y desaturación tras un bloqueo retrobulbar y recuperó con <strong>hidrocortisona + difenhidramina</strong>, clínicamente corresponde a un cuadro de <strong>Grado I o II</strong> (donde la afectación ventilatoria y hemodinámica no era irreversible por sí misma, o donde el colapso fue de componente predominantemente vasovagal o spread bulbar menor autolimitado). Sin embargo, es un principio de seguridad anestésica recordar que ante un paciente con compromiso **Grado III**, la hidrocortisona y antihistamínicos son insuficientes y la <strong>Adrenalina</strong> es el único pilar que contrarresta activamente la vasodilatación y el edema de la vía aérea en la fase aguda.
+                En el caso comentado del paciente que presentó angioedema, pérdida transitoria del conocimiento y desaturación tras un bloqueo retrobulbar y recuperó con <strong>hidrocortisona + difenhidramina</strong>, clínicamente corresponde a un cuadro de <strong>Grado I o II</strong> (donde la afectación ventilatoria y hemodinámica no era irreversible por sí misma, o donde el colapso fue de componente predominantemente vasovagal o spread bulbar menor autolimitado). Sin embargo, es un principio de seguridad anestésica recordar que ante un paciente con compromiso <strong>Grado III</strong>, la hidrocortisona y antihistamínicos son insuficientes y la <strong>Adrenalina</strong> es el único pilar que contrarresta activamente la vasodilatación y el edema de la vía aérea en la fase aguda.
               </div>
 
             </div>
@@ -1302,7 +1303,7 @@ export default function AnafilaxiaPage() {
                 Receptor MRGPRX2: El Nuevo Paradigma
               </h3>
               <p style={{ fontSize: '16px', color: 'var(--text-secondary)', lineHeight: 1.75, textAlign: 'justify' }}>
-                Históricamente, las reacciones anafilácticas severas en la **primera exposición** a bloqueadores neuromusculares (como rocuronio) eran difíciles de justificar mediante la inmunidad IgE. La investigación molecular reciente resolvió este misterio al descubrir el receptor **MRGPRX2** (<em>Mas-related G-protein coupled receptor member X2</em>).
+                Históricamente, las reacciones anafilácticas severas en la <strong>primera exposición</strong> a bloqueadores neuromusculares (como rocuronio) eran difíciles de justificar mediante la inmunidad IgE. La investigación molecular reciente resolvió este misterio al descubrir el receptor <strong>MRGPRX2</strong> (<em>Mas-related G-protein coupled receptor member X2</em>).
               </p>
 
               <div style={{
@@ -1311,7 +1312,7 @@ export default function AnafilaxiaPage() {
               }}>
                 <strong style={{ color: '#f1f5f9', display: 'block', marginBottom: '12px', fontSize: '16px' }}>🔬 ¿Cómo funciona el canal MRGPRX2?</strong>
                 <ul style={{ paddingLeft: '22px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <li>Es un receptor de membrana acoplado a proteína G que se expresa de forma selectiva y abundante en los **mastocitos tisulares conectivos** (como los de la piel y los tejidos perivasculares).</li>
+                  <li>Es un receptor de membrana acoplado a proteína G que se expresa de forma selectiva y abundante en los <strong>mastocitos tisulares conectivos</strong> (como los de la piel y los tejidos perivasculares).</li>
                   <li>A diferencia de los basófilos y los mastocitos mucosos que son predominantemente dependientes de IgE, los mastocitos cutáneos / conectivos responden directamente a péptidos catiónicos e hidrocarburos cíclicos.</li>
                   <li>Cuando moléculas químicas con cargas netas catiónicas fuertes o estructuras específicas de anclaje peptídico se unen al bolsillo de unión de MRGPRX2, se desencadena una cascada de señalización rápida e independiente de IgE que genera degranulación de mastocitos.</li>
                 </ul>
@@ -1473,16 +1474,16 @@ export default function AnafilaxiaPage() {
                 <div style={{ textAlign: 'justify' }}>
                   <strong>1. Adrenalina IV (Titulada):</strong>
                   <div style={{ background: 'rgba(239, 68, 68, 0.04)', border: '1px solid rgba(239, 68, 68, 0.15)', borderRadius: '8px', padding: '10px', marginTop: '6px', fontSize: '14px' }}>
-                    <strong>Dilución:</strong> 1 mg (1 mL) Adrenalina + 9 mL Sol. Fisiológica = **100 mcg / mL** (1:10,000).<br/>
-                    <strong>Dosis Bolo:</strong> Administrar **0.5 mL** (**50 mcg**) IV. Repetir cada 1-2 min según respuesta.
+                    <strong>Dilución:</strong> 1 mg (1 mL) Adrenalina + 9 mL Sol. Fisiológica = <strong>100 mcg / mL</strong> (1:10,000).<br/>
+                    <strong>Dosis Bolo:</strong> Administrar <strong>0.5 mL</strong> (<strong>50 mcg</strong>) IV. Repetir cada 1-2 min según respuesta.
                   </div>
                   <div style={{ fontSize: '13.5px', color: '#94a3b8', marginTop: '4px' }}>
-                    *Si no hay vía IV permeable inmediata: dar **0.5 mg IM** (0.5 mL sin diluir 1:1,000) en el muslo.*
+                    <em>Si no hay vía IV permeable inmediata: dar <strong>0.5 mg IM</strong> (0.5 mL sin diluir 1:1,000) en el muslo.</em>
                   </div>
                 </div>
                 <div style={{ textAlign: 'justify', marginTop: '4px' }}>
                   <strong>2. Restablecimiento de Volumen:</strong>
-                  <div>Administrar bolo rápido de cristaloides a **20 mL/kg** (1-2 litros en adultos). Repetir según necesidades.</div>
+                  <div>Administrar bolo rápido de cristaloides a <strong>20 mL/kg</strong> (1-2 litros en adultos). Repetir según necesidades.</div>
                 </div>
               </div>
 
@@ -1491,11 +1492,11 @@ export default function AnafilaxiaPage() {
                 <span style={{ fontSize: '12px', fontWeight: 800, color: '#f59e0b', letterSpacing: '0.08em', textTransform: 'uppercase' }}>PLAN C: Shock / Broncoespasmo Refractario</span>
                 <ul style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '6px', textAlign: 'justify' }}>
                   <li><strong>Infusión continua de Adrenalina:</strong> Iniciar a 0.05 - 0.4 mcg/kg/min si requiere bolos repetidos.</li>
-                  <li><strong>Paciente betabloqueado:</strong> La adrenalina puede fallar. Administrar **Glucagón 1-2 mg IV** lento en bolo.</li>
-                  <li><strong>Alternativa en México (sin Glucagón):</strong> Administrar **Vasopresina 1-2 UI IV** en bolo + **Noradrenalina** en infusión.</li>
+                  <li><strong>Paciente betabloqueado:</strong> La adrenalina puede fallar. Administrar <strong>Glucagón 1-2 mg IV</strong> lento en bolo.</li>
+                  <li><strong>Alternativa en México (sin Glucagón):</strong> Administrar <strong>Vasopresina 1-2 UI IV</strong> en bolo + <strong>Noradrenalina</strong> en infusión.</li>
                   <li><strong>Broncoespasmo Refractario:</strong>
                     <div>• Salbutamol IV (100-250 mcg bolo) o inhalado por tubo.</div>
-                    <div>• **Sulfato de Magnesio 2 g IV** a pasar en 20 minutos.</div>
+                    <div>• <strong>Sulfato de Magnesio 2 g IV</strong> a pasar en 20 minutos.</div>
                   </li>
                   <li><strong>Dispositivos Avanzados:</strong> Asegurar la vía aérea con videolaringoscopio de forma temprana en caso de angioedema progresivo.</li>
                 </ul>

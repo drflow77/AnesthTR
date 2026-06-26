@@ -15,12 +15,12 @@ export default function Home() {
         </div>
         <div className="hero-stats">
           <div className="stat-pill">
-            <span className="stat-num">8</span>
+            <span className="stat-num">9</span>
             <span className="stat-label">Módulos</span>
           </div>
           <div className="stat-divider" />
           <div className="stat-pill">
-            <span className="stat-num">4</span>
+            <span className="stat-num">5</span>
             <span className="stat-label">Simuladores</span>
           </div>
           <div className="stat-divider" />
