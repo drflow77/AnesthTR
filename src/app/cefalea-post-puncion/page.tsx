@@ -3,10 +3,140 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
+interface Option {
+  id: number;
+  text: string;
+  feedback: string;
+  points: number;
+  type: 'correct' | 'incorrect' | 'suboptimal';
+  evaImpact: number;
+  breastfeedingImpact: 'imposible' | 'con_dificultad' | 'normal';
+}
+
+interface Step {
+  stepNumber: number;
+  title: string;
+  narrative: string;
+  options: Option[];
+}
+
+const simulatorSteps: Step[] = [
+  {
+    stepNumber: 1,
+    title: "Paso 1: Diagnóstico Inicial ante la Queja",
+    narrative: "Sofía (28 años, puérpera de primer día) solicita valoración. Presenta cefalea opresiva frontal-occipital severa (EVA 8/10) que comenzó al sentarse para alimentar a su bebé. Refiere náuseas leves. Al recostarse, el dolor se reduce a EVA 2/10. Tuvo punción dural accidental (PDA) con aguja Tuohy 18G hace 24 horas.",
+    options: [
+      {
+        id: 1,
+        text: "Solicitar de inmediato Tomografía Computarizada (TAC) simple de cráneo de urgencia.",
+        type: 'incorrect',
+        points: 0,
+        evaImpact: 8,
+        breastfeedingImpact: 'imposible',
+        feedback: "Incorrecto. De acuerdo con el Consenso Internacional ASRA/SOAP 2023 y las directrices IHS ICHD-3 2018, la neuroimagen rutinaria no está indicada para el diagnóstico de la Cefalea Pos-Punción Dural (CPPD) típica. La TAC simple tiene baja sensibilidad para detectar hipotensión intracraneal y expone a la paciente a radiación innecesaria. Las indicaciones de neuroimagen se reservan estrictamente para cuando se sospechan diagnósticos alternativos graves ante la presencia de signos de alarma (Red Flags), tales como déficits neurológicos focales progresivos, fiebre de origen no aclarado o pérdida del carácter ortostático de la cefalea."
+      },
+      {
+        id: 2,
+        text: "Evaluar clínicamente aplicando criterios ICHD-3 y descartar banderas rojas.",
+        type: 'correct',
+        points: 10,
+        evaImpact: 8,
+        breastfeedingImpact: 'con_dificultad',
+        feedback: "¡Correcto! Las directrices de la IHS ICHD-3 2018 y el Consenso Internacional ASRA/SOAP 2023 establecen que el diagnóstico de CPPD es fundamentalmente clínico. Se basa en una historia clínica compatible (exposición dural previa) y la presencia de cefalea postural clásica (empeora al erguirse, mejora en supino), acompañada de síntomas asociados (náuseas, rigidez nucal, acúfenos, fotofobia). El primer paso ineludible es descartar signos de alarma (banderas rojas) que sugieran otras patologías neurológicas graves (p. ej., trombosis de senos venosos cerebrales o hematoma subdural)."
+      },
+      {
+        id: 3,
+        text: "Iniciar una infusión continua epidural de solución salina.",
+        type: 'suboptimal',
+        points: 3,
+        evaImpact: 8,
+        breastfeedingImpact: 'imposible',
+        feedback: "Subóptimo. La infusión epidural de solución salina (salina normal) puede elevar temporalmente la presión epidural y ofrecer un alivio mecánico transitorio por compresión del saco dural, disminuyendo la tracción meníngea. Sin embargo, no sella la brecha dural y la tasa de recurrencia de la cefalea al suspenderla es extremadamente alta. Las directrices actuales de la ASRA/SOAP 2023 no recomiendan esta técnica como medida diagnóstica o terapéutica de primera línea debido a su eficacia efímera, incomodidad para la paciente y el riesgo latente de infección o catéteres epidurales prolongados."
+      }
+    ]
+  },
+  {
+    stepNumber: 2,
+    title: "Paso 2: Manejo Inicial de Primera Línea",
+    narrative: "Se confirma el diagnóstico de CPPD y se descartan banderas rojas. Sofía tiene un EVA de 8/10 al incorporarse y no logra lactar debido a la intensidad del dolor. ¿Cuál es la conducta terapéutica inicial idónea en este momento?",
+    options: [
+      {
+        id: 1,
+        text: "Realizar un Parche Hemático Epidural (PHE) profiláctico inmediato en las próximas 12 horas.",
+        type: 'incorrect',
+        points: 0,
+        evaImpact: 8,
+        breastfeedingImpact: 'imposible',
+        feedback: "Incorrecto/Controvertido. La realización de un Parche Hemático Epidural (PHE) profiláctico o extremadamente temprano (primeras 24 horas) presenta una tasa de falla muy elevada y expone a la paciente a los riesgos inherentes del procedimiento (como una segunda punción dural accidental) sin un beneficio claro demostrado. Las recomendaciones del Consenso Internacional ASRA/SOAP 2023 sugieren que, salvo en circunstancias muy específicas con síntomas neurológicos severos de inicio inmediato, se debe priorizar el manejo conservador inicial o posponer el PHE terapéutico al menos 24-48 horas tras la punción dural."
+      },
+      {
+        id: 2,
+        text: "Iniciar manejo conservador multimodal: hidratación adecuada, analgésicos no esteroideos (AINEs) programados + paracetamol, cafeína oral (200-300 mg) y reposo en cama relativo según tolerancia.",
+        type: 'correct',
+        points: 10,
+        evaImpact: 6,
+        breastfeedingImpact: 'con_dificultad',
+        feedback: "¡Correcto! El Consenso Internacional ASRA/SOAP 2023 y la práctica clínica habitual respaldan el manejo conservador multimodal como el enfoque inicial preferente para la CPPD de intensidad leve a moderada, o como puente terapéutico en casos severos. Consiste en optimizar la analgesia sistémica mediante AINEs y paracetamol en dosis pautadas (no a demanda) y cafeína enteral (que actúa como vasoconstrictor cerebral). Es crucial alentar al reposo en cama relativo según tolerancia de la paciente: las guías desaconsejan explícitamente prescribir reposo absoluto en cama prolongado de forma preventiva o terapéutica, ya que no altera la resolución de la cefalea y incrementa significativamente el riesgo de eventos tromboembólicos venosos en el posparto."
+      },
+      {
+        id: 3,
+        text: "Prescribir reposo absoluto en cama boca arriba sin almohada por 72 horas continuas.",
+        type: 'incorrect',
+        points: 0,
+        evaImpact: 8,
+        breastfeedingImpact: 'imposible',
+        feedback: "Incorrecto. Prescribir reposo absoluto estricto y prolongado en cama (con o sin almohada) es una práctica obsoleta que carece de respaldo científico. Los estudios demuestran que el reposo en cama absoluto no reduce la incidencia ni la duración de la CPPD. Además, el decúbito supino forzado durante 72 horas dificulta enormemente el autocuidado del recién nacido, interfiere negativamente con la lactancia materna e incrementa de forma alarmante el riesgo de trombosis venosa profunda (TVP) en el estado procoagulante fisiológico del puerperio inmediato."
+      }
+    ]
+  },
+  {
+    stepNumber: 3,
+    title: "Paso 3: Falla del Manejo Conservador",
+    narrative: "Han pasado 36 horas. A pesar del tratamiento conservador multimodal continuo, Sofía continúa presentando cefalea incapacitante con EVA 9/10 al levantarse. Sigue sin poder cuidar o amamantar a su recién nacido y se siente sumamente frustrada. ¿Cuál es el siguiente paso clínico idóneo?",
+    options: [
+      {
+        id: 1,
+        text: "Incrementar la dosis de analgésicos programados y añadir un opioide fuerte (tramadol IV).",
+        type: 'incorrect',
+        points: 0,
+        evaImpact: 9,
+        breastfeedingImpact: 'imposible',
+        feedback: "Incorrecto. Los analgésicos opioides sistémicos no son eficaces para tratar la CPPD, ya que el dolor no está mediado predominantemente por vías nociceptivas inflamatorias típicas, sino por la tracción física de las meninges inducida por la gravedad. Adicionalmente, los opioides añaden efectos adversos indeseables en el posparto, como constipación, sedación y náuseas. La sedación materna puede interferir significativamente con la lactancia y el cuidado seguro del neonato, además de excretarse en parte a través de la leche materna."
+      },
+      {
+        id: 2,
+        text: "Ofrecer un Parche Hemático Epidural (PHE) terapéutico formal.",
+        type: 'correct',
+        points: 10,
+        evaImpact: 3,
+        breastfeedingImpact: 'normal',
+        feedback: "¡Correcto! El Parche Hemático Epidural (PHE) es el estándar de oro terapéutico y está plenamente indicado según el Consenso Internacional ASRA/SOAP 2023 cuando la CPPD es grave, persistente tras 24-48 horas de manejo conservador, e incapacita a la paciente para realizar sus actividades de la vida diaria, cuidar de su hijo o iniciar la lactancia de manera efectiva. El PHE tiene una tasa de éxito inicial del 60-80% para resolver o atenuar drásticamente los síntomas, al sillar mecánicamente la brecha dural y restaurar el volumen y presión del LCR cerebral."
+      },
+      {
+        id: 3,
+        text: "Realizar una punción lumbar diagnóstica para medir la presión de apertura del LCR.",
+        type: 'incorrect',
+        points: -10,
+        evaImpact: 10,
+        breastfeedingImpact: 'imposible',
+        feedback: "¡Error Grave! La realización de una nueva punción lumbar diagnóstica creará un segundo orificio dural, empeorando directamente la fuga de LCR y agravando severamente la cefalea y el riesgo de hipotensión intracraneal de la paciente. La CPPD es un diagnóstico meramente clínico en este contexto; medir la presión de apertura del LCR no aporta ningún valor al manejo clínico y representa un riesgo iatrogénico grave que viola los principios básicos de seguridad del paciente según las directrices de la IHS ICHD-3."
+      }
+    ]
+  }
+];
+
 export default function CefaleaPostPuncionPage() {
   const [activeTab, setActiveTab] = useState<'intro' | 'fisio' | 'diagnostico' | 'simulador' | 'referencias'>('intro');
   const [isStanding, setIsStanding] = useState(false);
   const [expandedCard, setExpandedCard] = useState<number | null>(1);
+
+  // Clinical Case Simulator State
+  const [simStep, setSimStep] = useState<number>(1);
+  const [evaPain, setEvaPain] = useState<number>(8);
+  const [breastfeedingStatus, setBreastfeedingStatus] = useState<'imposible' | 'con_dificultad' | 'normal'>('imposible');
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [showFeedback, setShowFeedback] = useState<boolean>(false);
+  const [points, setPoints] = useState<number>(0);
 
   // ICHD-3 Diagnostic Calculator State
   const [hasPuncture, setHasPuncture] = useState<boolean | null>(null);
@@ -62,6 +192,42 @@ export default function CefaleaPostPuncionPage() {
     return missing;
   };
 
+  const handleSelectOption = (option: Option) => {
+    if (showFeedback) return;
+    setSelectedOption(option.id);
+    setShowFeedback(true);
+    setPoints(prev => prev + option.points);
+    setEvaPain(option.evaImpact);
+    setBreastfeedingStatus(option.breastfeedingImpact);
+  };
+
+  const handleContinue = () => {
+    const nextStep = simStep + 1;
+    setSimStep(nextStep);
+    setSelectedOption(null);
+    setShowFeedback(false);
+
+    if (nextStep === 2) {
+      setEvaPain(8);
+      setBreastfeedingStatus('imposible');
+    } else if (nextStep === 3) {
+      setEvaPain(9);
+      setBreastfeedingStatus('imposible');
+    }
+  };
+
+  const handleRestart = () => {
+    setSimStep(1);
+    setEvaPain(8);
+    setBreastfeedingStatus('imposible');
+    setSelectedOption(null);
+    setShowFeedback(false);
+    setPoints(0);
+  };
+
+  const currentStep = simulatorSteps.find(s => s.stepNumber === simStep);
+  const selectedOptionObj = currentStep?.options.find(o => o.id === selectedOption);
+
   return (
     <main className="container">
       {/* Global Page Styles */}
@@ -105,6 +271,30 @@ export default function CefaleaPostPuncionPage() {
           .svg-panel {
             height: 320px !important;
           }
+        }
+        
+        .option-button {
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        .option-button:hover {
+          border-color: rgba(249, 115, 22, 0.4) !important;
+          background: rgba(249, 115, 22, 0.04) !important;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(249, 115, 22, 0.08) !important;
+        }
+        .option-button:hover div {
+          background: #f97316 !important;
+          color: #0f172a !important;
+        }
+        .option-button:active {
+          transform: translateY(0);
+        }
+        .restart-button {
+          transition: all 0.2s ease !important;
+        }
+        .restart-button:hover {
+          background: rgba(255, 255, 255, 0.12) !important;
+          border-color: rgba(255, 255, 255, 0.25) !important;
         }
       `}</style>
 
@@ -1222,7 +1412,465 @@ export default function CefaleaPostPuncionPage() {
             </div>
           </div>
         )}
-        {activeTab === 'simulador' && <div style={{ color: 'var(--text-muted)' }}>Módulo Caso Clínico en desarrollo...</div>}
+        {activeTab === 'simulador' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* 1. Patient Status Top Bar */}
+            <div style={{
+              background: 'rgba(15, 23, 42, 0.6)',
+              border: '1px solid var(--border)',
+              borderRadius: '16px',
+              padding: '16px 20px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '20px',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+            }}>
+              {/* Patient Info */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '18px' }}>🤰</span>
+                  <strong style={{ fontSize: '15px', color: '#f1f5f9' }}>Sofía</strong>
+                  <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>• 28 años</span>
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  Post-op Cesárea (Día 1) • PDA con Tuohy 18G hace 24h
+                </div>
+              </div>
+
+              {/* EVA Pain Indicator */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '180px', flex: '1 1 auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>Cefalea (EVA):</span>
+                  <span style={{
+                    color: evaPain >= 7 ? '#f87171' : evaPain >= 4 ? '#fbbf24' : '#4ade80',
+                    fontWeight: 'bold',
+                  }}>
+                    {evaPain}/10
+                  </span>
+                </div>
+                <div style={{ height: '8px', background: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
+                  <div style={{
+                    height: '100%',
+                    width: `${evaPain * 10}%`,
+                    background: evaPain >= 7 ? 'linear-gradient(90deg, #eab308, #ef4444)' : evaPain >= 4 ? 'linear-gradient(90deg, #22c55e, #eab308)' : '#22c55e',
+                    borderRadius: '4px',
+                    transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease',
+                    boxShadow: evaPain >= 7 ? '0 0 10px rgba(239, 68, 68, 0.4)' : 'none'
+                  }} />
+                </div>
+              </div>
+
+              {/* Breastfeeding Status */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>Lactancia Materna:</span>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: breastfeedingStatus === 'normal' ? 'rgba(34, 197, 94, 0.12)' : breastfeedingStatus === 'con_dificultad' ? 'rgba(234, 179, 8, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+                  border: breastfeedingStatus === 'normal' ? '1px solid rgba(34, 197, 94, 0.3)' : breastfeedingStatus === 'con_dificultad' ? '1px solid rgba(234, 179, 8, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)',
+                  color: breastfeedingStatus === 'normal' ? '#4ade80' : breastfeedingStatus === 'con_dificultad' ? '#fbbf24' : '#f87171',
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  transition: 'all 0.5s ease'
+                }}>
+                  <span>🤱</span>
+                  <span>
+                    {breastfeedingStatus === 'normal' ? 'Lactancia Normal' : breastfeedingStatus === 'con_dificultad' ? 'Lactancia con Dificultad' : 'Imposible Lactar'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Score Tracker */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end' }}>
+                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>Puntaje Acumulado:</span>
+                <div style={{
+                  background: 'rgba(249, 115, 22, 0.15)',
+                  border: '1px solid rgba(249, 115, 22, 0.4)',
+                  color: '#f97316',
+                  padding: '4px 12px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 800,
+                  boxShadow: '0 0 12px rgba(249, 115, 22, 0.2)'
+                }}>
+                  {points} pts
+                </div>
+              </div>
+            </div>
+
+            {/* Active Simulation Step (Steps 1-3) */}
+            {simStep <= 3 && currentStep && (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1.2fr 1fr',
+                gap: '24px',
+                alignItems: 'start',
+              }}>
+                {/* Left Column: Narrative and Options */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{
+                    background: 'rgba(15, 23, 42, 0.3)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        background: 'rgba(249, 115, 22, 0.12)',
+                        color: '#f97316',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                      }}>
+                        CASO CLÍNICO
+                      </span>
+                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                        Paso {simStep} de 3
+                      </span>
+                    </div>
+                    
+                    <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#f1f5f9', margin: 0 }}>
+                      {currentStep.title}
+                    </h3>
+                    
+                    {/* Narrative Card */}
+                    <div style={{
+                      borderLeft: '4px solid #f97316',
+                      background: 'rgba(249, 115, 22, 0.03)',
+                      padding: '14px 16px',
+                      borderRadius: '0 12px 12px 0',
+                      fontSize: '14px',
+                      lineHeight: '1.6',
+                      color: 'var(--text-secondary)',
+                      fontStyle: 'italic',
+                    }}>
+                      {currentStep.narrative}
+                    </div>
+                  </div>
+
+                  {/* Options List */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {currentStep.options.map((opt, idx) => {
+                      const isSelected = selectedOption === opt.id;
+                      const hasSelectedSomething = selectedOption !== null;
+                      
+                      let borderStyle = '1px solid var(--border)';
+                      let backgroundStyle = 'rgba(15, 23, 42, 0.3)';
+                      let shadowStyle = 'none';
+                      let opacityStyle = 1;
+                      
+                      if (hasSelectedSomething) {
+                        if (isSelected) {
+                          if (opt.type === 'correct') {
+                            borderStyle = '2px solid #22c55e';
+                            backgroundStyle = 'rgba(34, 197, 94, 0.08)';
+                            shadowStyle = '0 0 16px rgba(34, 197, 94, 0.15)';
+                          } else if (opt.type === 'suboptimal') {
+                            borderStyle = '2px solid #eab308';
+                            backgroundStyle = 'rgba(234, 179, 8, 0.08)';
+                            shadowStyle = '0 0 16px rgba(234, 179, 8, 0.15)';
+                          } else {
+                            borderStyle = '2px solid #ef4444';
+                            backgroundStyle = 'rgba(239, 68, 68, 0.08)';
+                            shadowStyle = '0 0 16px rgba(239, 68, 68, 0.15)';
+                          }
+                        } else {
+                          opacityStyle = 0.45;
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={opt.id}
+                          onClick={() => handleSelectOption(opt)}
+                          disabled={hasSelectedSomething}
+                          style={{
+                            display: 'flex',
+                            gap: '14px',
+                            alignItems: 'center',
+                            textAlign: 'left',
+                            width: '100%',
+                            padding: '16px 20px',
+                            borderRadius: '12px',
+                            border: borderStyle,
+                            background: backgroundStyle,
+                            boxShadow: shadowStyle,
+                            opacity: opacityStyle,
+                            cursor: hasSelectedSomething ? 'default' : 'pointer',
+                            transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                          }}
+                          className={hasSelectedSomething ? '' : 'option-button'}
+                        >
+                          {/* Option Prefix Circle */}
+                          <div style={{
+                            width: '28px',
+                            height: '28px',
+                            borderRadius: '50%',
+                            background: isSelected
+                              ? opt.type === 'correct' ? '#22c55e' : opt.type === 'suboptimal' ? '#eab308' : '#ef4444'
+                              : 'rgba(255, 255, 255, 0.06)',
+                            color: isSelected ? '#0f172a' : 'var(--text-secondary)',
+                            fontWeight: 700,
+                            fontSize: '13px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            transition: 'all 0.2s',
+                          }}>
+                            {idx === 0 ? 'A' : idx === 1 ? 'B' : 'C'}
+                          </div>
+                          
+                          <span style={{
+                            fontSize: '13.5px',
+                            lineHeight: '1.5',
+                            color: isSelected ? '#f1f5f9' : 'var(--text-secondary)',
+                            fontWeight: isSelected ? 600 : 500,
+                          }}>
+                            {opt.text}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right Column: Feedback Card */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {showFeedback && selectedOptionObj ? (
+                    <div style={{
+                      background: selectedOptionObj.type === 'correct' ? 'rgba(34, 197, 94, 0.06)' : selectedOptionObj.type === 'suboptimal' ? 'rgba(234, 179, 8, 0.06)' : 'rgba(239, 68, 68, 0.06)',
+                      border: selectedOptionObj.type === 'correct' ? '1px solid rgba(34, 197, 94, 0.3)' : selectedOptionObj.type === 'suboptimal' ? '1px solid rgba(234, 179, 8, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '16px',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '22px' }}>
+                          {selectedOptionObj.type === 'correct' ? '✅' : selectedOptionObj.type === 'suboptimal' ? '⚠️' : '❌'}
+                        </span>
+                        <h4 style={{
+                          margin: 0,
+                          fontSize: '15px',
+                          fontWeight: 700,
+                          color: selectedOptionObj.type === 'correct' ? '#4ade80' : selectedOptionObj.type === 'suboptimal' ? '#fbbf24' : '#f87171'
+                        }}>
+                          {selectedOptionObj.type === 'correct' ? 'DECISIÓN CORRECTA' : selectedOptionObj.type === 'suboptimal' ? 'DECISIÓN SUBÓPTIMA' : 'DECISIÓN INCORRECTA'}
+                          <span style={{ marginLeft: '6px', fontSize: '12px', opacity: 0.8 }}>
+                            ({selectedOptionObj.points >= 0 ? `+${selectedOptionObj.points}` : selectedOptionObj.points} pts)
+                          </span>
+                        </h4>
+                      </div>
+
+                      {/* Scientific Evidence Badge */}
+                      <div style={{
+                        display: 'flex',
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                        fontSize: '10.5px',
+                        color: 'var(--text-muted)',
+                        fontWeight: 600,
+                        alignSelf: 'flex-start',
+                      }}>
+                        📚 Evidencia: ASRA/SOAP 2023 • IHS ICHD-3 2018
+                      </div>
+
+                      <p style={{
+                        fontSize: '13.5px',
+                        lineHeight: '1.6',
+                        color: 'var(--text-secondary)',
+                        margin: 0,
+                      }}>
+                        {selectedOptionObj.feedback}
+                      </p>
+
+                      <button
+                        onClick={handleContinue}
+                        style={{
+                          background: 'linear-gradient(135deg, #f97316 0%, #fbbf24 100%)',
+                          color: '#060a14',
+                          border: 'none',
+                          padding: '12px 20px',
+                          borderRadius: '8px',
+                          fontSize: '13.5px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          marginTop: '8px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        {simStep === 3 ? 'Ver Resultados Finales 📊' : 'Continuar al Siguiente Paso ➜'}
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{
+                      background: 'rgba(15, 23, 42, 0.15)',
+                      border: '1px dashed var(--border)',
+                      borderRadius: '16px',
+                      padding: '30px 20px',
+                      textAlign: 'center',
+                      color: 'var(--text-muted)',
+                      fontSize: '13px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '10px',
+                      alignItems: 'center',
+                    }}>
+                      <span style={{ fontSize: '28px' }}>💡</span>
+                      <span>Seleccione una opción de respuesta a la izquierda para evaluar la conducta y analizar su sustento científico basado en guías internacionales.</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Completion Screen (Step 4) */}
+            {simStep === 4 && (
+              <div style={{
+                background: 'rgba(15, 23, 42, 0.3)',
+                border: '1px solid var(--border)',
+                borderRadius: '16px',
+                padding: '32px',
+                maxWidth: '650px',
+                margin: '0 auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '24px',
+                alignItems: 'center',
+                textAlign: 'center',
+                boxShadow: '0 4px 30px rgba(0,0,0,0.3)',
+              }}>
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '50%',
+                  background: points === 30 ? 'rgba(34, 197, 94, 0.15)' : points >= 15 ? 'rgba(234, 179, 8, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                  border: points === 30 ? '2px solid #22c55e' : points >= 15 ? '2px solid #eab308' : '2px solid #ef4444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '32px',
+                }}>
+                  {points === 30 ? '🏆' : points >= 15 ? '🎓' : '⚠️'}
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#f1f5f9', margin: 0 }}>
+                    ¡Simulación de Caso Clínico Finalizada!
+                  </h3>
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>
+                    Puntaje final obtenido: <strong style={{ color: '#f97316', fontSize: '18px' }}>{points} / 30</strong> puntos.
+                  </p>
+                </div>
+
+                {/* Score Review Box */}
+                <div style={{
+                  background: 'rgba(15, 23, 42, 0.5)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '12px',
+                  padding: '16px 20px',
+                  fontSize: '13.5px',
+                  lineHeight: '1.6',
+                  color: 'var(--text-secondary)',
+                }}>
+                  {points === 30 ? (
+                    <span><strong>¡Excelente desempeño!</strong> Has tomado las mejores decisiones clínicas guiadas rigurosamente por la evidencia científica del <strong>Consenso Internacional ASRA/SOAP 2023</strong> y de la <strong>IHS ICHD-3 2018</strong>. Has aliviado el dolor de la paciente eficazmente y restaurado su capacidad de lactar de forma segura.</span>
+                  ) : points >= 15 ? (
+                    <span><strong>Buen desempeño.</strong> Lograste resolver satisfactoriamente el cuadro de CPPD de Sofía, aunque tomaste alguna conducta inicial subóptima o no del todo recomendada por las guías modernas. Recuerda evitar los parches hemáticos profilácticos tempranos e infusiones epidurales de salina como primera línea.</span>
+                  ) : (
+                    <span><strong>Desempeño Insuficiente.</strong> Has tomado decisiones que prolongaron el dolor de la paciente o que incluso supusieron un riesgo directo grave (como realizar otra punción lumbar, lo cual duplica la fuga de LCR). Te recomendamos revisar con detalle la pestaña de Fisiopatología y Criterios Diagnósticos e intentar de nuevo.</span>
+                  )}
+                </div>
+
+                {/* Patient Outcome Summary */}
+                <div style={{
+                  width: '100%',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  textAlign: 'left',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                }}>
+                  <h4 style={{ margin: 0, fontSize: '13px', color: '#f1f5f9', fontWeight: 700, letterSpacing: '0.5px' }}>
+                    ESTADO FINAL DE LA PACIENTE:
+                  </h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div style={{
+                      background: 'rgba(15, 23, 42, 0.3)',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '12.5px',
+                    }}>
+                      <span style={{ color: 'var(--text-muted)' }}>Cefalea (EVA):</span>
+                      <strong style={{ color: evaPain <= 3 ? '#4ade80' : evaPain <= 6 ? '#fbbf24' : '#f87171' }}>
+                        {evaPain}/10
+                      </strong>
+                    </div>
+                    <div style={{
+                      background: 'rgba(15, 23, 42, 0.3)',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '12.5px',
+                    }}>
+                      <span style={{ color: 'var(--text-muted)' }}>Lactancia:</span>
+                      <strong style={{ color: breastfeedingStatus === 'normal' ? '#4ade80' : breastfeedingStatus === 'con_dificultad' ? '#fbbf24' : '#f87171' }}>
+                        {breastfeedingStatus === 'normal' ? 'Normalizada' : breastfeedingStatus === 'con_dificultad' ? '#fbbf24' : '#f87171' }
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleRestart}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    color: '#f1f5f9',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    fontSize: '13.5px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                  }}
+                  className="restart-button"
+                >
+                  🔄 Reiniciar Caso Clínico
+                </button>
+              </div>
+            )}
+          </div>
+        )}
         {activeTab === 'referencias' && <div style={{ color: 'var(--text-muted)' }}>Módulo Referencias en desarrollo...</div>}
       </div>
     </main>
