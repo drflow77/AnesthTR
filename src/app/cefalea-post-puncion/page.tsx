@@ -122,6 +122,108 @@ const simulatorSteps: Step[] = [
         feedback: "¡Error Grave! La realización de una nueva punción lumbar diagnóstica creará un segundo orificio dural, empeorando directamente la fuga de LCR y agravando severamente la cefalea y el riesgo de hipotensión intracraneal de la paciente. La CPPD es un diagnóstico meramente clínico en este contexto; medir la presión de apertura del LCR no aporta ningún valor al manejo clínico y representa un riesgo iatrogénico grave que viola los principios básicos de seguridad del paciente según las directrices de la IHS ICHD-3."
       }
     ]
+  },
+  {
+    stepNumber: 4,
+    title: "Paso 4: Técnica del Parche Hemático Epidural (PHE)",
+    narrative: "Sofía es trasladada al quirófano para la realización del Parche Hemático Epidural (PHE). Se coloca en posición de decúbito lateral. Se localiza el espacio epidural a nivel L3-L4 con técnica de pérdida de resistencia. ¿Cuál es la conducta y volumen de inyección óptimo de sangre autóloga según las directrices científicas?",
+    options: [
+      {
+        id: 1,
+        text: "Extraer 8-10 mL de sangre periférica de forma aséptica e inyectarla rápidamente en el espacio epidural.",
+        type: 'suboptimal',
+        points: 3,
+        evaImpact: 5,
+        breastfeedingImpact: 'con_dificultad',
+        feedback: "Subóptimo. Inyectar menos de 15 mL de sangre autóloga se asocia con una tasa de falla terapéutica del parche significativamente más alta. Además, la inyección rápida puede elevar bruscamente la presión en el canal espinal, provocando dolor o cefalea por compresión mecánica transitoria."
+      },
+      {
+        id: 2,
+        text: "Extraer 15-20 mL de sangre periférica de forma estrictamente aséptica e inyectarla lentamente en el espacio epidural, deteniendo la inyección si la paciente refiere opresión lumbar o dolor radicular.",
+        type: 'correct',
+        points: 10,
+        evaImpact: 1,
+        breastfeedingImpact: 'normal',
+        feedback: "¡Correcto! Las guías del Consenso Internacional ASRA/SOAP 2023 recomiendan un volumen de inyección de sangre autóloga de 15 a 20 mL. Este volumen maximiza la propagación cefálica y caudal en el espacio epidural para sellar el sitio de la punción. La inyección debe ser lenta (aprox. 1 mL cada 10-15 segundos) y detenerse de inmediato si la paciente presenta dolor de espalda intenso, opresión o dolor radicular."
+      },
+      {
+        id: 3,
+        text: "Extraer 35-40 mL de sangre venosa periférica e inyectarla a alta presión para garantizar el sellado.",
+        type: 'incorrect',
+        points: 0,
+        evaImpact: 8,
+        breastfeedingImpact: 'imposible',
+        feedback: "Incorrecto/Peligroso. Inyectar volúmenes excesivos (>30 mL) de sangre en el espacio epidural no incrementa la tasa de éxito y aumenta significativamente el riesgo de compresión de la cola de caballo o de la médula espinal, dolor de espalda severo crónico, parestesias y radiculopatía persistente."
+      }
+    ]
+  },
+  {
+    stepNumber: 5,
+    title: "Paso 5: Falla / Recurrencia del PHE",
+    narrative: "Tras el PHE, Sofía experimenta un alivio inmediato (EVA 1/10) y logra lactar a su bebé sin problemas. Sin embargo, 24 horas después, al deambular en su domicilio, refiere que la cefalea ortostática ha regresado con una intensidad de EVA 7/10. ¿Cuál es el enfoque terapéutico correcto ante la falla o recidiva del primer PHE?",
+    options: [
+      {
+        id: 1,
+        text: "Programar inmediatamente a la paciente para una resonancia magnética (RMN) de columna y una laminectomía quirúrgica para cierre directo de la duramadre.",
+        type: 'incorrect',
+        points: 0,
+        evaImpact: 7,
+        breastfeedingImpact: 'imposible',
+        feedback: "Incorrecto y prematuro. La laminectomía y el parche dural quirúrgico directo son intervenciones altamente invasivas reservadas únicamente para fugas de LCR persistentes, severas y refractarias a múltiples parches hemáticos fallidos, acompañadas de hallazgos anatómicos confirmatorios por neuroimagen. No es una opción de primera línea en este escenario."
+      },
+      {
+        id: 2,
+        text: "Re-evaluar minuciosamente a la paciente buscando signos de alarma (banderas rojas), confirmar que persiste la CPPD y discutir la realización de un segundo Parche Hemático Epidural (PHE) terapéutico.",
+        type: 'correct',
+        points: 10,
+        evaImpact: 2,
+        breastfeedingImpact: 'normal',
+        feedback: "¡Correcto! La recidiva o falla del primer PHE ocurre en un 15-30% de los casos. Antes de proceder, es indispensable re-evaluar a la paciente para descartar diagnósticos alternativos graves (trombosis venosa cerebral, meningitis, hematoma subdural). Si se confirma que se trata de CPPD persistente, la realización de un segundo PHE está plenamente indicada y presenta una tasa de éxito acumulativa de aproximadamente el 90%."
+      },
+      {
+        id: 3,
+        text: "Prescribir un esquema programado de paracetamol con codeína o tramadol por 2 semanas y recomendar reposo absoluto prolongado.",
+        type: 'incorrect',
+        points: 0,
+        evaImpact: 7,
+        breastfeedingImpact: 'con_dificultad',
+        feedback: "Incorrecto. Los opioides programados no tratan la fuga física y aumentan el riesgo de efectos adversos maternos y neonatales. El reposo absoluto prolongado no acelera el sellado dural y eleva el riesgo de eventos tromboembólicos en el posparto, además de dificultar el vínculo y cuidado del recién nacido."
+      }
+    ]
+  },
+  {
+    stepNumber: 6,
+    title: "Paso 6: Alta y Prevención de Recidivas",
+    narrative: "Tras la colocación de un segundo PHE (exitoso, EVA 1/10), Sofía se encuentra en condiciones de egreso. ¿Qué recomendaciones y pautas de prevención debes indicar para evitar la ruptura del parche y garantizar su seguridad en casa?",
+    options: [
+      {
+        id: 1,
+        text: "Autorizar alta sin restricciones físicas. Sofía puede cargar objetos pesados y hacer ejercicio cardiovascular ligero desde el primer día.",
+        type: 'incorrect',
+        points: 0,
+        evaImpact: 6,
+        breastfeedingImpact: 'con_dificultad',
+        feedback: "Incorrecto. Autorizar esfuerzos físicos pesados o ejercicio inmediato puede aumentar bruscamente la presión intratorácica e intraabdominal (maniobra de Valsalva), lo que incrementa la presión epidural y puede 'desplazar' o romper el coágulo del parche hemático, provocando la recurrencia inmediata de la fuga de LCR y la cefalea."
+      },
+      {
+        id: 2,
+        text: "Recomendar reposo relativo en casa, evitar levantar objetos más pesados que su bebé, evitar esfuerzos físicos intensos y maniobras de Valsalva (prescribir laxantes suaves para evitar estreñimiento) durante 48-72 horas, y advertir sobre signos de alarma (fiebre, parestesias, debilidad motora en miembros inferiores o incontinencia urinaria).",
+        type: 'correct',
+        points: 10,
+        evaImpact: 1,
+        breastfeedingImpact: 'normal',
+        feedback: "¡Correcto! La educación al alta es crucial para proteger el coágulo epidural. Se debe instruir a la paciente a realizar reposo relativo (movilización suave) por 48-72 horas, evitar flexiones del tronco, no levantar objetos pesados (excepto el bebé) y prescribir ablandadores de heces/laxantes para evitar el esfuerzo al evacuar. Asimismo, se deben detallar con precisión los signos de alarma que ameritan valoración de urgencia (fiebre, entumecimiento o debilidad de piernas, pérdida del control de esfínteres)."
+      },
+      {
+        id: 3,
+        text: "Mantener a la paciente hospitalizada por 5 días adicionales en reposo absoluto estricto para monitoreo continuo.",
+        type: 'incorrect',
+        points: 0,
+        evaImpact: 1,
+        breastfeedingImpact: 'normal',
+        feedback: "Incorrecto. Mantener hospitalizada a una paciente asintomática por 5 días adicionales es innecesario, eleva sustancialmente los costos de atención y no aporta beneficio en la cicatrización dural. Además, expone a la paciente a riesgos de infecciones nosocomiales y limita la reincorporación a su entorno familiar."
+      }
+    ]
   }
 ];
 
@@ -213,6 +315,15 @@ export default function CefaleaPostPuncionPage() {
     } else if (nextStep === 3) {
       setEvaPain(9);
       setBreastfeedingStatus('imposible');
+    } else if (nextStep === 4) {
+      setEvaPain(9);
+      setBreastfeedingStatus('imposible');
+    } else if (nextStep === 5) {
+      setEvaPain(7);
+      setBreastfeedingStatus('imposible');
+    } else if (nextStep === 6) {
+      setEvaPain(1);
+      setBreastfeedingStatus('normal');
     }
   };
 
@@ -1504,7 +1615,7 @@ export default function CefaleaPostPuncionPage() {
             </div>
 
             {/* Active Simulation Step (Steps 1-3) */}
-            {simStep <= 3 && currentStep && (
+            {simStep <= 6 && currentStep && (
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: '1.2fr 1fr',
@@ -1534,7 +1645,7 @@ export default function CefaleaPostPuncionPage() {
                         CASO CLÍNICO
                       </span>
                       <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                        Paso {simStep} de 3
+                        Paso {simStep} de 6
                       </span>
                     </div>
                     
@@ -1717,7 +1828,7 @@ export default function CefaleaPostPuncionPage() {
                           transition: 'all 0.2s',
                         }}
                       >
-                        {simStep === 3 ? 'Ver Resultados Finales 📊' : 'Continuar al Siguiente Paso ➜'}
+                        {simStep === 6 ? 'Ver Resultados Finales 📊' : 'Continuar al Siguiente Paso ➜'}
                       </button>
                     </div>
                   ) : (
@@ -1743,7 +1854,7 @@ export default function CefaleaPostPuncionPage() {
             )}
 
             {/* Completion Screen (Step 4) */}
-            {simStep === 4 && (
+            {simStep === 7 && (
               <div style={{
                 background: 'rgba(15, 23, 42, 0.3)',
                 border: '1px solid var(--border)',
@@ -1762,14 +1873,14 @@ export default function CefaleaPostPuncionPage() {
                   width: '64px',
                   height: '64px',
                   borderRadius: '50%',
-                  background: points === 30 ? 'rgba(34, 197, 94, 0.15)' : points >= 15 ? 'rgba(234, 179, 8, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                  border: points === 30 ? '2px solid #22c55e' : points >= 15 ? '2px solid #eab308' : '2px solid #ef4444',
+                  background: points === 60 ? 'rgba(34, 197, 94, 0.15)' : points >= 30 ? 'rgba(234, 179, 8, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                  border: points === 60 ? '2px solid #22c55e' : points >= 30 ? '2px solid #eab308' : '2px solid #ef4444',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '32px',
                 }}>
-                  {points === 30 ? '🏆' : points >= 15 ? '🎓' : '⚠️'}
+                  {points === 60 ? '🏆' : points >= 30 ? '🎓' : '⚠️'}
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -1777,7 +1888,7 @@ export default function CefaleaPostPuncionPage() {
                     ¡Simulación de Caso Clínico Finalizada!
                   </h3>
                   <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>
-                    Puntaje final obtenido: <strong style={{ color: '#f97316', fontSize: '18px' }}>{points} / 30</strong> puntos.
+                    Puntaje final obtenido: <strong style={{ color: '#f97316', fontSize: '18px' }}>{points} / 60</strong> puntos.
                   </p>
                 </div>
 
@@ -1791,12 +1902,12 @@ export default function CefaleaPostPuncionPage() {
                   lineHeight: '1.6',
                   color: 'var(--text-secondary)',
                 }}>
-                  {points === 30 ? (
-                    <span><strong>¡Excelente desempeño!</strong> Has tomado las mejores decisiones clínicas guiadas rigurosamente por la evidencia científica del <strong>Consenso Internacional ASRA/SOAP 2023</strong> y de la <strong>IHS ICHD-3 2018</strong>. Has aliviado el dolor de la paciente eficazmente y restaurado su capacidad de lactar de forma segura.</span>
-                  ) : points >= 15 ? (
-                    <span><strong>Buen desempeño.</strong> Lograste resolver satisfactoriamente el cuadro de CPPD de Sofía, aunque tomaste alguna conducta inicial subóptima o no del todo recomendada por las guías modernas. Recuerda evitar los parches hemáticos profilácticos tempranos e infusiones epidurales de salina como primera línea.</span>
+                  {points === 60 ? (
+                    <span><strong>¡Excelente desempeño!</strong> Has tomado las mejores decisiones clínicas guiadas rigurosamente por la evidencia científica del <strong>Consenso Internacional ASRA/SOAP 2023</strong> y de la <strong>IHS ICHD-3 2018</strong>. Has aliviado el dolor de la paciente eficazmente, manejado la recurrencia con un segundo PHE e indicado correctamente las pautas de alta para proteger el coágulo epidural.</span>
+                  ) : points >= 30 ? (
+                    <span><strong>Buen desempeño.</strong> Lograste resolver satisfactoriamente el cuadro de CPPD de Sofía, aunque tomaste alguna conducta inicial subóptima o no del todo recomendada por las guías modernas. Recuerda revisar la técnica correcta del PHE, el manejo de su recurrencia y las restricciones físicas necesarias al alta.</span>
                   ) : (
-                    <span><strong>Desempeño Insuficiente.</strong> Has tomado decisiones que prolongaron el dolor de la paciente o que incluso supusieron un riesgo directo grave (como realizar otra punción lumbar, lo cual duplica la fuga de LCR). Te recomendamos revisar con detalle la pestaña de Fisiopatología y Criterios Diagnósticos e intentar de nuevo.</span>
+                    <span><strong>Desempeño Insuficiente.</strong> Has tomado decisiones que prolongaron el dolor de la paciente o que incluso supusieron un riesgo directo grave (como realizar una laminectomía prematura o dar de alta sin restricciones físicas). Te recomendamos revisar con detalle la pestaña de Fisiopatología y Criterios Diagnósticos e intentar de nuevo.</span>
                   )}
                 </div>
 
@@ -1871,7 +1982,193 @@ export default function CefaleaPostPuncionPage() {
             )}
           </div>
         )}
-        {activeTab === 'referencias' && <div style={{ color: 'var(--text-muted)' }}>Módulo Referencias en desarrollo...</div>}
+        {activeTab === 'referencias' && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#f1f5f9", margin: 0 }}>
+              📖 Guías de Práctica Clínica y Referencias Bibliográficas
+            </h3>
+            <p style={{ fontSize: "13px", color: "var(--text-secondary)", margin: 0 }}>
+              Sustento científico y literatura clave que fundamenta los algoritmos de diagnóstico y tratamiento presentados en este módulo.
+            </p>
+
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "16px",
+            }}>
+              {/* Reference 1 */}
+              <div style={{
+                background: "rgba(15, 23, 42, 0.4)",
+                border: "1px solid var(--border)",
+                borderRadius: "12px",
+                padding: "16px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+              }}>
+                <span style={{
+                  alignSelf: "flex-start",
+                  fontSize: "9.5px",
+                  fontWeight: 700,
+                  padding: "2.5px 8px",
+                  borderRadius: "100px",
+                  background: "rgba(249, 115, 22, 0.12)",
+                  color: "#f97316",
+                  border: "1px solid rgba(249, 115, 22, 0.2)",
+                }}>
+                  CONSENSO INTERNACIONAL
+                </span>
+                <strong style={{ fontSize: "14px", color: "#f1f5f9" }}>ASRA/SOAP 2023 Guidelines</strong>
+                <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
+                  Consensus practice guidelines on postdural puncture headache from a joint committee of the American Society of Regional Anesthesia and Pain Medicine (ASRA) and the Society for Obstetric Anesthesia and Perinatology (SOAP).
+                </p>
+                <a
+                  href="https://rapm.bmj.com/content/48/7/312"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: "12px",
+                    color: "#f97316",
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    marginTop: "auto",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  Ver artículo completo ↗
+                </a>
+              </div>
+
+              {/* Reference 2 */}
+              <div style={{
+                background: "rgba(15, 23, 42, 0.4)",
+                border: "1px solid var(--border)",
+                borderRadius: "12px",
+                padding: "16px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+              }}>
+                <span style={{
+                  alignSelf: "flex-start",
+                  fontSize: "9.5px",
+                  fontWeight: 700,
+                  padding: "2.5px 8px",
+                  borderRadius: "100px",
+                  background: "rgba(14, 165, 233, 0.12)",
+                  color: "#38bdf8",
+                  border: "1px solid rgba(14, 165, 233, 0.2)",
+                }}>
+                  CRITERIOS DIAGNÓSTICOS
+                </span>
+                <strong style={{ fontSize: "14px", color: "#f1f5f9" }}>IHS ICHD-3 Criterios (2018)</strong>
+                <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
+                  The International Classification of Headache Disorders, 3rd edition. Criterios de diagnóstico clínicos para cefalea por presión de LCR baja / cefalea pos-punción dural (Sección 8.1.3).
+                </p>
+                <a
+                  href="https://ichd-3.org/8-headache-attributed-to-non-vascular-intracranial-disorder/8-1-headache-attributed-to-low-cerebrospinal-fluid-pressure/8-1-3-post-dural-puncture-headache/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: "12px",
+                    color: "#38bdf8",
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    marginTop: "auto",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  Ver criterios oficiales ↗
+                </a>
+              </div>
+
+              {/* Reference 3 */}
+              <div style={{
+                background: "rgba(15, 23, 42, 0.4)",
+                border: "1px solid var(--border)",
+                borderRadius: "12px",
+                padding: "16px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+              }}>
+                <span style={{
+                  alignSelf: "flex-start",
+                  fontSize: "9.5px",
+                  fontWeight: 700,
+                  padding: "2.5px 8px",
+                  borderRadius: "100px",
+                  background: "rgba(239, 68, 68, 0.12)",
+                  color: "#f87171",
+                  border: "1px solid rgba(239, 68, 68, 0.2)",
+                }}>
+                  DIRECTRICES REINO UNIDO
+                </span>
+                <strong style={{ fontSize: "14px", color: "#f1f5f9" }}>OAA / Association of Anaesthetists (2018)</strong>
+                <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
+                  Obstetric Anaesthetists' Association (OAA) and Association of Anaesthetists joint guidelines for the management of accidental dural puncture and post-dural puncture headache.
+                </p>
+                <a
+                  href="https://associationofanaesthetists-publications.onlinelibrary.wiley.com/doi/full/10.1111/anae.14444"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: "12px",
+                    color: "#f87171",
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    marginTop: "auto",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  Ver directrices conjuntas ↗
+                </a>
+              </div>
+
+              {/* Reference 4 */}
+              <div style={{
+                background: "rgba(15, 23, 42, 0.4)",
+                border: "1px solid var(--border)",
+                borderRadius: "12px",
+                padding: "16px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+              }}>
+                <span style={{
+                  alignSelf: "flex-start",
+                  fontSize: "9.5px",
+                  fontWeight: 700,
+                  padding: "2.5px 8px",
+                  borderRadius: "100px",
+                  background: "rgba(251, 191, 36, 0.12)",
+                  color: "#fbbf24",
+                  border: "1px solid rgba(251, 191, 36, 0.2)",
+                }}>
+                  TEXTOS DE REFERENCIA
+                </span>
+                <strong style={{ fontSize: "14px", color: "#f1f5f9" }}>Libros de Texto Estándar</strong>
+                <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
+                  Chestnut's Obstetric Anesthesia (Principles and Practice) y Miller's Anesthesia. Capítulos dedicados a complicaciones de bloqueos neuroaxiales y cefalea postural.
+                </p>
+                <span style={{
+                  fontSize: "12px",
+                  color: "var(--text-muted)",
+                  fontWeight: 500,
+                  marginTop: "auto",
+                }}>
+                  Consulta Académica Tradicional
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
