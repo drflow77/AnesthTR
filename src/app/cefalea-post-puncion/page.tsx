@@ -1993,7 +1993,7 @@ export default function CefaleaPostPuncionPage() {
 
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))",
               gap: "16px",
             }}>
               {/* Reference 1 */}
@@ -2005,6 +2005,9 @@ export default function CefaleaPostPuncionPage() {
                 display: "flex",
                 flexDirection: "column",
                 gap: "8px",
+                minWidth: 0,
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
               }}>
                 <span style={{
                   alignSelf: "flex-start",
@@ -2050,6 +2053,9 @@ export default function CefaleaPostPuncionPage() {
                 display: "flex",
                 flexDirection: "column",
                 gap: "8px",
+                minWidth: 0,
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
               }}>
                 <span style={{
                   alignSelf: "flex-start",
@@ -2095,6 +2101,9 @@ export default function CefaleaPostPuncionPage() {
                 display: "flex",
                 flexDirection: "column",
                 gap: "8px",
+                minWidth: 0,
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
               }}>
                 <span style={{
                   alignSelf: "flex-start",
@@ -2140,6 +2149,9 @@ export default function CefaleaPostPuncionPage() {
                 display: "flex",
                 flexDirection: "column",
                 gap: "8px",
+                minWidth: 0,
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
               }}>
                 <span style={{
                   alignSelf: "flex-start",
