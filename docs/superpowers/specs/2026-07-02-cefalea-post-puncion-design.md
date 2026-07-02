@@ -59,7 +59,8 @@ El estado principal `currentStep` manejará las siguientes vistas:
   2. *Tratamiento Inicial:* Elegir manejo conservador (hidratación, cafeína, analgésicos) vs Parche Hemático Epidural (PHE) inmediato (profiláctico) vs reposo absoluto estricto.
   3. *Indicación de PHE:* Identificar cuándo el fallo del manejo conservador a las 36 horas justifica ofrecer un PHE terapéutico.
   4. *Técnica del PHE:* Elegir volumen óptimo de sangre autóloga (15-20 mL) y velocidad de inyección lenta vs otros volúmenes inapropiados.
-  5. *Alta y Prevención:* Seleccionar instrucciones de alta correctas (evitar esfuerzos y Valsalva, uso de laxantes, signos de alarma).
+  5. *Manejo ante Falla/Recurrencia del PHE:* Identificar qué hacer si la cefalea regresa a las 24 horas (descartar diagnósticos alternativos y ofrecer un segundo PHE si se confirma CPPD persistente).
+  6. *Alta y Prevención:* Seleccionar instrucciones de alta correctas (evitar esfuerzos y Valsalva, uso de laxantes, signos de alarma).
 
 ---
 
