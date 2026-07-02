@@ -1950,7 +1950,7 @@ export default function CefaleaPostPuncionPage() {
                     }}>
                       <span style={{ color: 'var(--text-muted)' }}>Lactancia:</span>
                       <strong style={{ color: breastfeedingStatus === 'normal' ? '#4ade80' : breastfeedingStatus === 'con_dificultad' ? '#fbbf24' : '#f87171' }}>
-                        {breastfeedingStatus === 'normal' ? 'Normalizada' : breastfeedingStatus === 'con_dificultad' ? '#fbbf24' : '#f87171' }
+                        {breastfeedingStatus === 'normal' ? 'Normalizada' : breastfeedingStatus === 'con_dificultad' ? 'Con dificultad' : 'Imposible' }
                       </strong>
                     </div>
                   </div>

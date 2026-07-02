@@ -310,6 +310,16 @@ a { text-decoration: none; color: inherit; }
 .card-link { cursor: pointer; display: flex; }
 .card-disabled { opacity: 0.35; filter: grayscale(0.8); pointer-events: none; }
 
+/* Colored left border per variant (matches Anafilaxia / Cefalea styling) */
+.card-link.r1 { border-left: 4px solid var(--r1); }
+.card-link.r2 { border-left: 4px solid var(--r2); }
+.card-link.general { border-left: 4px solid var(--general); }
+.card-link.eco { border-left: 4px solid var(--eco); }
+.card-link.sim { border-left: 4px solid var(--sim); }
+.card-link.ai-card { border-left: 4px solid var(--ai); }
+.card-link.opioides { border-left: 4px solid var(--opioides); }
+.card-disabled { border-left: 4px solid var(--r3); }
+
 /* Hover states */
 .card-link:hover {
   transform: translateY(-4px) scale(1.005);
