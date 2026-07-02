@@ -340,7 +340,7 @@ export default function CefaleaPostPuncionPage() {
   const selectedOptionObj = currentStep?.options.find(o => o.id === selectedOption);
 
   return (
-    <main className="container">
+    <main className="container" style={{ maxWidth: '1180px', width: '100%' }}>
       {/* Global Page Styles */}
       <style>{`
         @keyframes drip {
