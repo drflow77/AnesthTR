@@ -171,6 +171,26 @@ export default function Home() {
         </div>
       </Link>
 
+      <Link href="/cefalea-post-puncion" className="glass-card card-link sim" style={{ borderLeft: '4px solid #f97316' }}>
+        <div className="card-icon-wrap sim-icon" style={{ background: 'rgba(249, 115, 22, 0.12)', color: '#f97316', border: '1px solid rgba(249, 115, 22, 0.2)' }}>💉</div>
+        <div className="card-body">
+          <div className="card-header">
+            <span className="card-grade sim-tag" style={{ background: 'rgba(249, 115, 22, 0.12)', color: '#f97316' }}>Simulador</span>
+            <span className="card-status active">Activo</span>
+          </div>
+          <h2 className="card-title">Cefalea Pos-Punción Dural</h2>
+          <p className="card-desc">Fisiopatología interactiva de Monro-Kellie, calculadora diagnóstica ICHD-3 y simulador clínico de toma de decisiones terapéuticas.</p>
+          <div className="card-meta">
+            <span>🔬 Fisiopatología interactiva</span>
+            <span>📋 Criterios ICHD-3</span>
+            <span>💉 Manejo y segundo PHE</span>
+          </div>
+        </div>
+        <div className="card-arrow">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+      </Link>
+
       <div className="card-grid">
         <Link href="/general/40-intoxicacion-last-simulador.html" className="glass-card card-link sim">
           <div className="card-icon-wrap sim-icon">🧪</div>
