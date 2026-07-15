@@ -1521,6 +1521,122 @@ export default function CefaleaPostPuncionPage() {
                 </div>
               </div>
             </div>
+
+            {/* Panel de CPPD Crónica y Aspectos Médico-Legales */}
+            <div style={{
+              marginTop: '28px',
+              background: 'rgba(15, 23, 42, 0.25)',
+              border: '1px solid var(--border)',
+              borderRadius: '16px',
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '24px' }}>📋</span>
+                <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#f1f5f9', letterSpacing: '0.5px' }}>
+                  ABORDAJE CLÍNICO DE LA CPPD CRÓNICA Y ASPECTOS MÉDICO-LEGALES
+                </h3>
+              </div>
+              <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.6' }}>
+                A diferencia de la fase aguda, cuando la cefalea post-punción dural (CPPD) se prolonga más allá de 2 semanas o se presenta meses después del procedimiento, el diagnóstico y la responsabilidad clínica adquieren matices de alta relevancia médico-legal.
+              </p>
+
+              {/* Caja de Citas Textuales (Estilo ENARM - Verde) */}
+              <div style={{
+                background: 'rgba(34, 197, 94, 0.05)',
+                borderLeft: '4px solid #22c55e',
+                borderRadius: '8px',
+                padding: '16px',
+                fontSize: '13px',
+                color: 'var(--text-secondary)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px'
+              }}>
+                <strong style={{ color: '#4ade80', fontSize: '13.5px' }}>📌 Evidencia de Cronicidad y Citas de Referencia (Estilo enarmTR):</strong>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <p style={{ margin: 0, fontStyle: 'italic', lineHeight: '1.5', color: '#cbd5e1' }}>
+                    "A los 5 años del parto, la prevalencia de cefalea crónica fue significativamente mayor en los grupos que tuvieron CPPD (20.4% en las tratadas con parche hemático y 21.4% en las no tratadas) en comparación con los controles (5.3% con epidural normal y 0.9% sin epidural)... El dolor crónico severo fue reportado por el 28.6% de quienes recibieron parche hemático frente al 43.8% de quienes no lo recibieron."
+                  </p>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    <strong>Ref:</strong> Weiss A, Ioscovich A, et al. <em>Chronic pain and long-term disability following postdural puncture headache: a five-year prospective follow-up</em>. Int J Obstet Anesth. 2025 Nov. PMID: 40773857.
+                  </span>
+                </div>
+
+                <hr style={{ border: '0', borderTop: '1px solid rgba(34, 197, 94, 0.15)', margin: '4px 0' }} />
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <p style={{ margin: 0, fontStyle: 'italic', lineHeight: '1.5', color: '#cbd5e1' }}>
+                    "Hasta el 30% de las mujeres que sufrieron una punción dural accidental con una aguja Tuohy (calibre grueso) experimentan cefalea crónica debilitante que persiste durante meses o más de un año... La CPPD también se asocia con una alta tasa de depresión posparto (52.3% vs. 11.2% en controles) y trastorno de estrés postraumático (12.8% vs. 0.4% en controles)."
+                  </p>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    <strong>Ref:</strong> Orbach-Zinger S, et al. <em>Long-term psychological and physical outcomes after PDPH</em>. Eur J Anaesthesiol. 2021. PMID: 32858584 / Barad M, et al. <em>Headache</em>. 2021. PMID: 34570902.
+                  </span>
+                </div>
+              </div>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '20px',
+                marginTop: '8px'
+              }} className="fisio-grid">
+                {/* Columna Izquierda: Protocolo Diagnóstico */}
+                <div style={{
+                  background: 'rgba(15, 23, 42, 0.4)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}>
+                  <h4 style={{ margin: 0, fontSize: '14px', color: '#f97316', fontWeight: 700 }}>
+                    1. Cronicidad e Imagen Diagnóstica
+                  </h4>
+                  <ul style={{ paddingLeft: '18px', margin: 0, fontSize: '12.5px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '8px', lineHeight: '1.5' }}>
+                    <li>
+                      <strong>Pérdida del carácter ortostático:</strong> La cefalea crónica de LCR bajo puede perder su comportamiento posicional clásico y presentarse de forma continua, simulando cefalea tensional.
+                    </li>
+                    <li>
+                      <strong>RM Cerebral y Espinal con Gadolinio:</strong> Es el estudio de elección para buscar signos de hipotensión intracraneal (Criterios SEEPS: colecciones subdurales, realce paquimeníngeo difuso, dilatación venosa, congestión pituitaria y descenso cerebral).
+                    </li>
+                    <li>
+                      <strong>La RM normal NO descarta la patología:</strong> Hasta el 80-90% de las fugas crónicas de LCR tienen una RM convencional normal. El diagnóstico sigue siendo eminentemente clínico-temporal.
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Columna Derecha: Lex Artis */}
+                <div style={{
+                  background: 'rgba(15, 23, 42, 0.4)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}>
+                  <h4 style={{ margin: 0, fontSize: '14px', color: '#f87171', fontWeight: 700 }}>
+                    2. Aspectos Médico-Legales Clave
+                  </h4>
+                  <ul style={{ paddingLeft: '18px', margin: 0, fontSize: '12.5px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '8px', lineHeight: '1.5' }}>
+                    <li>
+                      <strong>Consentimiento Informado:</strong> Debe registrarse expresamente la explicación del riesgo de CPPD crónico/agudo y la necesidad de parche hemático.
+                    </li>
+                    <li>
+                      <strong>Registro Obligatorio (Lex Artis):</strong> Omitir registrar punciones accidentales o dificultades en pacientes con factores de riesgo anatómicos (p. ej., obesidad grado II-III, IMC elevado, talla baja) se considera una omisión de registro que debilita la defensa.
+                    </li>
+                    <li>
+                      <strong>Retraso Terapéutico y Neuromodulación:</strong> Retrasar el parche hemático o no realizar un seguimiento clínico estructurado puede originar sensibilización central, obligando a dar tratamiento prolongado con neuromoduladores (Pregabalina/Gabapentina) durante 3-6 meses.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         )}
         {activeTab === 'simulador' && (
@@ -2177,6 +2293,102 @@ export default function CefaleaPostPuncionPage() {
                 }}>
                   Consulta Académica Tradicional
                 </span>
+              </div>
+
+              {/* Reference 5 */}
+              <div style={{
+                background: "rgba(15, 23, 42, 0.4)",
+                border: "1px solid var(--border)",
+                borderRadius: "12px",
+                padding: "16px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                minWidth: 0,
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
+              }}>
+                <span style={{
+                  alignSelf: "flex-start",
+                  fontSize: "9.5px",
+                  fontWeight: 700,
+                  padding: "2.5px 8px",
+                  borderRadius: "100px",
+                  background: "rgba(168, 85, 247, 0.12)",
+                  color: "#c084fc",
+                  border: "1px solid rgba(168, 85, 247, 0.2)",
+                }}>
+                  ESTUDIO DE SEGUIMIENTO A 5 AÑOS (2025)
+                </span>
+                <strong style={{ fontSize: "14px", color: "#f1f5f9" }}>Weiss et al. (IJOA)</strong>
+                <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
+                  Chronic pain and long-term disability following postdural puncture headache: a five-year prospective follow-up of a case-control cohort. Publicado en Noviembre de 2025.
+                </p>
+                <a
+                  href="https://doi.org/10.1016/j.ijoa.2025.104747"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: "12px",
+                    color: "#c084fc",
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    marginTop: "auto",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  Ver artículo completo ↗
+                </a>
+              </div>
+
+              {/* Reference 6 */}
+              <div style={{
+                background: "rgba(15, 23, 42, 0.4)",
+                border: "1px solid var(--border)",
+                borderRadius: "12px",
+                padding: "16px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                minWidth: 0,
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
+              }}>
+                <span style={{
+                  alignSelf: "flex-start",
+                  fontSize: "9.5px",
+                  fontWeight: 700,
+                  padding: "2.5px 8px",
+                  borderRadius: "100px",
+                  background: "rgba(34, 197, 94, 0.12)",
+                  color: "#4ade80",
+                  border: "1px solid rgba(34, 197, 94, 0.2)",
+                }}>
+                  REVISIÓN SISTEMÁTICA (2024)
+                </span>
+                <strong style={{ fontSize: "14px", color: "#f1f5f9" }}>Cureus Systematic Review</strong>
+                <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
+                  Treatment and Prevention of Post-dural Puncture Headaches: A Systematic Review. Publicado en Cureus en Enero de 2024.
+                </p>
+                <a
+                  href="https://www.cureus.com/articles/214300-treatment-and-prevention-of-post-dural-puncture-headaches-a-systematic-review"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: "12px",
+                    color: "#4ade80",
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    marginTop: "auto",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  Descargar PDF completo ↗
+                </a>
               </div>
             </div>
           </div>
