@@ -9,7 +9,7 @@ export default function Home() {
         <div className="logo-brand">
           <img src="/logo.PNG" alt="AnesthTR" className="logo-img" />
           <div className="logo-text-group">
-            <span className="logo-wordmark">Anesth<span className="logo-tr">TR</span></span>
+            <h1 className="logo-wordmark">Anesth<span className="logo-tr">TR</span></h1>
             <p className="hero-sub">Plataforma de educación en anestesiología</p>
           </div>
         </div>
