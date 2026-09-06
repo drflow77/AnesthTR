@@ -42,3 +42,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# subproyectos y material suelto que viven en el disco pero no en el repo
+/guía-interactiva-das-2025/
+/OPIOIDES/
+/modify_page.js
