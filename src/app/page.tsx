@@ -31,6 +31,34 @@ export default function Home() {
         </div>
       </div>
 
+      {/* ROPICALC — producto hermano */}
+      <a
+        href="https://ropicalc.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="glass-card card-link ropi-banner"
+      >
+        <div className="card-icon-wrap ropi-icon">
+          <img src="/ropicalc-icon.png" alt="" width={48} height={48} />
+        </div>
+        <div className="card-body">
+          <div className="card-header">
+            <span className="card-grade ropi-tag">Otra herramienta de Medicode</span>
+            <span className="card-status active">Activo</span>
+          </div>
+          <h2 className="card-title">RopiCalc — 18 calculadoras clínicas</h2>
+          <p className="card-desc">Ropivacaína, dosis pediátrica, ASA, Caprini, función renal y más. Funciona sin internet.</p>
+          <div className="card-meta">
+            <span>🧮 18 calculadoras</span>
+            <span>📴 Offline</span>
+            <span>📱 Web app</span>
+          </div>
+        </div>
+        <div className="card-arrow">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 14L14 6M14 6H8M14 6v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+      </a>
+
       {/* TRIVIA */}
       <div className="section-label">Trivia general</div>
 

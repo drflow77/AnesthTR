@@ -12,8 +12,8 @@
   --r2: #818cf8;
   --r2-glow: rgba(129, 140, 248, 0.4);
   --r3: #fbbf24;
-  --general: #34d399;
-  --general-glow: rgba(52, 211, 153, 0.4);
+  --general: #facc15;
+  --general-glow: rgba(250, 204, 21, 0.4);
   --eco: #06b6d4;
   --eco-glow: rgba(6, 182, 212, 0.4);
   --sim: #f97316;
@@ -22,6 +22,8 @@
   --ai-glow: rgba(167, 139, 250, 0.4);
   --opioides: #ff6b35;
   --opioides-glow: rgba(255, 107, 53, 0.4);
+  --ropi: #38f5c4;
+  --ropi-glow: rgba(56, 245, 196, 0.4);
 
   --text: #f1f5f9;
   --text-secondary: #94a3b8;
@@ -329,7 +331,7 @@ a { text-decoration: none; color: inherit; }
 
 .card-link.r1:hover { border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 12px 40px -8px var(--r1-glow); }
 .card-link.r2:hover { border-color: rgba(129, 140, 248, 0.5); box-shadow: 0 12px 40px -8px var(--r2-glow); }
-.card-link.general:hover { border-color: rgba(52, 211, 153, 0.5); box-shadow: 0 12px 40px -8px var(--general-glow); }
+.card-link.general:hover { border-color: rgba(250, 204, 21, 0.5); box-shadow: 0 12px 40px -8px var(--general-glow); }
 .card-link.eco:hover { border-color: rgba(6, 182, 212, 0.5); box-shadow: 0 12px 40px -8px var(--eco-glow); }
 .card-link.sim:hover { border-color: rgba(249, 115, 22, 0.5); box-shadow: 0 12px 40px -8px var(--sim-glow); }
 .card-link.ai-card:hover { border-color: rgba(167, 139, 250, 0.5); box-shadow: 0 12px 40px -8px var(--ai-glow); }
@@ -352,11 +354,30 @@ a { text-decoration: none; color: inherit; }
 .r1-icon { background: rgba(56, 189, 248, 0.12); color: var(--r1); border: 1px solid rgba(56, 189, 248, 0.2); }
 .r2-icon { background: rgba(129, 140, 248, 0.12); color: var(--r2); border: 1px solid rgba(129, 140, 248, 0.2); }
 .r3-icon { background: rgba(251, 191, 36, 0.12); color: var(--r3); border: 1px solid rgba(251, 191, 36, 0.2); }
-.general-icon { background: rgba(52, 211, 153, 0.12); border: 1px solid rgba(52, 211, 153, 0.2); }
+.general-icon { background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.2); }
 .eco-icon { background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.2); }
 .sim-icon { background: rgba(249, 115, 22, 0.12); border: 1px solid rgba(249, 115, 22, 0.2); }
 .ai-icon { background: rgba(167, 139, 250, 0.12); border: 1px solid rgba(167, 139, 250, 0.2); }
 .opioides-icon { background: rgba(255, 107, 53, 0.12); border: 1px solid rgba(255, 107, 53, 0.2); }
+.ropi-icon {
+  background: #fafaf9;
+  border: 1px solid rgba(56, 245, 196, 0.25);
+  padding: 0;
+  overflow: hidden;
+}
+.ropi-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ═══ BANNER ROPICALC (producto hermano, no un módulo de AnesthTR) ═══ */
+.ropi-banner {
+  border-left: 4px solid var(--ropi);
+  background: linear-gradient(120deg, rgba(56, 245, 196, 0.07), var(--surface) 55%);
+}
+.ropi-banner:hover {
+  border-color: rgba(56, 245, 196, 0.5);
+  box-shadow: 0 12px 40px -8px var(--ropi-glow);
+  background: linear-gradient(120deg, rgba(56, 245, 196, 0.11), rgba(15, 23, 42, 0.8) 55%);
+}
+.ropi-tag { background: rgba(56, 245, 196, 0.12); color: var(--ropi); }
 
 /* ═══ CARD BODY ═══ */
 .card-body { flex: 1; min-width: 0; }
@@ -380,7 +401,7 @@ a { text-decoration: none; color: inherit; }
 .r1-tag { background: rgba(56, 189, 248, 0.12); color: var(--r1); }
 .r2-tag { background: rgba(129, 140, 248, 0.12); color: var(--r2); }
 .r3-tag { background: rgba(251, 191, 36, 0.12); color: var(--r3); }
-.general-tag { background: rgba(52, 211, 153, 0.12); color: var(--general); }
+.general-tag { background: rgba(250, 204, 21, 0.12); color: var(--general); }
 .eco-tag { background: rgba(6, 182, 212, 0.12); color: var(--eco); }
 .sim-tag { background: rgba(249, 115, 22, 0.12); color: var(--sim); }
 .ai-tag { background: rgba(167, 139, 250, 0.12); color: var(--ai); }
